@@ -67,3 +67,11 @@ D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\obj\Release\Subdu
 D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\bin\Release\Subdued.dll
 D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\bin\Release\Subdued.pdb
 D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\bin\Release\MediaBrowser.Model.dll
+D:\Git Repositories\Subdued\Subdued\bin\Release\Subdued.dll
+D:\Git Repositories\Subdued\Subdued\bin\Release\Subdued.pdb
+D:\Git Repositories\Subdued\Subdued\bin\Release\MediaBrowser.Model.dll
+D:\Git Repositories\Subdued\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\Git Repositories\Subdued\Subdued\obj\Release\Subdued.Resources.resources
+D:\Git Repositories\Subdued\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\Git Repositories\Subdued\Subdued\obj\Release\Subdued.dll
+D:\Git Repositories\Subdued\Subdued\obj\Release\Subdued.pdb

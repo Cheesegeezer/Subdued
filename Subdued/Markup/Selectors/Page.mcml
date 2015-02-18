@@ -51,10 +51,16 @@
             <Command Name="CloseUserMenuCommand" />
             <Command Name="SwitchUserCommand" />
 
-          <Command Name="Configure" />
+			<Command Name="SearchFunction" />
+			<Command Name="CloseSearch"/>
+
+            <Command Name="Configure" />
 
             <KeyHandler Name="SwitchKey" Key="D3" Handle="false" Modifiers="Shift" HandlerStage="Bubbled"/>
             <ShortcutHandler Name="BackHandler"   Handle="false" Shortcut="Back" HandlerStage="Bubbled"/>
+
+			<ShortcutHandler Name="SearchShortcut" Handle="true" HandlerStage="Bubbled" Shortcut="Yellow"/>
+			<KeyHandler Name="SearchKey" Handle="true" HandlerStage="Bubbled" Key="S" Modifiers="Control"/>
 
             <FormLayoutInput Name="CoverWallLayoutInput" Left="Parent,0,-20" Right="Parent,1,20" Top="Parent,0,-20" Bottom="Parent,1,20" />
 
@@ -187,6 +193,43 @@
                     <Set Target="[TopPanelStyle]" Value="[Utility.ThemeConfig.TopPanelStyle]" />
                 </Actions>
             </Rule>
+
+			<!--SEARCH PANEL LOGIC-->
+			<Changed Source="[CloseSearch.Invoked]">
+				<Actions>
+					<Set Target="[MouseBlocker.Visible]" Value="false" />
+					<Set Target="[Application.ShowSearchPanel]" Value="false" />
+				</Actions>
+			</Changed>
+
+			<Rule ConditionLogicalOp="Or">
+				<Conditions>
+					<Modified Source="[SearchShortcut.Invoked]" />
+					<Modified Source="[SearchKey.Invoked]" />
+				</Conditions>
+				<Actions>
+					<Set Target="[Application.ShowSearchPanel]" Value="true" />
+				</Actions>
+			</Rule>
+
+			<Rule ConditionLogicalOp="Or">
+				<Conditions>
+					<Modified Source="[SearchFunction.Invoked]" />
+					<Modified Source="[SearchKey.Invoked]" />
+				</Conditions>
+				<Actions>
+					<Set Target="[Application.ShowSearchPanel]" Value="true" />
+				</Actions>
+			</Rule>
+
+			<Condition Source="[Application.ShowSearchPanel]" SourceValue="true"  >
+				<Actions>
+					<!--<PlaySound Sound="sound://sounds:Miniselect" />-->
+					<Set Target="[MouseBlocker.Visible]" Value="true" />
+
+				</Actions>
+			</Condition>
+			<!--END SEARCH PANEL LOGIC-->
 
             <!-- If it is a root, EHS, horizontal folder -->
             <Rule ConditionLogicalOp="And">
@@ -657,6 +700,8 @@
                                 </Children>
                             </Panel>
 
+							<Panel Name="MouseBlocker" MouseInteractive="true" Layout="Fill" Visible="false" />
+
                             <!-- Full Screen/PCI/Config -->
                             <Panel Name="ConfigButtonsPanel" Margins="0,0,20,0" LayoutInput="[ConfigPanelBottomLayoutInput]">
                                 <Layout>
@@ -664,9 +709,11 @@
                                 </Layout>
                                 <Children>
                                     <ib:ImageButton Name="UserMenuBtn" Command="[SwitchUserCommand]" Image="[Application.CurrentUser.PrimaryImage]" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Size="0,20" Visible="true" />
-                                    <ib:ImageButton Name="FullScreenButton" Command="[FullScreenCommand]" Image="resx://Subdued/Subdued.Resources/watch" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Visible="false" />
+									<ib:ImageButton Name="SearchBtn" Command="[SearchFunction]" Image="resx://Subdued/Subdued.Resources/search" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Visible="true" />
+									<ib:ImageButton Name="FullScreenButton" Command="[FullScreenCommand]" Image="resx://Subdued/Subdued.Resources/watch" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Visible="false" />
                                     <pc:PCIndicatorButton Name="PCIBtn" Config="[Utility.ThemeConfig]" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Application="[Application]" />
                                     <ib:ImageButton Name="ConfigBtn" Command="[ShowOptionsCommand]" Image="resx://Subdued/Subdued.Resources/config" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Visible="true" />
+									
                                 </Children>
                             </Panel>
 

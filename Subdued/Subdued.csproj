@@ -229,6 +229,7 @@
     <None Include="Images\rated_movie_r_full.png" />
     <None Include="Images\hd.png" />
     <None Include="Images\BlankImage.png" />
+    <Content Include="Images\search.png" />
     <Content Include="Images\User.png" />
     <Content Include="Markup\Animations.mcml" />
     <Content Include="Markup\ConfigPanelViews.mcml">

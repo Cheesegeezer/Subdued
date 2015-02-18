@@ -1,0 +1,108 @@
+﻿<Mcml xmlns="http://schemas.microsoft.com/2006/mcml">
+
+    <Animation Name="ScrollFast" Type="Move">
+        <Keyframes>
+            <PositionKeyframe Time="0" RelativeTo="Current"/>
+            <PositionKeyframe Time="0.15" RelativeTo="Final"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="ScrollMedium" Type="Move">
+        <Keyframes>
+            <PositionKeyframe Time="0" RelativeTo="Current"/>
+            <PositionKeyframe Time="0.3" RelativeTo="Final"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="ScrollSlow" Type="Move">
+        <Keyframes>
+            <PositionKeyframe Time="0" RelativeTo="Current"/>
+            <PositionKeyframe Time="0.5" RelativeTo="Final"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="ScaleFast" Type="Scale">
+        <Keyframes>
+            <ScaleKeyframe Time="0" RelativeTo="Current" Interpolation="Log" />
+            <ScaleKeyframe Time="0.15" RelativeTo="Final" Interpolation="Log"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="ScaleMedium" Type="Scale">
+        <Keyframes>
+            <ScaleKeyframe Time="0" RelativeTo="Current" Interpolation="Log" />
+            <ScaleKeyframe Time="0.3" RelativeTo="Final" Interpolation="Log"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="ScaleSlow" Type="Scale">
+        <Keyframes>
+            <ScaleKeyframe Time="0" RelativeTo="Current" Interpolation="Log" />
+            <ScaleKeyframe Time="0.5" RelativeTo="Final" Interpolation="Log"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="RotateFastX" Type="Rotate">
+        <Keyframes>
+            <RotateKeyframe Time="0" RelativeTo="Current" Interpolation="Log" Value="0deg;1,0,0" />
+            <RotateKeyframe Time="0.15" RelativeTo="Final" Interpolation="Log" Value="0deg;1,0,0"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="RotateMediumX" Type="Rotate">
+        <Keyframes>
+            <RotateKeyframe Time="0" RelativeTo="Current" Interpolation="Log" Value="0deg;1,0,0" />
+            <RotateKeyframe Time="0.3" RelativeTo="Final" Interpolation="Log" Value="0deg;1,0,0" />
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="RotateSlowX" Type="Rotate">
+        <Keyframes>
+            <RotateKeyframe Time="0" RelativeTo="Current" Interpolation="Log" Value="0deg;1,0,0" />
+            <RotateKeyframe Time="0.5" RelativeTo="Final" Interpolation="Log" Value="0deg;1,0,0" />
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="RotateFastY" Type="Rotate">
+        <Keyframes>
+            <RotateKeyframe Time="0" RelativeTo="Current" Interpolation="Log" Value="0deg;0,1,0" />
+            <RotateKeyframe Time="0.15" RelativeTo="Final" Interpolation="Log" Value="0deg;0,1,0"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="RotateMediumY" Type="Rotate">
+        <Keyframes>
+            <RotateKeyframe Time="0" RelativeTo="Current" Interpolation="Log" Value="0deg;0,1,0" />
+            <RotateKeyframe Time="0.3" RelativeTo="Final" Interpolation="Log" Value="0deg;0,1,0" />
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="RotateSlowY" Type="Rotate">
+        <Keyframes>
+            <RotateKeyframe Time="0" RelativeTo="Current" Interpolation="Log" Value="0deg;0,1,0" />
+            <RotateKeyframe Time="0.5" RelativeTo="Final" Interpolation="Log" Value="0deg;0,1,0" />
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="AlphaFast" Type="Alpha">
+        <Keyframes>
+            <AlphaKeyframe Time="0" RelativeTo="Current"/>
+            <AlphaKeyframe Time="0.15" RelativeTo="Final"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="AlphaMedium" Type="Alpha">
+        <Keyframes>
+            <AlphaKeyframe Time="0" RelativeTo="Current"/>
+            <AlphaKeyframe Time="0.3" RelativeTo="Final"/>
+        </Keyframes>
+    </Animation>
+
+    <Animation Name="AlphaSlow" Type="Alpha">
+        <Keyframes>
+            <AlphaKeyframe Time="0" RelativeTo="Current"/>
+            <AlphaKeyframe Time="0.5" RelativeTo="Final"/>
+        </Keyframes>
+    </Animation>
+
+</Mcml>

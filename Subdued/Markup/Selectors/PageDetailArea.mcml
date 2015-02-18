@@ -1,0 +1,162 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:cor="assembly://MSCorLib/System"
+	  xmlns:a="assembly://MediaBrowser/MediaBrowser"
+      xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:lr="resx://Subdued/Subdued.Resources/LayoutRoot"
+	  xmlns:lpo="resx://Subdued/Subdued.Resources/LayoutPoster"
+	  xmlns:lth="resx://Subdued/Subdued.Resources/LayoutThumb"
+	  xmlns:lde="resx://Subdued/Subdued.Resources/LayoutDetails"
+	  xmlns:lcf="resx://Subdued/Subdued.Resources/LayoutCoverflow"
+	  xmlns:lts="resx://Subdued/Subdued.Resources/LayoutThumbStrip"    
+	  xmlns:la="resx://Subdued/Subdued.Resources/LayoutAlbum">
+
+  <!--*****************************************************************************************************************
+  
+  This is an example of a page detail area selector.  To build your theme you must modify the individual mcml
+  files for your specific views OR change the references to existing/default views in MB.
+  
+  The project template should have generated references to and shell mcml for standard view UIs with the following naming convention:
+  
+    [projectname]LayoutPoster
+    [projectname]LayoutThumb
+    [projectname]LayoutDetails
+    [projectname]LayoutCoverflow
+    [projectname]LayoutThumbStrip
+    
+  *********************************************************************************************************************-->
+
+  <UI Name="PageDetailAreaSubdued">
+    <Properties>
+      <a:Application Name="Application" Application="$Required"/>
+      <lib:FolderModel Name="Folder" FolderModel="$Required"/>
+      <sd:MyConfig Name="Config" MyConfig="$Required"/>
+      <sd:AppUtil Name="Utility" AppUtil="$Required" />
+      <cor:Boolean Name="Enabled" Boolean="true" />
+    </Properties>
+
+    <Rules>
+      <Binding Source="[Enabled]" Target="[Input.Enabled]" />
+
+      <Rule ConditionLogicalOp ="And">
+        <Conditions >
+          <Equality Source="[Folder.IsRoot]" Value="true"/>
+          <Equality Source="[Application.Config.EnableRootPage]" Value="true"/>
+        </Conditions>
+        <Actions>
+          <Set Target="[LayoutRoot.Visible]" Value="true"/>
+          <Set Target="[DetailsView.Visible]" Value="false"/>
+          <Set Target="[PosterView.Visible]" Value="false"/>
+          <Set Target="[ThumbView.Visible]" Value="false"/>
+          <Set Target="[ThumbStripView.Visible]" Value="false"/>
+          <Set Target="[CoverFlow.Visible]" Value="false"/>
+          <Set Target="[AlbumArtist.Visible]" Value="false"/>
+        </Actions>
+      </Rule>
+
+      <Rule ConditionLogicalOp="Or">
+        <Conditions>
+          <Equality Source="[Folder.ItemTypeString]" Value="ArtistAlbum"/>
+          <Equality Source="[Folder.ItemTypeString]" Value="MusicAlbum"/>
+        </Conditions>
+        <Actions>
+          <Set Target="[LayoutRoot.Visible]" Value="false"/>
+          <Set Target="[DetailsView.Visible]" Value="false"/>
+          <Set Target="[PosterView.Visible]" Value="false"/>
+          <Set Target="[ThumbView.Visible]" Value="false"/>
+          <Set Target="[ThumbStripView.Visible]" Value="false"/>
+          <Set Target="[CoverFlow.Visible]" Value="false"/>
+          <Set Target="[AlbumArtist.Visible]" Value="true"/>
+        </Actions>
+      </Rule>
+
+      <Rule ConditionLogicalOp="And">
+        <Conditions>
+          <Equality Source="[Folder.ItemTypeString]" ConditionOp="NotEquals" Value="ArtistAlbum"/>
+          <Equality Source="[Folder.ItemTypeString]" ConditionOp="NotEquals" Value="MusicAlbum"/>
+        </Conditions>
+        <Actions>
+          <Set Target="[AlbumArtist.Visible]" Value="false"/>
+        </Actions>
+      </Rule>
+
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail" Target="[DetailsView.Visible]" Value="true" />
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="NotEquals" SourceValue="Detail" Target="[DetailsView.Visible]" Value="false" />
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Poster" Target="[PosterView.Visible]" Value="true" />
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="NotEquals" SourceValue="Poster" Target="[PosterView.Visible]" Value="false" />
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Thumb" Target="[ThumbView.Visible]" Value="true" />
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="NotEquals" SourceValue="Thumb" Target="[ThumbView.Visible]" Value="false" />
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="ThumbStrip" Target="[ThumbStripView.Visible]" Value="true" />
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="NotEquals" SourceValue="ThumbStrip" Target="[ThumbStripView.Visible]" Value="false" />
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="CoverFlow" Target="[CoverFlow.Visible]" Value="true" />
+      <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="NotEquals" SourceValue="CoverFlow" Target="[CoverFlow.Visible]" Value="false" />
+
+    </Rules>
+
+    <Content>
+      <Panel Name="MainPanel" Layout="Form">
+        <Animations>
+          <Animation Name="AlphaAnimation" Type="Alpha">
+            <Keyframes>
+              <AlphaKeyframe Time="0.0"  RelativeTo="Current" Interpolation="EaseIn"/>
+              <AlphaKeyframe Time="0.1"  RelativeTo="Final"/>
+            </Keyframes>
+          </Animation>
+        </Animations>
+        <Children>
+          <!--
+                    <Text Content="[Folder.ItemTypeString]" Color="White" Font="Arial Black,18">
+                        <LayoutInput>
+                            <FormLayoutInput Top="Parent,0" Left="Parent,0" Right="Parent,1" Horizontal="Center" />
+                        </LayoutInput>
+                    </Text>
+                    -->
+
+          <!--  View Details-->
+          <lr:SubduedLayoutRoot Name="LayoutRoot" Folder="[Folder]" Application="[Application]" Visible="false" Config="[Config]" Utility="[Utility]">
+            <LayoutInput>
+              <FormLayoutInput Horizontal="Fill" Top="Parent,0" Bottom="Parent,1"/>
+            </LayoutInput>
+          </lr:SubduedLayoutRoot>
+
+          <lde:SubduedLayoutDetails Name="DetailsView" Visible="false" Folder="[Folder]" Application="[Application]" Config="[Config]" Utility="[Utility]">
+            <LayoutInput>
+              <FormLayoutInput Horizontal="Fill" Top="Parent,0" Bottom="Parent,1"/>
+            </LayoutInput>
+          </lde:SubduedLayoutDetails>
+
+          <lpo:SubduedLayoutPoster Name="PosterView" Visible="false" Application="[Application]" Folder="[Folder]" Config="[Config]" Utility="[Utility]">
+            <LayoutInput>
+              <FormLayoutInput Horizontal="Fill" Top="Parent,0" Bottom="Parent,1" />
+            </LayoutInput>
+          </lpo:SubduedLayoutPoster>
+
+          <lth:SubduedLayoutThumb Name="ThumbView" Visible="false" Folder="[Folder]" Application="[Application]" Config="[Config]" Utility="[Utility]">
+            <LayoutInput>
+              <FormLayoutInput Horizontal="Fill" Top="Parent,0" Bottom="Parent,1"/>
+            </LayoutInput>
+          </lth:SubduedLayoutThumb>
+
+          <lcf:SubduedLayoutCoverflow Name="CoverFlow" Visible="false" Folder="[Folder]" Application="[Application]" Config="[Config]" Utility="[Utility]">
+            <LayoutInput>
+              <FormLayoutInput Horizontal="Fill" Top="Parent,0" Bottom="Parent,1"/>
+            </LayoutInput>
+          </lcf:SubduedLayoutCoverflow>
+
+          <lts:SubduedLayoutThumbStrip Name="ThumbStripView" Visible="false" Folder="[Folder]" Application="[Application]" Config="[Config]" Utility="[Utility]">
+            <LayoutInput>
+              <FormLayoutInput Horizontal="Fill" Top="Parent,0" Bottom="Parent,1"/>
+            </LayoutInput>
+          </lts:SubduedLayoutThumbStrip>
+
+          <la:SubduedLayoutAlbum Name="AlbumArtist" Visible="false" Folder="[Folder]" Application="[Application]" Config="[Config]" Utility="[Utility]">
+            <LayoutInput>
+              <FormLayoutInput Horizontal="Fill" Top="Parent,0" Bottom="Parent,1"/>
+            </LayoutInput>
+          </la:SubduedLayoutAlbum>
+        </Children>
+      </Panel>
+    </Content>
+  </UI>
+
+</Mcml>

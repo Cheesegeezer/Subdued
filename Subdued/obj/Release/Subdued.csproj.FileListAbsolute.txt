@@ -1,0 +1,69 @@
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued\trunk\subdued\Subdued\bin\Release\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued\trunk\subdued\Subdued\bin\Release\Subdued.pdb
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued\trunk\subdued\Subdued\obj\Release\Subdued.Resources.resources
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued\trunk\subdued\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued\trunk\subdued\Subdued\obj\Release\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued\trunk\subdued\Subdued\obj\Release\Subdued.pdb
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued\trunk\subdued\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\bin\Release\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\bin\Release\Subdued.pdb
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\obj\Release\Subdued.Resources.resources
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\obj\Release\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\obj\Release\Subdued.pdb
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\Subdued\bin\Release\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\Subdued\bin\Release\Subdued.pdb
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\Subdued\obj\Release\Subdued.Resources.resources
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\Subdued\obj\Release\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\Subdued\obj\Release\Subdued.pdb
+D:\VS 2012 Projects\[cheesegeezer]-Subdued - Working Copy\Subdued\bin\Release\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-Subdued - Working Copy\Subdued\bin\Release\Subdued.pdb
+D:\VS 2012 Projects\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\VS 2012 Projects\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.Resources.resources
+D:\VS 2012 Projects\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.pdb
+D:\VS 2012 Projects\[cheesegeezer]-Subdued - Working Copy\Subdued\bin\Release\MediaBrowser.Model.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.Resources.resources
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued - Working Copy\Subdued\obj\Release\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued - Working Copy\Subdued\bin\Release\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued - Working Copy\Subdued\bin\Release\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued - Working Copy\Subdued\bin\Release\MediaBrowser.Model.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.6 Chapters Implementation\Subdued\bin\Release\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.6 Chapters Implementation\Subdued\bin\Release\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.6 Chapters Implementation\Subdued\bin\Release\MediaBrowser.Model.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.6 Chapters Implementation\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.6 Chapters Implementation\Subdued\obj\Release\Subdued.Resources.resources
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.6 Chapters Implementation\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.6 Chapters Implementation\Subdued\obj\Release\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.6 Chapters Implementation\Subdued\obj\Release\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued Working Copy\Subdued\bin\Release\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued Working Copy\Subdued\bin\Release\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued Working Copy\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued Working Copy\Subdued\obj\Release\Subdued.Resources.resources
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued Working Copy\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued Working Copy\Subdued\obj\Release\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued Working Copy\Subdued\obj\Release\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Release\Subdued.Resources.resources
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Release\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Release\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\bin\Release\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\bin\Release\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\bin\Release\MediaBrowser.Model.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued Working Copy\Subdued\bin\Release\MediaBrowser.Model.dll
+D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\obj\Release\Subdued.csprojResolveAssemblyReference.cache
+D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\obj\Release\Subdued.Resources.resources
+D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\obj\Release\Subdued.csproj.GenerateResource.Cache
+D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\obj\Release\Subdued.dll
+D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\obj\Release\Subdued.pdb
+D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\bin\Release\Subdued.dll
+D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\bin\Release\Subdued.pdb
+D:\Git Repositories\Subdued 3.0.0.16 - Small Additions\Subdued\bin\Release\MediaBrowser.Model.dll

@@ -1,0 +1,224 @@
+<!-- CORE VERSION (DO NOT EDIT): 6 -->
+<!-- STYLE VERSION: 8 -->
+<!-- IMPORTANT: The above lines MUST exist in order as the first 2 lines of any theme file
+                The CORE VERSION must match the Subdued styles core version and must implement
+                    all items from that version (reference: The Original.mcml)
+                The STYLE VERSION allows for modifications to be made to a given style; if
+                    greater than that bundled with Subdued, it will not be overwritten -->
+
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:cor="assembly://MsCorLib/System"
+	  xmlns:me="Me">
+
+    <!-- ========== Colors ========== -->
+    <!-- Values may be: red,green,blue
+                        alpha,red,green,blue
+                        colorName
+    -->
+
+        <!-- Color and opacity of the text used for the 'find as you type' display -->
+        <Color Name="SdC_FindAsYouType" Color="200,150,0,0"/>
+    
+        <!-- Color and opacity of the default theme background, if enabled -->
+        <Color Name="SdC_ThemeBG" Color="200,64,64,64" />
+
+        <!-- Color and opacity of the fade used at the top of the backdrop if 'Top Panel Style' is not 'Double Panels' -->
+        <Color Name="SdC_BackdropFade" Color="75,0,0,0" />
+
+        <!-- Color and opacity of the overlay placed over the backdrop -->
+        <Color Name="SdC_BackdropOverlay" Color="100,0,0,0" />
+
+        <!-- Color and opacity of the "glow" fade used at the edges of the UI panels -->
+        <Color Name="SdC_PanelGlow" Color="100,150,0,0" />
+
+        <!-- Color and opacity of primary UI panels -->
+        <Color Name="SdC_PanelPrimaryBG" Color="100,0,0,0" />
+
+        <!-- Color and opacity of secondary UI panels -->
+        <Color Name="SdC_PanelSecondaryBG" Color="100,0,0,0" />
+
+        <!-- Color and opacity of the background used under popup menus -->
+        <Color Name="SdC_PopupMenuBG" Color="100,128,128,128" />
+
+        <!-- Color and opacity of the text used for the popup menu list items -->
+        <Color Name="SdC_PopupMenuItem" Color="100,255,255,255" />
+
+        <!-- Color and opacity of the text used for the selected popup menu list item -->
+        <Color Name="SdC_PopupMenuItemSel" Color="175,255,255,255" />
+
+        <!-- Color and opacity of the panel used for the popup menu list of items/actions -->
+        <Color Name="SdC_PopupMenuItemBG" Color="200,0,0,0" />
+
+        <!-- Color of the text used for the popup menu title -->
+        <Color Name="SdC_PopupMenuTitle" Color="200,200,220" />
+
+        <!-- Color and opacity of the panel used for the popup menu title -->
+        <Color Name="SdC_PopupMenuTitleBG" Color="150,0,0,0" />
+
+        <!-- Color and opacity of the text used for items on the root EHS and Details views -->
+        <Color Name="SdC_RootItem" Color="255,255,255,255" />
+
+        <!-- Color and opacity of the text used for the selected item on the root EHS and Details views -->
+        <Color Name="SdC_RootItemSel" Color="255,255,255,255" />
+
+        <!-- Color of the text used for the title of the EHS RAL -->
+        <Color Name="SdC_RALTitle" Color="200,200,220" />
+
+        <!-- Color of the text used for the "No ..." message of the EHS RAL -->
+        <Color Name="SdC_RALMessage" Color="255,255,255" />
+
+        <!-- Color of the text used for items on non-root Details views -->
+        <Color Name="SdC_DetailsItem" Color="128,255,255,255" />
+
+        <!-- Color of the text used for the selected item on non-root Details views -->
+        <Color Name="SdC_DetailsItemSel" Color="255,255,255,255" />
+
+        <!-- Color and opacity of the focus frame, if enabled -->
+        <Color Name="SdC_FocusFrame" Color="100,150,0,0" />
+
+        <!-- Color and opacity of the overlay used to dim unselected posters, if enabled -->
+        <Color Name="SdC_PosterDim" Color="75,0,0,0" />
+
+        <!-- Color of the text used for the poster label when no poster art is available -->
+        <Color Name="SdC_PosterLabel" Color="255,255,255" />
+
+        <!-- Color of the text used for the breadcrumb and index of count display, if enabled -->
+        <Color Name="SdC_Breadcrumb" Color="255,255,255" />
+
+        <!-- Color of the text used for the clock display, if enabled -->
+        <Color Name="SdC_Clock" Color="255,255,255" />
+
+        <!-- Color of the text used for the item title display -->
+        <Color Name="SdC_ItemTitle" Color="255,255,255" />
+
+        <!-- Color of the text used for the item info display -->
+        <Color Name="SdC_ItemInfo" Color="255,255,255" />
+
+        <!-- Color of the text used for the item overview display -->
+        <Color Name="SdC_ItemOverview" Color="255,255,255" />
+
+        <!-- Color and opacity of the text used for the actions on item details view -->
+        <Color Name="SdC_ItemAction" Color="128,255,255,255" />
+
+        <!-- Color and opacity of the text used for the selected action on item details view -->
+        <Color Name="SdC_ItemActionSel" Color="255,255,255,255" />
+
+        <!-- Color of the text used when displaying the number of unwatched items in a folder, if enabled -->
+        <Color Name="SdC_UnwatchedCount" Color="42,47,69" />
+
+        <!-- Color of the text used for the "View Style Not Supported" root view message -->
+        <Color Name="SdC_ViewStyleNotSupported" Color="200,200,220" />
+
+        <!-- Color of the filter used for the MPAA/ESRB icons -->
+        <Color Name="SdC_InfoIconsColorFilter" Color="220,220,220" />
+
+        <!-- Color of the filter used for the star rating icons, if enabled -->
+        <Color Name="SdC_StarRatingColorFilter" Color="238,214,66" />
+
+        <!-- Color of the filter used for the title panel button icons -->
+        <Color Name="SdC_TitleButtonsColorFilter" Color="255,255,255" />
+    
+        <!-- Color of the filter used for the status panel button icons -->
+        <Color Name="SdC_StatusButtonsColorFilter" Color="255,255,255" />
+    
+        <!-- Color of the filter used for the EHS RAL button icon -->
+        <Color Name="SdC_RALButtonColorFilter" Color="255,255,255" />
+
+        <!-- Color of the filter used for the new item icon background -->
+        <Color Name="SdC_NewItemIconBGColorFilter" Color="157,185,64" />
+
+        <!-- Color of the filter used for the new item icon text -->
+        <Color Name="SdC_NewItemIconTextColorFilter" Color="255,255,255" />
+
+    <!-- ========== Fonts ========== -->
+    <!-- Values may be: fontName,fontSize
+                        fontName,fontSize,{Bold | Italic | None}
+    -->
+
+        <!-- Font for the text used for the 'find as you type' display -->
+        <Font Name="SdF_FindAsYouType" Font="Segoe Media Center Semibold, 150"/>
+
+        <!-- Font for the text used for the breadcrumb and index of count display, if enabled -->
+        <Font Name="SdF_Breadcrumb" Font="Calibri Bold, 18" />
+
+        <!-- Font for the text used for the clock display, if enabled -->
+        <Font Name="SdF_Clock" Font="Calibri, 18" />
+
+        <!-- Font for the text used for the popup menu title -->
+        <Font Name="SdF_PopupMenuTitle" Font="Calibri Bold, 18" />
+
+        <!-- Font for the text used for the popup menu list items -->
+        <Font Name="SdF_PopupMenuItem" Font="Calibri, 18" />
+
+        <!-- Font for the text used for items on the root EHS and Details views -->
+        <Font Name="SdF_RootItem" Font="Calibri, 24" />
+
+        <!-- Font for the text used for the selected item on the root EHS and Details views -->
+        <Font Name="SdF_RootItemSel" Font="Arial Black, 40" />
+
+        <!-- Font for the text used for the title of the EHS RAL -->
+        <Font Name="SdF_RALTitle" Font="Calibri Bold, 18" />
+
+        <!-- Font for the text used for the "No..." message of the EHS RAL -->
+        <Font Name="SdF_RALMessage" Font="Calibri Bold, 18" />
+
+        <!-- Font for the text used for items on non-root Details views -->
+        <Font Name="SdF_DetailsItem" Font="Calibri, 18" />
+
+        <!-- Font for the text used for the selected item on non-root Details views -->
+        <Font Name="SdF_DetailsItemSel" Font="Calibri Bold, 24" />
+
+        <!-- Font for the text when displaying the number of unwatched items in a folder, if enabled -->
+        <Font Name="SdF_UnwatchedCount" Font="Calibri Bold, 15" />
+
+        <!-- Font for the text used for the item title display -->
+        <Font Name="SdF_ItemTitle" Font="Calibri Bold, 24" />
+
+        <!-- Font for the text used for the item title display on EHS RAL -->
+        <Font Name="SdF_ItemTitleRAL" Font="Calibri Bold, 18" />
+
+        <!-- Font for the text used for the item info display -->
+        <Font Name="SdF_ItemInfo" Font="Calibri, 18" />
+
+        <!-- Font for the text used for the item overview display -->
+        <Font Name="SdF_ItemOverview" Font="Calibri, 18" />
+
+        <!-- Font for the text used for the actions on item details view -->
+        <Font Name="SdF_ItemAction" Font="Calibri, 18" />
+
+        <!-- Font for the text used for the selected action on item details view -->
+        <Font Name="SdF_ItemActionSel" Font="Calibri Bold, 24" />
+
+        <!-- Font for the text used for the poster label when no poster art is available -->
+        <Font Name="SdF_PosterLabel" Font="Calibri, 18" />
+
+        <!-- Font for the text used for the "View Style Not Supported" root view message -->
+        <Font Name="SdF_ViewStyleNotSupported" Font="Arial Black, 40" />
+
+    <!-- ========== Sizes ========== -->
+
+        <!-- Height of the top panel that contains the breadcrumb display; may need to adjust if breadcrumb font is changed -->
+        <cor:Int32 Name="SdI_BreadcrumbPanelHeight" Int32="46" />
+
+        <!-- Height of the top panel that contains the clock display and config icons; may need to adjust if clock font is changed -->
+        <cor:Int32 Name="SdI_ClockPanelHeight" Int32="46" />
+
+        <!-- Height of the EHS RAL title panel; may need to adjust of EHS RAL title font is changed -->
+        <cor:Int32 Name="SdI_RALTitlePanelHeight" Int32="40" />
+
+        <!-- Height of the Coverflow/Poster view title/info panel, if combined; may need to adjust if item tile or info fonts are changed -->
+        <cor:Int32 Name="SdI_TitleInfoPanelHeight" Int32="76" />
+
+        <!-- Height of the Coverflow/Poster view title panel, if split; may need to adjust if item tile font is changed -->
+        <cor:Int32 Name="SdI_TitlePanelHeight" Int32="46" />
+
+        <!-- Height of the Coverflow/Poster view info panel, if split; may need to adjust if item info font is changed -->
+        <cor:Int32 Name="SdI_InfoPanelHeight" Int32="46" />
+
+        <!-- Size that the focus frame extends from outside of the bounds of the poster -->
+        <cor:Int32 Name="SdI_FocusFrameSize" Int32="2" />
+
+        <!-- Height of the label shown below the poster when Show Labels is enabled -->
+        <cor:Int32 Name="SdI_PosterLabelHeight" Int32="32" />
+
+</Mcml>

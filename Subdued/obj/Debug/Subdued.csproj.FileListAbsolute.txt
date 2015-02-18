@@ -1,0 +1,13 @@
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\bin\Debug\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\bin\Debug\Subdued.pdb
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\obj\Debug\Subdued.Resources.resources
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\obj\Debug\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\obj\Debug\Subdued.dll
+D:\VS 2012 Projects\[cheesegeezer]-personal Subdued Weather\trunk\subdued\Subdued\obj\Debug\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\bin\Debug\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\bin\Debug\Subdued.pdb
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Debug\Subdued.csprojResolveAssemblyReference.cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Debug\Subdued.Resources.resources
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Debug\Subdued.csproj.GenerateResource.Cache
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Debug\Subdued.dll
+D:\VS 2012 Projects\Subdued\[cheesegeezer]-Subdued 3.0.1.10 Chapters Marquee Text\Subdued\obj\Debug\Subdued.pdb

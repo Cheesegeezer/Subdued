@@ -1,0 +1,277 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+      xmlns:cor ="assembly://mscorlib/System"
+      xmlns:me = "Me"
+	  xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+      xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:ss="file://Subdued_Styles.mcml"
+      >
+
+    <UI Name="StarRating">
+        <Properties>
+            <lib:Item Name="Item" Item="$Required"/>
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+            <sd:AppUtil Name="Utility" />
+        </Properties>
+        
+        <Locals>
+            <cor:Single Name="RatingValue" Single="0" />
+            <cor:Single Name="RTRatingValue" Single="0" />
+
+            <Image Name="StarEmpty" Image="resx://Subdued/Subdued.Resources/star_empty" />
+            <Image Name="StarHalf" Image="resx://Subdued/Subdued.Resources/star_half" />
+            <Image Name="StarFull" Image="resx://Subdued/Subdued.Resources/star_full" />
+        </Locals>
+        
+        <Rules>
+            <Binding Source="[Item]" Target="[Utility.CurrentItem]" />
+
+            <Binding Source="[Item.ImdbRating]" Target="[RatingValue]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="NotEquals" Value="GameItem" />
+                    <Equality Source="[Item.CriticRatingString]" ConditionOp="NotEquals" Value="Tomato" />
+                </Conditions>
+            </Binding>
+            <Binding Source="[Utility.TgdbRating]" Target="[RatingValue]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="Equals" Value="GameItem" />
+                </Conditions>
+            </Binding>
+          
+          <!--ROTTEN TOMATOES BINDINGS-->
+            <Binding Source="[Item.CriticRating]" Target="[RTRatingValue]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="NotEquals" Value="GameItem" />
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="NotEquals" Value="Star Graph" />
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="NotEquals" Value="Numeric" />
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Tomato" />
+                </Conditions>
+            </Binding>
+            <Binding Source="[Item.RottenTomatoImage]" Target="[RTImage.Content]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="NotEquals" Value="GameItem" />
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="NotEquals" Value="Star Graph" />
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="NotEquals" Value="Numeric" />
+                </Conditions>
+            </Binding>
+          
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Tomato" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[RTImage.Visible]" Value="true" />
+                    <Set Target="[RTRating.Visible]" Value="true" />
+                    <Set Target="[StarRating.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Binding Source="[RatingValue!cor:String]" Target="[StarRating.Content]" />
+            <Binding Source="[RTRatingValue!cor:String]" Target="[RTRating.Content]" />
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="0" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Visible]" Value="true" />
+                    <Set Target="[Star2.Visible]" Value="true" />
+                    <Set Target="[Star3.Visible]" Value="true" />
+                    <Set Target="[Star4.Visible]" Value="true" />
+                    <Set Target="[Star5.Visible]" Value="true" />
+                    <Set Target="[StarRating.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Numeric" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="0" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]" />
+                    <Set Target="[Star1.Visible]" Value="true" />
+                    <Set Target="[Star2.Visible]" Value="false" />
+                    <Set Target="[Star3.Visible]" Value="false" />
+                    <Set Target="[Star4.Visible]" Value="false" />
+                    <Set Target="[Star5.Visible]" Value="false" />
+                    <Set Target="[StarRating.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="0"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="1"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarHalf]"/>
+                    <Set Target="[Star2.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star3.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star4.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star5.Content]" Value="[StarEmpty]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="1"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="2"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star2.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star3.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star4.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star5.Content]" Value="[StarEmpty]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="2"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="3"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star2.Content]" Value="[StarHalf]"/>
+                    <Set Target="[Star3.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star4.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star5.Content]" Value="[StarEmpty]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="3"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="4"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star2.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star3.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star4.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star5.Content]" Value="[StarEmpty]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="4"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="5"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star2.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star3.Content]" Value="[StarHalf]"/>
+                    <Set Target="[Star4.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star5.Content]" Value="[StarEmpty]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="5"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="6"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star2.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star3.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star4.Content]" Value="[StarEmpty]"/>
+                    <Set Target="[Star5.Content]" Value="[StarEmpty]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="6"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="7"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star2.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star3.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star4.Content]" Value="[StarHalf]"/>
+                    <Set Target="[Star5.Content]" Value="[StarEmpty]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="7"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="8"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star2.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star3.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star4.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star5.Content]" Value="[StarEmpty]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="8"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="9"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star2.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star3.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star4.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star5.Content]" Value="[StarHalf]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RatingValue]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.StarRatingStyle]" ConditionOp="Equals" Value="Star Graph" />
+                    <Equality Source="[RatingValue]" ConditionOp="GreaterThan" Value="9"/>
+                    <Equality Source="[RatingValue]" ConditionOp="LessThanOrEquals" Value="10"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[Star1.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star2.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star3.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star4.Content]" Value="[StarFull]"/>
+                    <Set Target="[Star5.Content]" Value="[StarFull]"/>
+                </Actions>
+            </Changed>
+        </Rules>
+
+        <Content>
+            <Panel>
+                <Layout>
+                    <FlowLayout Orientation="Horizontal" ItemAlignment="Center" />
+                </Layout>
+                <Children>
+                    <Graphic Name="Star1" ColorFilter="color://ss:SdC_StarRatingColorFilter" Visible="false" />
+                    <Graphic Name="Star2" ColorFilter="color://ss:SdC_StarRatingColorFilter" Visible="false" />
+                    <Graphic Name="Star3" ColorFilter="color://ss:SdC_StarRatingColorFilter" Visible="false" />
+                    <Graphic Name="Star4" ColorFilter="color://ss:SdC_StarRatingColorFilter" Visible="false" />
+                    <Graphic Name="Star5" ColorFilter="color://ss:SdC_StarRatingColorFilter" Visible="false" />
+                    <Graphic Name="RTImage" MaximumSize="32,32" Visible="false" />
+                    <Text Name="RTRating" Color="color://ss:SdC_ItemInfo" Font="font://ss:SdF_ItemInfo" Margins="4,0,0,0" Visible="false" />
+                    <Text Name="StarRating" Color="color://ss:SdC_ItemInfo" Font="font://ss:SdF_ItemInfo" Margins="4,0,0,0" Visible="false" />
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+</Mcml>

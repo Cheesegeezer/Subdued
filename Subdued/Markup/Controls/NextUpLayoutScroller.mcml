@@ -1,0 +1,263 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+      xmlns:cor="assembly://MSCorLib/System"
+      xmlns:a="assembly://MediaBrowser/MediaBrowser"
+	    xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:xs="file://Xenon_Styles.mcml"
+      xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+      xmlns:vi="resx://Xenon/Xenon.Resources/Images"
+      xmlns:ib="resx://MediaBrowser/MediaBrowser.Resources/ItemButton"
+      xmlns:lv="resx://Xenon/Xenon.Resources/LabelValue"
+      xmlns:sounds="resx://MediaBrowser/MediaBrowser.Resources/Sounds"
+      xmlns:xh="assembly://Xenon/Xenon"
+      xmlns:me="Me" >
+  
+
+  <UI Name="NextUpPopup">
+      <Properties>
+        <lib:FolderModel Name="Folder"/>
+        <xh:XenonHelper Name="ThemeHelper" />
+        <a:Application Name="Application" Application="$Required"/>
+        <Color Name="TitleColor" Color="color://xs:XC_PopupMenuTitle" />
+        <Font Name="Font" Font="font://xs:XF_PopupMenuTitle"/>
+       </Properties>
+      <Locals>
+        <cor:Int32 Name="Startup" />
+        <lib:Item Name="SelectedItem" Item="[Folder.SelectedChild]" />
+        <ScrollingHandler Name="ScrollingHandler"  HandleDirectionalKeys="true" HandleHomeEndKeys="true" HandleMouseWheel="true" HandlePageCommands="true" HandlePageKeys="true" HandlerStage="Bubbled" />
+        <ScrollingData Name="ScrollingData" BeginPadding="50" EndPadding="50" LockedPosition="0.1" LockedAlignment="0.1"/>
+
+      </Locals>
+      <Rules>
+        <Binding Target="[ThemeHelper.CurrentItem]" Source="[Folder.SelectedChild]" />
+        <Binding Target="[Application.CurrentItem]" Source="[Folder.SelectedChild]" />
+        
+        <!-- Default Values-->
+        <Default Target="[ScrollingHandler.ScrollingData]" Value="[ScrollingData]" />
+        <Default Target="[ScrollingData.Repeater]" Value="[Repeater]" />
+
+        <!--<Default Target="[Startup]" Value="1" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[Folder.QuickListItems.Count]" ConditionOp="GreaterThan" Value="0" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[Repeater.NavigateIntoIndex]"  index="[Folder.FirstUnwatchedIndex]"/>
+          </Actions>
+        </Default>-->
+        
+        <!-- RECENT ITEMS MODEL-->
+        <Default Target="[NextUpText.Content]" Value="Next Up Episodes" />
+
+        <Condition Source="[Folder.QuickListItems.Count]" ConditionOp="Equals" SourceValue="0">
+          <Actions>
+            <Set Target="[NoRecent.Visible]" Value="true" />
+            <Set Target="[Scroller.Visible]" Value="false" />
+          </Actions>
+        </Condition>
+        
+        <!-- Binding for NextUp Items-->
+        <Binding Source="[ThemeHelper.GetNextUpEpisodes]" Target="[Repeater.Source]">
+          <Conditions>
+            <IsValid Source="[ThemeHelper.GetNextUpEpisodes]"/>
+          </Conditions>
+        </Binding>
+    </Rules>
+
+      <Content>
+
+        <Panel Layout="Anchor" Navigation="ContainHorizontal, RememberFocus">
+          <Children>
+
+            <Clip FadeSize="150" Orientation="Horizontal" FadeAmount="1">
+              <Children>
+                <Scroller Orientation="Horizontal" Margins="25,40,-50,25" Name="Scroller" MinimumSize="0,250" MaximumSize="0,250" FadeSize="5" ScrollingData="[ScrollingData]" Navigation="RememberFocus" Visible="true">
+                  <LayoutInput>
+                    <AnchorLayoutInput Left="Parent, 0" Right="Parent, 0.8"/>
+                  </LayoutInput>
+                  <Children>
+                    <Repeater Name="Repeater" Navigation="Row" DefaultFocusIndex="1" >
+                      <Layout>
+                        <FlowLayout Orientation="Horizontal" FillStrip="true" ItemAlignment="Center" Spacing="10,10"/>
+                      </Layout>
+                      <Content>
+                        <me:RecentItems Application="[Application]" Item="[RepeatedItem!lib:Item]" Index="[RepeatedItemIndex]" />
+                      </Content>
+                      <Animations>
+                        <Animation Type="Move">
+                          <Keyframes>
+                            <PositionKeyframe Time="0" RelativeTo="Current" Interpolation="EaseIn, 1.0, 0.25"/>
+                            <PositionKeyframe Time="0.35" RelativeTo="Final"/>
+                          </Keyframes>
+                        </Animation>
+                      </Animations>
+                    </Repeater>
+                  </Children>
+                </Scroller>
+              </Children>
+            </Clip>
+
+            <Panel Layout="VerticalFlow" >
+              <LayoutInput>
+                <AnchorLayoutInput Left="Parent,0,50" Top="Parent,0,35" />
+              </LayoutInput>
+              <Children>
+                <Text Name="NextUpText" Color="color://xs:XC_RALPopupItem" Font="font://xs:XF_RALPopupItem" Content="" Margins="0,0,0,0"/>
+                <Text Name="NoRecent" Content="No Recent Episodes Found." Color="color://xs:XC_PopupMenuTitle" Font="font://xs:XF_PopupMenuTitle" Visible="false"  />
+              </Children>
+            </Panel>
+
+            <Graphic Content="image://vi:RALBG" ColorFilter="color://xs:XC_RALPanelFilterColor" MinimumSize="0,250" MaximumSize="0,500" Alpha="global://xs:RALPanelAlpha">
+              <LayoutInput>
+                <AnchorLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent, 1"  />
+              </LayoutInput>
+            </Graphic>
+          </Children>
+        </Panel>
+
+      </Content>
+    </UI>
+
+    <UI Name="RecentItems">
+      <Properties>
+        <a:Application Name="Application" Application="$Required" />
+        <xh:XenonHelper Name="ThemeHelper" />
+        <lib:Item Name="Item" Item="$Required" />
+        <Index Name="Index" Index="$Required"/>
+        <Timer Name="AreaHelpTimer" AutoRepeat="false" Interval="200" Enabled="false" />
+        <Color Name="TitleColor" Color="color://xs:XC_PopupMenuItem" />
+        <Color Name="FocusColor" Color="color://xs:XC_PopupMenuTitle" />
+        <Font Name="Font" Font="font://xs:XF_PopupMenuTitle"/>
+      </Properties>
+
+      <Locals>
+        <ClickHandler Name="Clicker"/>
+        <cor:Int32 Name="DisplayCount" Int32="20" />
+      </Locals>
+
+      
+      <Rules>
+        <!--Binding Source="[Item.PhysicalParent.PreferredImage]" Target="[ItemPoster.Content]" ConditionLogicalOp="And">
+          <Conditions>
+            <IsValid Source="[Item.PhysicalParent]"/>
+            <Equality Source="[ThemeHelper.Config.UseSeasonPosterInEHS]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Item.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+          </Conditions>
+        </Binding-->
+
+        <Binding Source="[Item.PhysicalParent.ThumbnailImage]" Target="[ItemThumb.Content]" />
+        <Binding Source="[Item.PreferredImage]" Target="[ItemPoster.Content]" />
+
+        <Rule>
+          <Conditions>
+            <Equality Source="[Item.PhysicalParent.HasThumbnailImage]" ConditionOp ="Equals" Value="True"/>
+          </Conditions>
+          <Actions>
+            <Set Target="[ItemPoster.Visible]" Value="false" />
+            <Set Target="[ItemThumb.Visible]" Value="true" />
+          </Actions>
+        </Rule>
+
+        <Rule>
+          <Conditions>
+            <Equality Source="[Item.PhysicalParent.HasThumbnailImage]" ConditionOp ="Equals" Value="false"/>
+          </Conditions>
+          <Actions>
+            <Set Target="[ItemPoster.Visible]" Value="true" />
+            <Set Target="[ItemThumb.Visible]" Value="false" />
+          </Actions>
+        </Rule>
+
+        <Default Target="[Input.KeyInteractive]" Value="true" />
+
+        <Changed Source="[Input.KeyFocus]" >
+          <Conditions>
+            <Equality Source="[Input.KeyFocus]" Value="true" />
+          </Conditions>
+          <Actions>
+            <Set Target="[ThemeHelper.CurrentItem]" Value="[Item]" />
+            <Set Target="[ItemPoster.Scale]" Value="1.1,1.1,1.1" />
+            <Set Target="[ItemThumb.Scale]" Value="1.1,1.1,1.1" />
+          </Actions>
+        </Changed>
+        <Condition Source="[Application.Config.DimUnselectedPosters]" ConditionOp="Equals" SourceValue="false" Target="[ItemPoster.ColorFilter]" Value="White" />
+
+        <Changed Source="[Clicker.Invoked]">
+          <Actions>
+            <PlaySound Sound="sound://sounds:Miniselect" />
+            <Invoke Target="[Application.Navigate]" item="[Item]"/>
+          </Actions>
+        </Changed>
+
+        <!--ITEM INFORMATION-->
+        <Condition Source="[Item.FirstAired]" ConditionOp="NotEquals" SourceValue="" Target="[ProdYear.Visible]"  Value="true" />
+        <!--Use Production Year-->
+        <Binding Target="[ProdYear.Value]"     Source="[Item.ProductionYearString]">
+          <Conditions>
+            <Equality Source="[Item.ItemTypeString]" ConditionOp="NotEquals" Value="Season"/>
+            <Equality Source="[Item.ItemTypeString]" ConditionOp="NotEquals" Value="Episode"/>
+          </Conditions>
+        </Binding>
+        <!--Use First Air-->
+        <Binding Target="[ProdYear.Value]"     Source="[Item.FirstAired]">
+          <Conditions>
+            <Equality Source="[Item.ItemTypeString]" ConditionOp="Equals" Value="Episode"/>
+          </Conditions>
+        </Binding>
+        <Default Value="" Target="[ProdYear.Label]" />
+
+        <!--Title-->
+        <Binding Target="[Title.Value]"     Source="[Item.Name]"/>
+      </Rules>
+
+      <Content>
+        <Panel Name="Bg" >
+          <Children>
+            <Panel Layout="VerticalFlow" MinimumSize="100,0" MaximumSize="0,250">
+              <Children>
+                <Clip Name="EpisodeDetails" Layout="VerticalFlow" Margins="0,10,0,0">
+                  <Children>
+                    <lv:FinalLabelValue Name="Title" />
+                    <lv:FinalLabelValue Name="ProdYear" />                   
+                    <Graphic Name="ItemPoster" Content="resx://MediaBrowser/Mediabrowser.Resources/MissingPerson"
+                      Scale="1,1,1" ColorFilter="125,125,125" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" Margins="0,10,0,0">
+                      <LayoutInput>
+                        <AnchorLayoutInput Left="Parent,0"/>
+                      </LayoutInput>
+                      <Animations>
+                        <Animation Loop="0" CenterPointPercent="0.5,0.5,1.0" Type="Scale">
+                          <Keyframes>
+                            <ScaleKeyframe Time="0.00" RelativeTo="Current" Interpolation="Log" />
+                            <ScaleKeyframe Time="0.4" RelativeTo="Final"/>
+                          </Keyframes>
+                        </Animation>
+                      </Animations>
+                    </Graphic>
+                    <Graphic Name="ItemThumb" Content="resx://MediaBrowser/Mediabrowser.Resources/MissingPerson"
+                      Scale="1,1,1" ColorFilter="125,125,125" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" Margins="0,10,0,0">
+                      <LayoutInput>
+                        <AnchorLayoutInput Left="Parent,0"/>
+                      </LayoutInput>
+                      <Animations>
+                        <Animation Loop="0" CenterPointPercent="0.5,0.5,1.0" Type="Scale">
+                          <Keyframes>
+                            <ScaleKeyframe Time="0.00" RelativeTo="Current" Interpolation="Log" />
+                            <ScaleKeyframe Time="0.4" RelativeTo="Final"/>
+                          </Keyframes>
+                        </Animation>
+                      </Animations>
+                    </Graphic>
+                    <Graphic Name="Border" Content="image://i:BlankImage" ColorFilter="color://xs:XC_FocusFrame" >
+                      <LayoutInput>
+                        <AnchorLayoutInput Left="ItemPoster,0,-2" Right="ItemPoster,1,2" Top="ItemPoster,0,-2" Bottom="ItemPoster,1,2" />
+                      </LayoutInput>
+                    </Graphic>
+                  </Children>
+                </Clip>
+              </Children>
+            </Panel>
+          
+              
+          </Children>
+        </Panel>
+      </Content>
+    </UI>
+</Mcml>

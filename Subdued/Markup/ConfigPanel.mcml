@@ -1,0 +1,352 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:cor="assembly://MSCorLib/System"
+      xmlns:a="assembly://MediaBrowser/MediaBrowser"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:cb="resx://MediaBrowser/MediaBrowser.Resources/CheckBox"
+      xmlns:vm="resx://MediaBrowser/MediaBrowser.Resources/ViewMenu"
+      xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+	  xmlns:s="file://Styles_DoNotEdit.mcml"
+	  xmlns:f="file://Fonts_DoNotEdit.mcml"
+      xmlns:me="Me"
+>
+
+    <UI Name="ConfigPanel">
+        <Properties>
+            <a:Application Name="Application" Application="$Required"/>
+            <EditableText Name="FocusItem" />
+            <sd:AppUtil Name="Utility" />
+        </Properties>
+
+        <Locals>
+            <Inset Name="CMargin" Inset="25,0,0,0" />
+
+            <Choice Name="MediaInfoIconsSet">
+                <Options>
+                    <cor:String String="Color" />
+                    <cor:String String="Mono" />
+                    <cor:String String="Custom Color" />
+                    <cor:String String="Custom Mono" />
+                </Options>
+            </Choice>
+
+            <Choice Name="NowPlayingStyle">
+                <Options>
+                    <cor:String String="Off" />
+                    <cor:String String="Small" />
+                    <cor:String String="Backdrop" />
+                </Options>
+            </Choice>
+
+            <Choice Name="TopPanelStyle">
+                <Options>
+                    <cor:String String="Double Panel" />
+                    <cor:String String="Single Panel" />
+                    <cor:String String="No Panels" />
+                    <cor:String String="Off" />
+                </Options>
+            </Choice>
+
+            <Choice Name="StarRatingStyle">
+                <Options>
+                    <cor:String String="Off" />
+                    <cor:String String="Star Graph" />
+                    <cor:String String="Numeric" />
+					<cor:String String="Tomato"/>
+                </Options>
+            </Choice>
+
+            <Choice Name="ScrollSpeed">
+                <Options>
+                    <cor:String String="Slow" />
+                    <cor:String String="Medium" />
+                    <cor:String String="Fast" />
+                </Options>
+            </Choice>
+
+            <Choice Name="WatchedIndicatorPosition">
+                <Options>
+                    <cor:String String="Top-Left" />
+                    <cor:String String="Bottom-Left" />
+                    <cor:String String="Bottom-Right" />
+                </Options>
+            </Choice>
+            <BooleanChoice Name="ShowClockConfigAtTop" Value="[Utility.ThemeConfig.ShowClockConfigAtTop]" />
+            <BooleanChoice Name="ShowMasterPCIcon" Value="[Utility.ThemeConfig.ShowMasterPCIcon]" />
+            <BooleanChoice Name="ShowEndTime" Value="[Utility.ThemeConfig.ShowEndTime]" />
+            <BooleanChoice Name="ShowPrevNextButtons" Value="[Utility.ThemeConfig.ShowPrevNextButtons]" />
+            <BooleanChoice Name="ShowIndexOfCount" Value="[Utility.ThemeConfig.ShowIndexOfCount]" />
+            <IntRangedValue Name="ThumbSpacing" Value="[Utility.ThemeConfig.ThumbSpacing]" MaxValue="50" MinValue="0" Step="1"/>
+            <IntRangedValue Name="SelThumbGrow" Value="[Utility.ThemeConfig.SelThumbGrow]" MaxValue="100" MinValue="0" Step="1"/>
+            <IntRangedValue Name="CoverArtAdjustment" Value="[Utility.ThemeConfig.CoverArtAdjustment]" MaxValue="30" MinValue="0" Step="1"/>
+            <IntRangedValue Name="UnselectedThumbAlpha" Value="[Utility.ThemeConfig.UnselectedThumbAlpha]" MaxValue="100" MinValue="0" Step="5"/>
+            <BooleanChoice Name="GraduatedAlpha" Value="[Utility.ThemeConfig.GraduatedAlpha]" />
+            <BooleanChoice Name="ColorizeStudioImages" Value="[Utility.ThemeConfig.ColorizeStudioImages]" />
+            <BooleanChoice Name="ColorizeRatingsImages" Value="[Utility.ThemeConfig.ColorizeRatingsImages]" />
+            <BooleanChoice Name="ColorizePosterOverlayImages" Value="[Utility.ThemeConfig.ColorizePosterOverlayImages]" />
+            <BooleanChoice Name="EnableNewItemIndicator" Value="[Utility.ThemeConfig.EnableNewItemIndicator]" />
+            <BooleanChoice Name="EnableQuickPlay" Value="[Utility.ThemeConfig.EnableQuickPlay]" />
+            <BooleanChoice Name="ShowMediaInfoMediaImage" Value="[Utility.ThemeConfig.ShowMediaInfoMediaImage]" />
+            <BooleanChoice Name="ShowMediaInfoVideoImage" Value="[Utility.ThemeConfig.ShowMediaInfoVideoImage]" />
+            <BooleanChoice Name="ShowMediaInfoHDImage" Value="[Utility.ThemeConfig.ShowMediaInfoHDImage]" />
+            <BooleanChoice Name="ShowMediaInfoAspectImage" Value="[Utility.ThemeConfig.ShowMediaInfoAspectImage]" />
+            <BooleanChoice Name="ShowMediaInfoAudioImage" Value="[Utility.ThemeConfig.ShowMediaInfoAudioImage]" />
+            <BooleanChoice Name="ShowMediaInfoAudioChannelImage" Value="[Utility.ThemeConfig.ShowMediaInfoAudioChannelImage]" />
+            <BooleanChoice Name="ShowMediaInfoMovieRatingImage" Value="[Utility.ThemeConfig.ShowMediaInfoMovieRatingImage]" />
+            <BooleanChoice Name="AskToQuit" Value="[Utility.ThemeConfig.AskToQuit]" />
+          
+            
+        </Locals>
+
+        <Rules>
+            <Binding Source="[Utility.ThemeConfig.InstalledStyles.Chosen!cor:String]" Target="[Utility.ThemeConfig.ThemeStyle]" />
+            <Binding Source="[MediaInfoIconsSet.Chosen!cor:String]" Target="[Utility.ThemeConfig.MediaInfoIconsSet]" />
+            <Binding Source="[ShowClockConfigAtTop.Value]" Target="[Utility.ThemeConfig.ShowClockConfigAtTop]" />
+            <Binding Source="[ShowMasterPCIcon.Value]" Target="[Utility.ThemeConfig.ShowMasterPCIcon]" />
+            <Binding Source="[ShowEndTime.Value]" Target="[Utility.ThemeConfig.ShowEndTime]" />
+            <Binding Source="[ShowPrevNextButtons.Value]" Target="[Utility.ThemeConfig.ShowPrevNextButtons]" />
+            <Binding Source="[ShowIndexOfCount.Value]" Target="[Utility.ThemeConfig.ShowIndexOfCount]" />
+            <Binding Source="[ScrollSpeed.Chosen!cor:String]" Target="[Utility.ThemeConfig.ScrollSpeed]" />
+            <Binding Source="[NowPlayingStyle.Chosen!cor:String]" Target="[Utility.ThemeConfig.NowPlayingStyle]" />
+            <Binding Source="[TopPanelStyle.Chosen!cor:String]" Target="[Utility.ThemeConfig.TopPanelStyle]" />
+            <Binding Source="[StarRatingStyle.Chosen!cor:String]" Target="[Utility.ThemeConfig.StarRatingStyle]" />
+            <Binding Source="[WatchedIndicatorPosition.Chosen!cor:String]" Target="[Utility.ThemeConfig.WatchedIndicatorPosition]" />
+            <Binding Source="[ThumbSpacing.Value]" Target="[Utility.ThemeConfig.ThumbSpacing]" />
+            <Binding Source="[SelThumbGrow.Value]" Target="[Utility.ThemeConfig.SelThumbGrow]" />
+            <Binding Source="[CoverArtAdjustment.Value]" Target="[Utility.ThemeConfig.CoverArtAdjustment]" />
+            <Binding Source="[UnselectedThumbAlpha.Value]" Target="[Utility.ThemeConfig.UnselectedThumbAlpha]" />
+            <Binding Source="[GraduatedAlpha.Value]" Target="[Utility.ThemeConfig.GraduatedAlpha]" />
+            <Binding Source="[ColorizeStudioImages.Value]" Target="[Utility.ThemeConfig.ColorizeStudioImages]" />
+            <Binding Source="[ColorizeRatingsImages.Value]" Target="[Utility.ThemeConfig.ColorizeRatingsImages]" />
+            <Binding Source="[ColorizePosterOverlayImages.Value]" Target="[Utility.ThemeConfig.ColorizePosterOverlayImages]" />
+            <Binding Source="[EnableNewItemIndicator.Value]" Target="[Utility.ThemeConfig.EnableNewItemIndicator]" />
+            <Binding Source="[EnableQuickPlay.Value]" Target="[Utility.ThemeConfig.EnableQuickPlay]" />
+            <Binding Source="[ShowMediaInfoMediaImage.Value]" Target="[Utility.ThemeConfig.ShowMediaInfoMediaImage]" />
+            <Binding Source="[ShowMediaInfoVideoImage.Value]" Target="[Utility.ThemeConfig.ShowMediaInfoVideoImage]" />
+            <Binding Source="[ShowMediaInfoHDImage.Value]" Target="[Utility.ThemeConfig.ShowMediaInfoHDImage]" />
+            <Binding Source="[ShowMediaInfoAspectImage.Value]" Target="[Utility.ThemeConfig.ShowMediaInfoAspectImage]" />
+            <Binding Source="[ShowMediaInfoAudioImage.Value]" Target="[Utility.ThemeConfig.ShowMediaInfoAudioImage]" />
+            <Binding Source="[ShowMediaInfoAudioChannelImage.Value]" Target="[Utility.ThemeConfig.ShowMediaInfoAudioChannelImage]" />
+            <Binding Source="[ShowMediaInfoMovieRatingImage.Value]" Target="[Utility.ThemeConfig.ShowMediaInfoMovieRatingImage]" />
+            <Binding Source="[AskToQuit.Value]" Target="[Utility.ThemeConfig.AskToQuit]" />
+            
+            
+          
+          
+        </Rules>
+        
+        <Content>
+            <Panel Layout="HorizontalFlow">
+                <Children>
+                    <Panel Layout="VerticalFlow" MaximumSize="0,445">
+                        <Children>
+                            <me:TextHeader Text="[Application.LocalStrings.#GeneralOptionsLabel!cor:String]" />
+                            <Panel Layout="HorizontalFlow">
+                                <Children>
+                                    <Panel Layout="VerticalFlow" MaximumSize="0,445">
+                                        <Children>
+                                            
+                                            <me:SpinnerText Model="[Utility.ThemeConfig.InstalledStyles]" FocusItem="[FocusItem]" TextSize="280,0" Label="[Application.LocalStrings.#ThemeStyleLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.ThemeStyle]" ReqRestart="true" />
+                                            <me:SpinnerText Model="[MediaInfoIconsSet]" FocusItem="[FocusItem]" TextSize="280,0" Label="[Application.LocalStrings.#MediaInfoIconsSetLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.MediaInfoIconsSet]" ReqRestart="true" />
+                                            <me:SpinnerText Model="[TopPanelStyle]" FocusItem="[FocusItem]" TextSize="280,0" Label="[Application.LocalStrings.#TopPanelStyleLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.TopPanelStyle]" />
+                                            <me:SpinnerText Model="[NowPlayingStyle]" FocusItem="[FocusItem]" TextSize="280,0" Label="[Application.LocalStrings.#NowPlayingStyleLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.NowPlayingStyle]" />
+                                            <me:SpinnerText Model="[StarRatingStyle]" FocusItem="[FocusItem]" TextSize="280,0" Label="[Application.LocalStrings.#StarRatingStyleLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.StarRatingStyle]" />
+                                            <me:SpinnerText Model="[ScrollSpeed]" FocusItem="[FocusItem]" TextSize="280,0" Label="[Application.LocalStrings.#ScrollSpeedLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.ScrollSpeed]" />
+                                            <me:SpinnerText Model="[WatchedIndicatorPosition]" FocusItem="[FocusItem]" TextSize="280,0" Label="[Application.LocalStrings.#WatchedIndicatorPositionLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.WatchedIndicatorPosition]" />
+                                            <me:SimpleSpinner Label="[Application.LocalStrings.#ThumbSpacingLabel!cor:String]" TextSize="280,0" Model="[ThumbSpacing]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" />
+                                            <me:SimpleSpinner Label="[Application.LocalStrings.#ThumbGrowLabel!cor:String]" TextSize="280,0" Model="[SelThumbGrow]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" />
+                                            <me:SimpleSpinner Label="[Application.LocalStrings.#CAAdjustmentLabel!cor:String]" TextSize="280,0" Model="[CoverArtAdjustment]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" />
+                                            <me:SimpleSpinner Label="[Application.LocalStrings.#UnselectedThumbAlphaLabel!cor:String]" TextSize="280,0" Model="[UnselectedThumbAlpha]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" />
+                                         
+                                        </Children>
+                                    </Panel>
+                                    <Panel Layout="VerticalFlow" MaximumSize="0,445">
+                                        <Children>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#GraduatedAlphaLabel!cor:String]" Checked="[GraduatedAlpha]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowClockConfigAtTopLabel!cor:String]" Checked="[ShowClockConfigAtTop]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowMasterPCIconLabel!cor:String]" Checked="[ShowMasterPCIcon]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowEndTimeLabel!cor:String]" Checked="[ShowEndTime]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowPrevNextButtonsLabel!cor:String]" Checked="[ShowPrevNextButtons]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowIndexOfCountLabel!cor:String]" Checked="[ShowIndexOfCount]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ColorizeStudioImagesLabel!cor:String]" Checked="[ColorizeStudioImages]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ColorizePosterOverlayImagesLabel!cor:String]" Checked="[ColorizePosterOverlayImages]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowNewItemIndicatorLabel!cor:String]" Checked="[EnableNewItemIndicator]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowQuickPlayLabel!cor:String]" Checked="[EnableQuickPlay]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#AskToQuitLabel!cor:String]" Checked="[AskToQuit]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            
+                                          
+                                        </Children>
+                                    </Panel>
+                                </Children>
+                            </Panel>
+                        </Children>
+                    </Panel>
+                    <Panel Layout="VerticalFlow" MaximumSize="0,400">
+                        <Children>
+                            <me:TextHeader Text="[Application.LocalStrings.#MediaInfoIconDisplayLabel!cor:String]" />
+                            <Panel Layout="HorizontalFlow">
+                                <Children>
+                                    <Panel Layout="VerticalFlow" MaximumSize="0,445">
+                                        <Children>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowMediaInfoMediaLabel!cor:String]" Checked="[ShowMediaInfoMediaImage]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowMediaInfoVideoLabel!cor:String]" Checked="[ShowMediaInfoVideoImage]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowMediaInfoHDLabel!cor:String]" Checked="[ShowMediaInfoHDImage]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowMediaInfoAspectLabel!cor:String]" Checked="[ShowMediaInfoAspectImage]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowMediaInfoAudioLabel!cor:String]" Checked="[ShowMediaInfoAudioImage]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowMediaInfoAudioChannelLabel!cor:String]" Checked="[ShowMediaInfoAudioChannelImage]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ShowMediaInfoMovieRatingLabel!cor:String]" Checked="[ShowMediaInfoMovieRatingImage]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <cb:CheckBox Label="[Application.LocalStrings.#ColorizeRatingsImagesLabel!cor:String]" Checked="[ColorizeRatingsImages]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                                            <Panel Layout="HorizontalFlow" Margins="10,35,10,0">
+                                                <Children>
+                                                    <me:TextHeader Text="* " Margin="0,0,0,0" Font="font://f:CP_ConfigItemFont" WordWrap="false" />
+                                                    <me:TextHeader MaximumSize="300,0" Margin="0,0,0,0" Text="[Application.LocalStrings.#ConfigRestartMessage!cor:String]" Font="font://f:CP_ConfigItemFont" WordWrap="true" />
+                                                </Children>
+                                            </Panel>
+                                        </Children>
+                                    </Panel>
+                                </Children>
+                            </Panel>
+                        </Children>
+                    </Panel>
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+    <UI Name="TextHeader">
+        <Properties>
+            <cor:String Name="Text" String="$Required" />
+            <cor:Boolean Name="WordWrap" Boolean="false" />
+            <Font Name="Font" Font="font://f:CP_ConfigHeaderFont" />
+            <Inset Name="Margin" Inset="10,0,10,0"/>
+        </Properties>
+        <Locals>
+            <Color Name="Color" Color="color://s:FontColorLight" />
+        </Locals>
+        <Content>
+            <Text Color="[Color]" Content="[Text]" Font="[Font]" Margins="[Margin]" WordWrap="[WordWrap]" />
+        </Content>
+    </UI>
+
+    <UI Name="SimpleSpinner">
+
+        <Properties>
+            <IValueRange Name="Model" IValueRange="$Required" />
+            <Color Name="BackgroundColor" Color="Transparent" />
+            <FormatTransformer Name="LabelTransformer" Format="{0}" />
+            <Font Name="Font" Font="$Required"/>
+            <Font Name="ValueFont" Font="$Required"/>
+            <Color Name="Color" Color="color://s:FontColorLight"/>
+            <cor:String Name="Label" String="" />
+            <EditableText Name="FocusItem" />
+            <Size Name="TextSize" Size="210,0" />
+            <cor:Boolean Name="ReqRestart" Boolean="false" />
+        </Properties>
+
+        <Locals>
+            <InvokeCommand Name="Previous" Target="[Model.PreviousValue]" />
+            <InvokeCommand Name="Next" Target="[Model.NextValue]" />
+            <cor:Boolean Name="HasFocus" />
+        </Locals>
+
+        <Rules>
+            <Binding Source="[Model.Value]" Target="[Value.Content]" Transformer="[LabelTransformer]" />
+            <Binding Source="[Model.HasNextValue]" Target="[Next.Available]"/>
+            <Binding Source="[Model.HasPreviousValue]" Target="[Previous.Available]"/>
+
+            <Condition Source="[Input.DeepKeyFocus]" SourceValue="true">
+                <Actions>
+                    <Set Target="[FocusItem.Value]" Value="[Label]" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.DeepKeyFocus]" SourceValue="true" Target="[HasFocus]" Value="[Input.DeepKeyFocus]" />
+            <Condition Source="[Input.DeepMouseFocus]" SourceValue="true" Target="[HasFocus]" Value="[Input.DeepMouseFocus]" />
+
+            <Binding Source="[ReqRestart]" Target="[RestartFlag.Visible]" />
+
+        </Rules>
+
+        <Content>
+            <Panel Navigation="Row">
+                <Layout>
+                    <FlowLayout Orientation="Horizontal" />
+                </Layout>
+                <Children>
+
+                    <Text Name="RestartFlag" Content="*" Font="[Font]" Color="[Color]" Visible="false" Margins="-22,0,-22,0" />
+                    <Text Name="Text" Content="[Label]" Font="[Font]" Color="[Color]" MinimumSize="[TextSize]" />
+
+                    <!-- Previous button -->
+                    <vm:ImageBtn Name="btnPrevious" Focused="image://i:DecrementFocus"
+                                 NonFocused="image://i:DecrementNoFocus"
+                                 Command="[Previous]"/>
+
+                    <!-- Next button -->
+                    <vm:ImageBtn Name="btnNext" Focused="image://i:IncrementFocus"
+                                 NonFocused="image://i:IncrementNoFocus"
+                                 Command="[Next]"/>
+
+                    <!-- Current value -->
+                    <ColorFill Name="Background" Content="Transparent" MinimumSize="80,35" MaximumSize="175,35" Padding="5,0,0,5">
+                        <Children>
+                            <Text Name="Value" Font="[ValueFont]" Color="color://s:FontColorLight" />
+                        </Children>
+                    </ColorFill>
+
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+    <UI Name="SpinnerText" BaseUI="me:SimpleSpinner">
+        <Properties>
+            <cor:String Name="DefaultString" String="Default"/>
+            <Choice Name="Model" Choice="$Required" />
+        </Properties>
+
+        <Locals>
+            <cor:Boolean Name="InitialFocusSet" Boolean="false"/>
+            <Timer Name="CheckInitialFocus" Interval="20" Enabled="false"/>
+        </Locals>
+
+        <Rules>
+            <Default Target="[Model.Default]"  Value="[DefaultString]" />
+            <!--<Default Target="[Background.Content]"  Value="SlateBlue" />-->
+
+            <!-- Set timer to check that we succeeded -->
+            <Rule>
+                <Conditions>
+                    <Equality Source="[InitialFocusSet]" Value="false"/>
+                    <IsValid Source="[DefaultString]"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[InitialFocusSet]" Value="true"/>
+                    <Set Target="[CheckInitialFocus.Enabled]" Value="true"/>
+                </Actions>
+            </Rule>
+
+            <!-- If focus isn't on the right item, move to the next position -->
+            <Changed Source="[CheckInitialFocus.Tick]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen!cor:String]" ConditionOp="NotEquals" Value="[DefaultString]"/>
+                    <Equality Source="[Model.HasNextValue]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Model.NextValue]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <!-- Shutdown the timer object once item is found -->
+            <Changed Source="[CheckInitialFocus.Tick]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen!cor:String]" ConditionOp="Equals" Value="[DefaultString]"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[CheckInitialFocus.Enabled]" Value="false"/>
+                </Actions>
+            </Changed>
+
+        </Rules>
+
+    </UI>
+</Mcml>

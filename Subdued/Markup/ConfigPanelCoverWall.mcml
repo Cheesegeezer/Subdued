@@ -1,0 +1,294 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:cor="assembly://MSCorLib/System"
+      xmlns:a="assembly://MediaBrowser/MediaBrowser"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:cb="resx://MediaBrowser/MediaBrowser.Resources/CheckBox"
+      xmlns:vm="resx://MediaBrowser/MediaBrowser.Resources/ViewMenu"
+      xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+	  xmlns:s="file://Styles_DoNotEdit.mcml"
+	  xmlns:f="file://Fonts_DoNotEdit.mcml"
+      xmlns:me="Me"
+>
+
+    <UI Name="ConfigPanelCoverWall">
+        <Properties>
+            <a:Application Name="Application" Application="$Required"/>
+            <EditableText Name="FocusItem" />
+            <sd:AppUtil Name="Utility" />
+        </Properties>
+
+        <Locals>
+            <Inset Name="CMargin" Inset="25,0,0,0" />
+
+            <Choice Name="CoverWallScroll">
+                <Options>
+                    <cor:String String="Left" />
+                    <cor:String String="Right" />
+                    <cor:String String="Up" />
+                    <cor:String String="Down" />
+                </Options>
+            </Choice>
+
+            <Choice Name="CoverWallRotation">
+                <Options>
+                    <cor:String String="None" />
+                    <cor:String String="To Back" />
+                    <cor:String String="To Right" />
+                </Options>
+            </Choice>
+
+            <Choice Name="CoverWallScrollSpeed">
+                <Options>
+                    <cor:String String="Crawl" />
+                    <cor:String String="Slow" />
+                    <cor:String String="Medium" />
+                    <cor:String String="Fast" />
+                </Options>
+            </Choice>
+
+            <BooleanChoice Name="CoverWallRootBackdrop" Value="[Utility.ThemeConfig.CoverWallRootBackdrop]" />
+            <BooleanChoice Name="CoverWallScreenSaver" Value="[Utility.ThemeConfig.CoverWallScreenSaver]" />
+            <IntRangedValue Name="CoverWallSSTimeout" Value="[Utility.ThemeConfig.CoverWallSSTimeout]" MaxValue="60" MinValue="1" Step="1"/>
+        </Locals>
+
+        <Rules>
+            <Binding Source="[CoverWallRootBackdrop.Value]" Target="[Utility.ThemeConfig.CoverWallRootBackdrop]" />
+            <Binding Source="[CoverWallScreenSaver.Value]" Target="[Utility.ThemeConfig.CoverWallScreenSaver]" />
+            <Binding Source="[CoverWallScroll.Chosen!cor:String]" Target="[Utility.ThemeConfig.CoverWallScroll]" />
+            <Binding Source="[CoverWallRotation.Chosen!cor:String]" Target="[Utility.ThemeConfig.CoverWallRotation]" />
+            <Binding Source="[CoverWallScrollSpeed.Chosen!cor:String]" Target="[Utility.ThemeConfig.CoverWallScrollSpeed]" />
+            <Binding Source="[CoverWallSSTimeout.Value]" Target="[Utility.ThemeConfig.CoverWallSSTimeout]" />
+        </Rules>
+        
+        <Content>
+            <Panel Layout="HorizontalFlow">
+                <Children>
+                    <Panel Layout="VerticalFlow" MaximumSize="0,400">
+                        <Children>
+                            <me:TextHeader Text="[Application.LocalStrings.#CoverWallOptionsLabel!cor:String]" />
+                            <cb:CheckBox Label="[Application.LocalStrings.#CoverWallRootBackdropLabel!cor:String]" Checked="[CoverWallRootBackdrop]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                            <cb:CheckBox Label="[Application.LocalStrings.#CoverWallScreenSaverLabel!cor:String]" Checked="[CoverWallScreenSaver]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                            <me:SimpleSpinner Label="[Application.LocalStrings.#CoverWallSSTimeoutLabel!cor:String]" TextSize="240,0" Model="[CoverWallSSTimeout]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" />
+                            <me:SpinnerText Model="[CoverWallScroll]" FocusItem="[FocusItem]"  Label="[Application.LocalStrings.#CoverWallScrollLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.CoverWallScroll]" TextSize="240,0" />
+                            <me:SpinnerText Model="[CoverWallScrollSpeed]" FocusItem="[FocusItem]"  Label="[Application.LocalStrings.#CoverWallScrollSpeedLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.CoverWallScrollSpeed]" TextSize="240,0" />
+                            <me:SpinnerText Model="[CoverWallRotation]" FocusItem="[FocusItem]"  Label="[Application.LocalStrings.#CoverWallRotationLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.CoverWallRotation]" TextSize="240,0" />
+                        </Children>
+                    </Panel>
+                    <Panel Layout="VerticalFlow" MaximumSize="0,400">
+                        <Children>
+                            <me:TextHeader Text="[Application.LocalStrings.#CoverWallFoldersLabel!cor:String]" />
+                            <Panel Layout="HorizontalFlow" Margins="[CMargin]">
+                                <Children>
+                                    <Text MinimumSize="300,0" MaximumSize="300,0" Font="font://f:CP_ConfigItemFont" Color="color://s:FontColorLight" />
+                                    <Text Content="[Application.LocalStrings.#CoverWallBackdropColumnLabel!cor:String]" MinimumSize="34,0" MaximumSize="34,0" Font="font://f:CP_ConfigItemFont" Color="color://s:FontColorLight" />
+                                    <Text Content="[Application.LocalStrings.#CoverWallScreenSaverColumnLabel!cor:String]" MinimumSize="34,0" MaximumSize="34,0" Font="font://f:CP_ConfigItemFont" Color="color://s:FontColorLight" />
+                                </Children>
+                            </Panel>
+                            <Scroller Orientation="Vertical" MaximumSize="0,300" FadeAmount="1" FadeSize="-5">
+                                <Children>
+                                    <Repeater Name="RootFolderRepeater" Source="[Utility.ThemeConfig.RootFolders]">
+                                        <Layout>
+                                            <FlowLayout Orientation="Vertical" ItemAlignment="Near" AllowWrap="true" />
+                                        </Layout>
+                                        <Content>
+                                            <me:CoverWallFolder Label="[RepeatedItem!cor:String]" Config="[Utility.ThemeConfig]" Font="font://f:CP_ConfigItemFont" Color="color://s:FontColorLight" />
+                                        </Content>
+                                    </Repeater>
+                                </Children>
+                            </Scroller>
+                        </Children>
+                    </Panel>
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+    <UI Name="TextHeader">
+        <Properties>
+            <cor:String Name="Text" String="$Required" />
+            <cor:Boolean Name="WordWrap" Boolean="false" />
+            <Font Name="Font" Font="font://f:CP_ConfigHeaderFont" />
+            <Inset Name="Margin" Inset="10,5,10,5"/>
+        </Properties>
+        <Locals>
+            <Color Name="Color" Color="color://s:FontColorLight" />
+        </Locals>
+        <Content>
+            <Text Color="[Color]" Content="[Text]" Font="[Font]" Margins="[Margin]" WordWrap="[WordWrap]" />
+        </Content>
+    </UI>
+
+    <UI Name="SimpleSpinner">
+
+        <Properties>
+            <IValueRange Name="Model" IValueRange="$Required" />
+            <Color Name="BackgroundColor" Color="Transparent" />
+            <FormatTransformer Name="LabelTransformer" Format="{0}" />
+            <Font Name="Font" Font="$Required"/>
+            <Font Name="ValueFont" Font="$Required"/>
+            <Color Name="Color" Color="color://s:FontColorLight"/>
+            <cor:String Name="Label" String="" />
+            <EditableText Name="FocusItem" />
+            <Size Name="TextSize" Size="210,0" />
+            <cor:Boolean Name="ReqRestart" Boolean="false" />
+        </Properties>
+
+        <Locals>
+            <InvokeCommand Name="Previous" Target="[Model.PreviousValue]" />
+            <InvokeCommand Name="Next" Target="[Model.NextValue]" />
+            <cor:Boolean Name="HasFocus" />
+        </Locals>
+
+        <Rules>
+            <Binding Source="[Model.Value]" Target="[Value.Content]" Transformer="[LabelTransformer]" />
+            <Binding Source="[Model.HasNextValue]" Target="[Next.Available]"/>
+            <Binding Source="[Model.HasPreviousValue]" Target="[Previous.Available]"/>
+
+            <Condition Source="[Input.DeepKeyFocus]" SourceValue="true">
+                <Actions>
+                    <Set Target="[FocusItem.Value]" Value="[Label]" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.DeepKeyFocus]" SourceValue="true" Target="[HasFocus]" Value="[Input.DeepKeyFocus]" />
+            <Condition Source="[Input.DeepMouseFocus]" SourceValue="true" Target="[HasFocus]" Value="[Input.DeepMouseFocus]" />
+
+            <Binding Source="[ReqRestart]" Target="[RestartFlag.Visible]" />
+
+        </Rules>
+
+        <Content>
+            <Panel Navigation="Row">
+                <Layout>
+                    <FlowLayout Orientation="Horizontal" />
+                </Layout>
+                <Children>
+
+                    <Text Name="RestartFlag" Content="*" Font="[Font]" Color="[Color]" Visible="false" Margins="-22,0,-22,0" />
+                    <Text Name="Text" Content="[Label]" Font="[Font]" Color="[Color]" MinimumSize="[TextSize]" />
+
+                    <!-- Previous button -->
+                    <vm:ImageBtn Name="btnPrevious" Focused="image://i:DecrementFocus"
+                                 NonFocused="image://i:DecrementNoFocus"
+                                 Command="[Previous]"/>
+
+                    <!-- Next button -->
+                    <vm:ImageBtn Name="btnNext" Focused="image://i:IncrementFocus"
+                                 NonFocused="image://i:IncrementNoFocus"
+                                 Command="[Next]"/>
+
+                    <!-- Current value -->
+                    <ColorFill Name="Background" Content="Transparent" MinimumSize="80,35" MaximumSize="175,35" Padding="5,0,0,5">
+                        <Children>
+                            <Text Name="Value" Font="[ValueFont]" Color="color://s:FontColorLight" />
+                        </Children>
+                    </ColorFill>
+
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+    <UI Name="SpinnerText" BaseUI="me:SimpleSpinner">
+        <Properties>
+            <cor:String Name="DefaultString" String="Default"/>
+            <Choice Name="Model" Choice="$Required" />
+        </Properties>
+
+        <Locals>
+            <cor:Boolean Name="InitialFocusSet" Boolean="false"/>
+            <Timer Name="CheckInitialFocus" Interval="20" Enabled="false"/>
+        </Locals>
+
+        <Rules>
+            <Default Target="[Model.Default]"  Value="[DefaultString]" />
+            <!--<Default Target="[Background.Content]"  Value="SlateBlue" />-->
+
+            <!-- Set timer to check that we succeeded -->
+            <Rule>
+                <Conditions>
+                    <Equality Source="[InitialFocusSet]" Value="false"/>
+                    <IsValid Source="[DefaultString]"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[InitialFocusSet]" Value="true"/>
+                    <Set Target="[CheckInitialFocus.Enabled]" Value="true"/>
+                </Actions>
+            </Rule>
+
+            <!-- If focus isn't on the right item, move to the next position -->
+            <Changed Source="[CheckInitialFocus.Tick]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen!cor:String]" ConditionOp="NotEquals" Value="[DefaultString]"/>
+                    <Equality Source="[Model.HasNextValue]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Model.NextValue]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <!-- Shutdown the timer object once item is found -->
+            <Changed Source="[CheckInitialFocus.Tick]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen!cor:String]" ConditionOp="Equals" Value="[DefaultString]"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[CheckInitialFocus.Enabled]" Value="false"/>
+                </Actions>
+            </Changed>
+
+        </Rules>
+
+    </UI>
+
+    <UI Name="CoverWallFolder">
+        <Properties>
+            <EditableText Name="FocusItem" />
+            <cor:String Name="Label" String="$Required" />
+            <Font Name="Font" Font="$Required"/>
+            <Color Name="Color" Color="White" />
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+        </Properties>
+        
+        <Locals>
+            <Inset Name="CMargin" Inset="25,0,0,0" />
+
+            <BooleanChoice Name="CheckedBD" Value="false" />
+            <BooleanChoice Name="CheckedSS" Value="false" />
+        </Locals>
+
+        <Rules>
+            <Binding Source="[Label]" Target="[LabelText.Content]" />
+
+            <Changed Source="[Label]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Config.IsCoverWallBackdropFolder]" folder="[Label]" ResultTarget="[CheckedBD.Value]" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Config.IsCoverWallScreenSaverFolder]" folder="[Label]" ResultTarget="[CheckedSS.Value]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[CheckedBD.Value]">
+                <Actions>
+                    <Invoke Target="[Config.SetCoverWallBackdropFolder]" folder="[Label]" value="[CheckedBD.Value]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[CheckedSS.Value]">
+                <Actions>
+                    <Invoke Target="[Config.SetCoverWallScreenSaverFolder]" folder="[Label]" value="[CheckedSS.Value]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+        </Rules>
+        
+        <Content>
+            <Panel Layout="HorizontalFlow" Margins="[CMargin]">
+                <Children>
+                    <Text Name="LabelText" MinimumSize="300,0" MaximumSize="300,0" Font="[Font]" Color="[Color]" />
+                    <cb:CheckBox Name="BackdropCB" Label="" Checked="[CheckedBD]" FocusItem="[FocusItem]" Font="[Font]"/>
+                    <cb:CheckBox Name="ScreensaverCB" Label="" Checked="[CheckedSS]" FocusItem="[FocusItem]" Font="[Font]" Margins="0,0,20,0"/>
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+</Mcml>

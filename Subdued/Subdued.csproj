@@ -1,0 +1,378 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0ECDEF19-D4A2-4C8D-B1B9-EC7B7D85E88C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Subdued</RootNamespace>
+    <AssemblyName>Subdued</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <AssemblyOriginatorKeyFile>Theme.snk</AssemblyOriginatorKeyFile>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <FullyQualifiedOutputPath>$(MSBuildProjectDirectory)\bin\Debug</FullyQualifiedOutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <FullyQualifiedOutputPath>$(MSBuildProjectDirectory)\bin\Release</FullyQualifiedOutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <StartWorkingDirectory>$(windir)\eHome</StartWorkingDirectory>
+    <StartArguments>-load:"resx://Crystal/Crystal.Resources/Default" -assemblyredirect:"$(FullyQualifiedOutputPath)" -markupredirect:"resx://Crystal/Crystal.Resources/,file://$(MSBuildProjectDirectory)\Markup\,.mcml"</StartArguments>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(windir)\eHome\McmlPad.exe</StartProgram>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MediaBrowser, Version=2.1.3.0, Culture=neutral, PublicKeyToken=59fc04479785fd64, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MB Theme\MediaBrowser\bin\Release\MediaBrowser.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaBrowser.Model, Version=3.0.5526.40037, Culture=neutral, PublicKeyToken=6cde51960597a7f9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MediaBrowser.Common.3.0.574\lib\net35\MediaBrowser.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.MediaCenter, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\ehome\Microsoft.MediaCenter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.MediaCenter.UI, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\ehome\Microsoft.MediaCenter.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="APICalls\APIQueries.cs" />
+    <Compile Include="APICalls\GetAPIItems.cs" />
+    <Compile Include="AppUtil.cs" />
+    <Compile Include="Clock.cs" />
+    <Compile Include="ConfigData.cs" />
+    <Compile Include="MyConfig.cs" />
+    <Compile Include="MyStrings.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Zip\EncryptionAlgorithm.cs" />
+    <Compile Include="Zip\Events.cs" />
+    <Compile Include="Zip\Exceptions.cs" />
+    <Compile Include="Zip\ExtractExistingFileAction.cs" />
+    <Compile Include="Zip\FileSelector.cs" />
+    <Compile Include="Zip\OffsetStream.cs" />
+    <Compile Include="Zip\Shared.cs" />
+    <Compile Include="Zip\WinZipAes.cs" />
+    <Compile Include="Zip\ZipConstants.cs" />
+    <Compile Include="Zip\ZipCrypto.cs" />
+    <Compile Include="Zip\ZipDirEntry.cs" />
+    <Compile Include="Zip\ZipEntry.cs" />
+    <Compile Include="Zip\ZipEntry.Extract.cs" />
+    <Compile Include="Zip\ZipEntry.Read.cs" />
+    <Compile Include="Zip\ZipEntry.Write.cs" />
+    <Compile Include="Zip\ZipEntrySource.cs" />
+    <Compile Include="Zip\ZipErrorAction.cs" />
+    <Compile Include="Zip\ZipFile.AddUpdate.cs" />
+    <Compile Include="Zip\ZipFile.cs" />
+    <Compile Include="Zip\ZipFile.Events.cs" />
+    <Compile Include="Zip\ZipFile.Extract.cs" />
+    <Compile Include="Zip\ZipFile.Read.cs" />
+    <Compile Include="Zip\ZipFile.Save.cs" />
+    <Compile Include="Zip\ZipFile.Selector.cs" />
+    <Compile Include="Zip\ZipFile.x-IEnumerable.cs" />
+    <Compile Include="Zip\ZipInputStream.cs" />
+    <Compile Include="Zip\ZipOutputStream.cs" />
+    <Compile Include="Zip\ZipSegmentedStream.cs" />
+    <Compile Include="Zip\Zlib\Crc32.cs" />
+    <Compile Include="Zip\Zlib\Deflate.cs" />
+    <Compile Include="Zip\Zlib\DeflateStream.cs" />
+    <Compile Include="Zip\Zlib\GZipStream.cs" />
+    <Compile Include="Zip\Zlib\Inflate.cs" />
+    <Compile Include="Zip\Zlib\InfTree.cs" />
+    <Compile Include="Zip\Zlib\ParallelDeflateOutputStream.cs" />
+    <Compile Include="Zip\Zlib\Tree.cs" />
+    <Compile Include="Zip\Zlib\Zlib.cs" />
+    <Compile Include="Zip\Zlib\ZlibBaseStream.cs" />
+    <Compile Include="Zip\Zlib\ZlibCodec.cs" />
+    <Compile Include="Zip\Zlib\ZlibConstants.cs" />
+    <Compile Include="Zip\Zlib\ZlibStream.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Markup\Controls\NextUpLayoutScroller.mcml" />
+    <None Include="Markup\Controls\StarRating.mcml" />
+    <None Include="Markup\Styles\Subtle Orange.mcml" />
+    <None Include="Markup\Styles\Subtle Yellow.mcml" />
+    <None Include="Markup\Styles\Subtle Green.mcml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Markup\Styles\Subtle Blue.mcml" />
+    <None Include="Markup\Styles\Subtle Red.mcml" />
+    <None Include="packages.config" />
+    <None Include="Resources\watched.png" />
+    <None Include="Resources\unwatched.png" />
+    <None Include="Resources\lightbulb off.png" />
+    <None Include="Resources\light_bulb %282%29.png" />
+    <None Include="Resources\watched2.tif" />
+    <None Include="Resources\watched.tif" />
+    <None Include="Resources\watched2.png" />
+    <None Include="Resources\watched1.tif" />
+    <None Include="Resources\watch4.png" />
+    <None Include="Resources\watch3.png" />
+    <None Include="Resources\watch.png" />
+    <None Include="Resources\unwatched21.tif" />
+    <None Include="Resources\unwatched2.tif" />
+    <None Include="Resources\BlankImage.png" />
+    <None Include="Resources\spacer.png" />
+    <None Include="Resources\blackbtnalpha50.png" />
+    <None Include="Resources\watch2.png" />
+    <None Include="Resources\watch1.png" />
+    <None Include="Resources\watched1.png" />
+    <None Include="Resources\unwatched1.png" />
+    <None Include="Resources\watche31.tif" />
+    <None Include="Resources\unwatched32.tif" />
+    <None Include="Resources\unwatched31.tif" />
+    <None Include="Resources\new_fg.png" />
+    <None Include="Resources\new_bg.png" />
+    <None Include="Resources\unwatched3.tif" />
+    <None Include="Resources\watche3.tif" />
+    <None Include="Resources\WeatherBG.png" />
+    <None Include="Resources\unwatched_eye.bmp" />
+    <None Include="Images\MediaInfo\mediainfo_color.zip" />
+    <None Include="Images\MediaInfo\mediainfo_mono.zip" />
+    <None Include="Images\unwatched_white.png" />
+    <None Include="Images\watched_white.png" />
+    <None Include="Images\rated-nc-17.png" />
+    <None Include="Images\rated-nr.png" />
+    <None Include="Images\rated-pg.png" />
+    <None Include="Images\rated-pg-13.png" />
+    <None Include="Images\rated-r.png" />
+    <None Include="Images\rated-g.png" />
+    <None Include="Images\esrb_ao.png" />
+    <None Include="Images\esrb_e.png" />
+    <None Include="Images\esrb_e10.png" />
+    <None Include="Images\esrb_ec.png" />
+    <None Include="Images\esrb_m.png" />
+    <None Include="Images\esrb_rp.png" />
+    <None Include="Images\esrb_t.png" />
+    <None Include="Images\esrb_ka.png" />
+    <None Include="Images\rated_tv_14.png" />
+    <None Include="Images\rated_tv_g.png" />
+    <None Include="Images\rated_tv_ma.png" />
+    <None Include="Images\rated_tv_pg.png" />
+    <None Include="Images\rated_tv_y.png" />
+    <None Include="Images\rated_tv_y7.png" />
+    <None Include="Images\rated_tv_y7_fv.png" />
+    <None Include="Images\star_empty.png" />
+    <None Include="Images\star_full.png" />
+    <None Include="Images\star_half.png" />
+    <None Include="Images\rated-empty.png" />
+    <None Include="Images\rated_movie_g_full.png" />
+    <None Include="Images\rated_movie_nc_17_full.png" />
+    <None Include="Images\rated_movie_nr_full.png" />
+    <None Include="Images\rated_movie_pg_13_full.png" />
+    <None Include="Images\rated_movie_pg_full.png" />
+    <None Include="Images\rated_movie_r_full.png" />
+    <None Include="Images\hd.png" />
+    <None Include="Images\BlankImage.png" />
+    <Content Include="Images\User.png" />
+    <Content Include="Markup\Animations.mcml" />
+    <Content Include="Markup\ConfigPanelViews.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Controls\MediaInfoPanel.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Controls\MPAARating.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Controls\PCIndicatorButton.mcml" />
+    <Content Include="Markup\Controls\ScrollableItemList.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Styles\The Original.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Styles\White Shadow.mcml" />
+    <Content Include="Markup\Views\LayoutAlbum.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="readme.txt" />
+    <None Include="Images\unwatched.png" />
+    <None Include="Images\cycle.png" />
+    <None Include="Images\watch.png" />
+    <None Include="Images\minus.png" />
+    <None Include="Images\plus.png" />
+    <None Include="Images\config.png" />
+    <None Include="Images\skip_back.png" />
+    <None Include="Images\skip_forward.png" />
+    <None Include="Images\refresh.png" />
+    <Content Include="Images\watched.png" />
+    <Content Include="Markup\ConfigPanel.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Controls\Backdrop.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Controls\BusyIndicator.mcml" />
+    <Content Include="Markup\Controls\CommandButton.mcml" />
+    <Content Include="Markup\Controls\ContextMenu.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Controls\ImageButton.mcml" />
+    <Content Include="Markup\Controls\MiniDetailsPanel.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Controls\PosterItemButton.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Controls\ScrollableText.mcml" />
+    <Content Include="Markup\DetailMovieView.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Selectors\Page.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Selectors\PageDetailArea.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\UI.mcml" />
+    <Content Include="Markup\UIConfig.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Views\LayoutCoverflow.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Views\LayoutDetails.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Views\LayoutPoster.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Views\LayoutRoot.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Views\LayoutThumb.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Markup\Views\LayoutThumbStrip.mcml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Markup\ConfigPanelCoverWall.mcml" />
+    <None Include="Markup\Styles\Blue Note.mcml" />
+    <None Include="Markup\Styles\Cold as Ice.mcml" />
+    <None Include="Markup\Styles\Neon.mcml" />
+    <None Include="Markup\Styles\Redrum.mcml" />
+    <None Include="Markup\Styles\Spy vs. Spy 1.mcml" />
+    <None Include="Markup\Styles\Spy vs. Spy 2.mcml" />
+    <None Include="Markup\Weather.mcml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Theme.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(TargetPath)" "C:\ProgramData\MediaBrowser-Classic\Plugins" /y</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

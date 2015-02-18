@@ -1,0 +1,1195 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:a="assembly://MediaBrowser/MediaBrowser"
+	  xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:ib="resx://MediaBrowser/MediaBrowser.Resources/ItemButton"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:ss="file://Subdued_Styles.mcml"
+	  xmlns:ui="resx://Subdued/Subdued.Resources/UI"
+	  xmlns:anim="resx://Subdued/Subdued.Resources/Animations"
+	  xmlns:bd="resx://Subdued/Subdued.Resources/Backdrop"
+	  xmlns:md="resx://Subdued/Subdued.Resources/MiniDetailsPanel"
+	  xmlns:st="resx://Subdued/Subdued.Resources/ScrollableText"
+	  xmlns:sil="resx://Subdued/Subdued.Resources/ScrollableItemList"
+      xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+      xmlns:me="Me"
+	  xmlns:cor="assembly://MSCorLib/System">
+
+    <UI Name="SubduedLayoutDetails">
+
+        <Properties>
+            <a:Application Name="Application" Application="$Required"/>
+            <lib:FolderModel Name="Folder" FolderModel="$Required"/>
+            <Timer Name="InfoTimer" AutoRepeat="false" Interval="250" Enabled="false"/>
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+            <Command Name="SkipBackCommand" />
+            <Command Name="SkipForwardCommand" />
+            <sd:AppUtil Name="Utility" AppUtil="$Required" />
+        </Properties>
+
+        <Locals>
+            <ScrollingHandler Name="RootScrollingHandler" HandleDirectionalKeys="true" HandleHomeEndKeys="true" HandleMouseWheel="true" HandlePageCommands="true" HandlePageKeys="true" HandlerStage="Bubbled" />
+            <ScrollingData Name="RootSD" LockedAlignment="0.5" LockedPosition="0.5"/>
+
+            <ScrollingHandler Name="ChildScrollingHandler" HandleDirectionalKeys="true" HandleHomeEndKeys="true" HandleMouseWheel="true" HandlePageCommands="true" HandlePageKeys="true" HandlerStage="Bubbled" />
+            <ScrollingData Name="ChildSD"/>
+
+            <ShortcutHandler Name="SkipBackShortcut" Shortcut="SkipBack" Command="[SkipBackCommand]" Handle="true" HandlerStage="Bubbled" />
+            <ShortcutHandler Name="SkipForwardShortcut" Shortcut="SkipForward" Command="[SkipForwardCommand]" Handle="true" HandlerStage="Bubbled" />
+
+            <IntRangedValue Name="SelectedIndex" Value="0"/>
+            <lib:Item Name="SelectedItem" Item="[Folder.SelectedChild]"/>
+            <lib:FolderModel Name="SelectedFolder" FolderModel="null" />
+
+            <AnchorEdge Name="RootRightAnchor" Id="Parent" Percent=".35" Offset="0" />
+
+            <AnchorEdge Name="ChildTopAnchor" Id="Parent" Percent=".5" Offset="0" />
+            <AnchorEdge Name="ChildSepAnchor" Id="Parent" Percent=".35" Offset="0" />
+            
+            <FormLayoutInput Name="ChildLayoutInput" Left="ChildBG,0,40" Right="ChildBG,1,-20" Top="ChildBG,0,20" Bottom="ChildBG,1,-20"/>
+
+            <FlowLayout Name="ChildRepeaterLayout" Orientation="Vertical" ItemAlignment="Near" AllowWrap="true" Repeat="Always" RepeatGap="12,0" />
+
+            <FormLayoutInput Name="ChildInfoLayoutInput" Left="InfoBG,0,20" Right="InfoBG,1,-40" Top="InfoBG,0,30" />
+            <FormLayoutInput Name="OverviewLayoutInput" Left="InfoBG,0,20" Right="InfoBG,1,-40" Top="ChildInfoPanel,1" Bottom="RatingMediaInfoPanel,0,-10"/>
+            <FormLayoutInput Name="RatingMediaInfoLayoutInput" Left="InfoBG,0,20" Right="InfoBG,1,-10" Bottom="InfoBG,1,-10"/>
+
+            <Timer Name="FocusViewTimer" AutoRepeat="false" Interval="500" />
+
+            <cor:Int32 Name="Startup" />
+        </Locals>
+
+      <Rules>
+        <!-- 
+            Layout -->
+        <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail">
+          <Actions>
+            <Set Target="[Config.AllowLiveLayout]" Value="true" />
+            <Set Target="[Config.LiveLayoutPgUpDownLabel]" Value="" />
+            <Set Target="[Config.LiveLayoutFwdRewLabel]" Value="" />
+          </Actions>
+        </Condition>
+
+        <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+          <Actions>
+            <Set Target="[Config.LiveLayoutLeftRightLabel]" Value="[Application.LocalStrings.#RootDetailsRightLabel!cor:String]" />
+            <Set Target="[Config.LiveLayoutUpDownLabel]" Value="" />
+          </Actions>
+        </Condition>
+
+        <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+          <Actions>
+            <Set Target="[Config.LiveLayoutLeftRightLabel]" Value="[Application.LocalStrings.#ChildDetailsSepLabel!cor:String]" />
+            <Set Target="[Config.LiveLayoutUpDownLabel]" Value="[Application.LocalStrings.#ChildDetailsTopLabel!cor:String]" />
+          </Actions>
+        </Condition>
+
+        <Changed Source="[Config.LayoutLeftCommand.Invoked]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Detail" />
+            <Equality Source="[Config.RootDetailsRight]" ConditionOp="GreaterThan" Value="0" />
+          </Conditions>
+          <Actions>
+            <Set Target="[RootPanel.Visible]" Value="false" ExclusiveApply="false" />
+            <Set Target="[Config.RootDetailsRight]" Value="[Config.RootDetailsRight]">
+              <Transformer>
+                <MathTransformer SubtractInt="1" />
+              </Transformer>
+            </Set>
+            <Set Target="[RootPanel.Visible]" Value="true" ExclusiveApply="false" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[Config.LayoutRightCommand.Invoked]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Detail" />
+            <Equality Source="[Config.RootDetailsRight]" ConditionOp="LessThan" Value="100" />
+          </Conditions>
+          <Actions>
+            <Set Target="[RootPanel.Visible]" Value="false" ExclusiveApply="false" />
+            <Set Target="[Config.RootDetailsRight]" Value="[Config.RootDetailsRight]">
+              <Transformer>
+                <MathTransformer AddInt="1" />
+              </Transformer>
+            </Set>
+            <Set Target="[RootPanel.Visible]" Value="true" ExclusiveApply="false" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[Config.LayoutLeftCommand.Invoked]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Detail" />
+            <Equality Source="[Config.ChildDetailsSep]" ConditionOp="GreaterThan" Value="0" />
+          </Conditions>
+          <Actions>
+            <Set Target="[ChildPanel.Visible]" Value="false" ExclusiveApply="false" />
+            <Set Target="[Config.ChildDetailsSep]" Value="[Config.ChildDetailsSep]">
+              <Transformer>
+                <MathTransformer SubtractInt="1" />
+              </Transformer>
+            </Set>
+            <Set Target="[ChildPanel.Visible]" Value="true" ExclusiveApply="false" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[Config.LayoutRightCommand.Invoked]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Detail" />
+            <Equality Source="[Config.ChildDetailsSep]" ConditionOp="LessThan" Value="100" />
+          </Conditions>
+          <Actions>
+            <Set Target="[ChildPanel.Visible]" Value="false" ExclusiveApply="false" />
+            <Set Target="[Config.ChildDetailsSep]" Value="[Config.ChildDetailsSep]">
+              <Transformer>
+                <MathTransformer AddInt="1" />
+              </Transformer>
+            </Set>
+            <Set Target="[ChildPanel.Visible]" Value="true" ExclusiveApply="false" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[Config.LayoutUpCommand.Invoked]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Detail" />
+            <Equality Source="[Config.ChildDetailsTop]" ConditionOp="GreaterThan" Value="0" />
+          </Conditions>
+          <Actions>
+            <Set Target="[ChildPanel.Visible]" Value="false" ExclusiveApply="false" />
+            <Set Target="[Config.ChildDetailsTop]" Value="[Config.ChildDetailsTop]">
+              <Transformer>
+                <MathTransformer SubtractInt="1" />
+              </Transformer>
+            </Set>
+            <Set Target="[ChildPanel.Visible]" Value="true" ExclusiveApply="false" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[Config.LayoutDownCommand.Invoked]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Detail" />
+            <Equality Source="[Config.ChildDetailsTop]" ConditionOp="LessThan" Value="100" />
+          </Conditions>
+          <Actions>
+            <Set Target="[ChildPanel.Visible]" Value="false" ExclusiveApply="false" />
+            <Set Target="[Config.ChildDetailsTop]" Value="[Config.ChildDetailsTop]">
+              <Transformer>
+                <MathTransformer AddInt="1" />
+              </Transformer>
+            </Set>
+            <Set Target="[ChildPanel.Visible]" Value="true" ExclusiveApply="false" />
+          </Actions>
+        </Changed>
+
+        <!-- Shortcut Handlers -->
+        <Changed Source="[SkipBackCommand.Invoked]">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[RootSD.PageUp]" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[SkipBackCommand.Invoked]">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[ChildSD.PageUp]" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[SkipForwardCommand.Invoked]">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[RootSD.PageDown]" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[SkipForwardCommand.Invoked]">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[ChildSD.PageDown]" />
+          </Actions>
+        </Changed>
+
+        <!-- View Mode -->
+        <Default Target="[RootPanel.Visible]" Value="[Folder.IsRoot]"/>
+        <Default Target="[ChildPanel.Visible]" Value="[Folder.IsRoot]">
+          <Transformer>
+            <BooleanTransformer Inverse="true"/>
+          </Transformer>
+        </Default>
+
+        <!-- Scroll Speed -->
+        <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Fast">
+          <Actions>
+            <Invoke Target="[RootItemRepeater.DetachAnimation]" type="Move" />
+            <Invoke Target="[RootItemRepeater.AttachAnimation]" animation="animation://anim:ScrollFast" />
+            <Invoke Target="[ChildItemRepeater.DetachAnimation]" type="Move" />
+            <Invoke Target="[ChildItemRepeater.AttachAnimation]" animation="animation://anim:ScrollFast" />
+          </Actions>
+        </Condition>
+
+        <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Medium">
+          <Actions>
+            <Invoke Target="[RootItemRepeater.DetachAnimation]" type="Move" />
+            <Invoke Target="[RootItemRepeater.AttachAnimation]" animation="animation://anim:ScrollMedium" />
+            <Invoke Target="[ChildItemRepeater.DetachAnimation]" type="Move" />
+            <Invoke Target="[ChildItemRepeater.AttachAnimation]" animation="animation://anim:ScrollMedium" />
+          </Actions>
+        </Condition>
+
+        <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Slow">
+          <Actions>
+            <Invoke Target="[RootItemRepeater.DetachAnimation]" type="Move" />
+            <Invoke Target="[RootItemRepeater.AttachAnimation]" animation="animation://anim:ScrollSlow" />
+            <Invoke Target="[ChildItemRepeater.DetachAnimation]" type="Move" />
+            <Invoke Target="[ChildItemRepeater.AttachAnimation]" animation="animation://anim:ScrollSlow" />
+          </Actions>
+        </Condition>
+
+        <!-- Panel Sizes -->
+        <Condition Source="[Config.FolderWrapItemList]" ConditionOp="Equals" SourceValue="Always" Target="[ChildRepeaterLayout.Repeat]" Value="Always" />
+        <Condition Source="[Config.FolderWrapItemList]" ConditionOp="Equals" SourceValue="Never" Target="[ChildRepeaterLayout.Repeat]" Value="Never" />
+        <Condition Source="[Config.FolderWrapItemList]" ConditionOp="Equals" SourceValue="When Too Big" Target="[ChildRepeaterLayout.Repeat]" Value="WhenTooBig" />
+
+        <Binding Source="[Config.RootDetailsRight!cor:Single]" Target="[RootRightAnchor.Percent]">
+          <Transformer>
+            <MathTransformer Divide="100" />
+          </Transformer>
+        </Binding>
+
+        <Binding Source="[Config.ChildDetailsTop!cor:Single]" Target="[ChildTopAnchor.Percent]">
+          <Transformer>
+            <MathTransformer Divide="100" />
+          </Transformer>
+        </Binding>
+
+        <Binding Source="[Config.ChildDetailsSep!cor:Single]" Target="[ChildSepAnchor.Percent]">
+          <Transformer>
+            <MathTransformer Divide="100" />
+          </Transformer>
+        </Binding>
+
+        <!-- Scroll Handlers -->
+        <!-- NOTE: Having both scroll handlers active doesn't work well; the first swallows the keyboard. So conditionally hook them up. -->
+        <Rule>
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+          <Actions>
+            <Set Target="[RootScrollingHandler.ScrollingData]" Value="[RootSD]" />
+            <Set Target="[RootSD.Repeater]" Value="[RootItemRepeater]" />
+          </Actions>
+        </Rule>
+
+        <Rule>
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+          <Actions>
+            <Set Target="[ChildScrollingHandler.ScrollingData]" Value="[ChildSD]"/>
+            <Set Target="[ChildSD.Repeater]" Value="[ChildItemRepeater]"/>
+          </Actions>
+        </Rule>
+
+        <!-- Type Select -->
+        <Changed Source="[Folder.JILShift]">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[ChildSD.Scroll]"  amount="[Folder.JILShift]"/>
+          </Actions>
+        </Changed>
+
+        <!-- Selection/Info Display -->
+        <Binding Source="[SelectedIndex.Value]" Target="[Folder.SelectedChildIndex]" />
+
+        <Changed Source="[Folder.SelectedChildIndex]" InitialEvaluate="true">
+          <Conditions>
+            <Equality ConditionOp="NotEquals" Source="[Folder.SelectedChildIndex]" Value="-1" />
+          </Conditions>
+          <Actions>
+            <Set Target="[InfoTimer.Enabled]" Value="false" ExclusiveApply="false" />
+            <Set Target="[InfoTimer.Enabled]" Value="true"/>
+          </Actions>
+        </Changed>
+
+        <Changed Source="[InfoTimer.Tick]">
+          <Actions>
+            <Set Target="[SelectedItem]" Value="[Folder.SelectedChild]" />
+          </Actions>
+        </Changed>
+
+        <Condition Source="[SelectedItem.IsFolder]" ConditionOp="Equals" SourceValue="true" Target="[SelectedFolder]" Value="[SelectedItem!lib:FolderModel]" />
+
+        <!-- List Sort/Group Change -->
+        <Changed Source="[Folder.Children]" InitialEvaluate="false">
+          <Actions>
+            <Set Target="[RootItemRepeater.Source]" Value="[Folder.Children]" />
+            <Set Target="[ChildItemRepeater.Source]" Value="[Folder.Children]" />
+            <Set Target="[SelectedIndex.Value]" Value="0" />
+          </Actions>
+        </Changed>
+
+        <!-- List Indicators -->
+        <Rule ConditionLogicalOp="Or">
+          <Conditions>
+            <Equality Source="[Application.Config.ShowUnwatchedIndicator]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Application.Config.EnableListViewTicks]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+          <Actions>
+            <Set Target="[ChildLayoutInput.Left]" Value="ChildBG,0,20" />
+          </Actions>
+        </Rule>
+
+        <!-- Backdrop Content -->
+        <Binding Source="[SelectedItem]" Target="[Backdrop.Item]" />
+
+        <!-- Poster Visibility/Content -->
+        <Rule ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+            <Equality Source="[SelectedItem.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+          <Actions>
+            <Set Target="[Poster.Visible]" Value="true" />
+            <Set Target="[Thumbnail.Visible]" Value="false" />
+            <Set Target="[ChildInfoLayoutInput.Left]" Value="Poster,1,20" />
+            <Set Target="[OverviewLayoutInput.Left]" Value="Poster,1,20" />
+            <Set Target="[RatingMediaInfoLayoutInput.Left]" Value="Poster,1,20" />
+          </Actions>
+        </Rule>
+
+        <Rule ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+            <Equality Source="[SelectedItem.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[SelectedItem.PhysicalParent.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Config.ChildSeasonEpisodeOverlay]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+          <Actions>
+            <Set Target="[Poster.Visible]" Value="true" />
+            <Set Target="[Thumbnail.Visible]" Value="true" />
+            <Set Target="[ChildInfoLayoutInput.Left]" Value="Poster,1,20" />
+            <Set Target="[OverviewLayoutInput.Left]" Value="Poster,1,20" />
+            <Set Target="[RatingMediaInfoLayoutInput.Left]" Value="Poster,1,20" />
+          </Actions>
+        </Rule>
+
+        <Rule ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+            <Equality Source="[SelectedItem.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[SelectedItem.PhysicalParent.HasPrimaryImage]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+          <Actions>
+            <Set Target="[Poster.Visible]" Value="true" />
+            <Set Target="[Thumbnail.Visible]" Value="false" />
+            <Set Target="[ChildInfoLayoutInput.Left]" Value="Poster,1,20" />
+            <Set Target="[OverviewLayoutInput.Left]" Value="Poster,1,20" />
+            <Set Target="[RatingMediaInfoLayoutInput.Left]" Value="Poster,1,20" />
+          </Actions>
+        </Rule>
+
+        <Rule ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+            <Equality Source="[SelectedItem.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Config.ChildSeasonEpisodeOverlay]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+          <Actions>
+            <Set Target="[Poster.Visible]" Value="true" />
+            <Set Target="[Thumbnail.Visible]" Value="false" />
+            <Set Target="[ChildInfoLayoutInput.Left]" Value="Poster,1,20" />
+            <Set Target="[OverviewLayoutInput.Left]" Value="Poster,1,20" />
+            <Set Target="[RatingMediaInfoLayoutInput.Left]" Value="Poster,1,20" />
+          </Actions>
+        </Rule>
+
+        <Rule ConditionLogicalOp="Or">
+          <Conditions>
+            <Equality Source="[SelectedItem.HasPrimaryImage]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+          <Actions>
+            <Set Target="[ChildInfoLayoutInput.Left]" Value="InfoBG,0,20" />
+            <Set Target="[OverviewLayoutInput.Left]" Value="InfoBG,0,20" />
+            <Set Target="[RatingMediaInfoLayoutInput.Left]" Value="InfoBG,0,20" />
+            <Set Target="[Thumbnail.Visible]" Value="false" />
+            <Set Target="[Poster.Visible]" Value="false" />
+          </Actions>
+        </Rule>
+
+        <Binding Source="[SelectedItem.PrimaryImage]" Target="[Poster.Content]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+        </Binding>
+
+        <Binding Source="[SelectedItem.PhysicalParent.PrimaryImage]" Target="[Poster.Content]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+            <Equality Source="[SelectedItem.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[SelectedItem.PhysicalParent.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Config.ChildSeasonEpisodeOverlay]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+        </Binding>
+
+        <Binding Source="[SelectedItem.PrimaryImage]" Target="[Thumbnail.Content]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+            <Equality Source="[SelectedItem.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[SelectedItem.PhysicalParent.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Config.ChildSeasonEpisodeOverlay]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+        </Binding>
+
+        <Binding Source="[SelectedItem.PrimaryImage]" Target="[Poster.Content]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+            <Equality Source="[SelectedItem.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[SelectedItem.PhysicalParent.HasPrimaryImage]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+        </Binding>
+
+        <Binding Source="[SelectedItem.PrimaryImage]" Target="[Poster.Content]" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+            <Equality Source="[SelectedItem.HasPrimaryImage]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Config.ChildSeasonEpisodeOverlay]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+        </Binding>
+
+        <!-- Banner Visibility/Content -->
+        <Changed Source="[SelectedItem]" InitialEvaluate="true">
+          <Actions>
+            <Set Target="[SelectedItem.PreferBanner]" Value="[Folder.DisplayPrefs.UseBanner.Value]" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[Folder.DisplayPrefs.UseBanner.Value]" InitialEvaluate="true">
+          <Actions>
+            <Set Target="[SelectedItem.PreferBanner]" Value="[Folder.DisplayPrefs.UseBanner.Value]" />
+          </Actions>
+        </Changed>
+
+        <Binding Source="[SelectedItem.HasPreferredImage]" Target="[Banner.Visible]">
+          <Conditions>
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+        </Binding>
+
+        <Binding Source="[SelectedItem.PreferredImage]" Target="[Banner.Content]">
+          <Conditions>
+            <Equality Source="[Folder.DisplayPrefs.UseBanner.Value]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+        </Binding>
+
+        <!-- Title Content -->
+        <Binding Source="[SelectedItem.Name]" Target="[Title.Content]" />
+        <Binding Source="[SelectedItem.LogoImage]" Target="[Logo.Content]" />
+        <Binding Source="[SelectedItem.ArtImage]" Target="[ClearArt.Content]" />
+        <Binding Source="[SelectedItem.ThumbnailImage]" Target="[ThumbArt.Content]" />
+        
+        <!--Logos-->
+             <Changed Source="[SelectedItem]" InitialEvaluate="true">
+                <Conditions>
+                  <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="Logo" />
+                  <Equality Source="[SelectedItem.HasLogoImage]" ConditionOp="Equals" Value="true" />
+                  <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+                  <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+                </Conditions>
+                <Actions>
+                  <Set Target="[Title.Visible]" Value="false" />
+                  <Set Target="[LogoPanel.Visible]" Value="true" />
+                  <Set Target="[ClearArtPanel.Visible]" Value="false" />
+                  <Set Target="[ThumbArtPanel.Visible]" Value="false" />
+                </Actions>
+            </Changed>
+
+              <!--ClearArt-->
+               <Changed Source="[SelectedItem]" InitialEvaluate="true">
+                <Conditions>
+                  <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="ClearArt" />
+                  <Equality Source="[SelectedItem.HasArtImage]" ConditionOp="Equals" Value="true" />
+                  <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+                  <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+                </Conditions>
+                <Actions>
+                  <Set Target="[Title.Visible]" Value="false" />
+                  <Set Target="[ClearArtPanel.Visible]" Value="true" />
+                  <Set Target="[LogoPanel.Visible]" Value="false" />
+                  <Set Target="[ThumbArtPanel.Visible]" Value="false" />
+                </Actions>          
+              </Changed>
+             
+              <!--ThumbNailArt-->
+              <Changed Source="[SelectedItem]" InitialEvaluate="true">
+                <Conditions>
+                  <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="ThumbArt" />
+                  <Equality Source="[SelectedItem.HasThumbnailImage]" ConditionOp="Equals" Value="true" />
+                  <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+                  <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+                </Conditions>
+                <Actions>
+                  <Set Target="[Title.Visible]" Value="false" />
+                  <Set Target="[ThumbArtPanel.Visible]" Value="true" />
+                  <Set Target="[ClearArtPanel.Visible]" Value="false" />
+                  <Set Target="[LogoPanel.Visible]" Value="false" />
+                </Actions>
+              </Changed>
+              
+              <!--NO Art Just Title-->
+              <Changed Source="[SelectedItem]" InitialEvaluate="true">
+                <Conditions>
+                  <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="Off" />
+                  <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+                  <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+                </Conditions>
+                <Actions>
+                  <Set Target="[Title.Visible]" Value="true" />
+                  <Set Target="[ThumbArtPanel.Visible]" Value="false" />
+                  <Set Target="[ClearArtPanel.Visible]" Value="false" />
+                  <Set Target="[LogoPanel.Visible]" Value="false" />
+                </Actions>          
+              </Changed>
+
+              <Changed Source="[SelectedItem]" InitialEvaluate="true">
+                <Actions>
+                  <Set Target="[Title.Content]" Value="[SelectedItem.Name]" />
+                </Actions>
+              </Changed>
+        
+
+        <!-- Sub-Title Visibility/Content 
+        <Changed Source="[SelectedItem]" InitialEvaluate="true">
+          <Conditions>
+            <Equality Source="[SelectedItem.HasSubTitle]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+          <Actions>
+            <Set Target="[SubTitle.Content]" Value="[SelectedItem.SubTitle]" />
+            <Set Target="[SubTitle.Visible]" Value="true" />
+          </Actions>
+        </Changed-->
+
+        <!-- Info Panel -->
+        <Binding Source="[SelectedItem]" Target="[InfoPanel.Item]" />
+        <Binding Source="[SelectedItem]" Target="[RatingMediaInfoPanel.Item]" />
+
+
+        <!-- Overview/List Items Visiblity/Content -->
+        <Binding Source="[SelectedItem.Overview]" Target="[Overview.Content]" />
+
+        <Rule ConditionLogicalOp="Or">
+          <Conditions>
+            <Equality Source="[SelectedItem.IsFolder]" ConditionOp="Equals" Value="false" />
+            <Equality Source="[Config.FolderInfoDisplay]" ConditionOp="Equals" Value="Overview" />
+          </Conditions>
+          <Actions>
+            <Set Target="[Overview.Visible]" Value="true" />
+            <Set Target="[ItemsTextList.Visible]" Value="false" />
+            <Set Target="[ItemsThumbList.Visible]" Value="false" />
+          </Actions>
+        </Rule>
+
+        <Rule ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.IsFolder]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Config.FolderInfoDisplay]" ConditionOp="Equals" Value="Text List" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[Utility.LoadDisplayPrefs]" folder="[SelectedFolder]" InvokePolicy="Synchronous" />
+            <Set Target="[ItemsTextList.Folder]" Value="[SelectedFolder]" />
+            <Set Target="[ItemsTextList.Visible]" Value="true" />
+            <Set Target="[Overview.Visible]" Value="false" />
+            <Set Target="[ItemsThumbList.Visible]" Value="false" />
+          </Actions>
+        </Rule>
+
+        <Rule ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[SelectedItem.IsFolder]" ConditionOp="Equals" Value="true" />
+            <Equality Source="[Config.FolderInfoDisplay]" ConditionOp="Equals" Value="Thumb List" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[Utility.LoadDisplayPrefs]" folder="[SelectedFolder]" InvokePolicy="Synchronous" />
+            <Set Target="[ItemsThumbList.Folder]" Value="[SelectedFolder]" />
+            <Set Target="[ItemsThumbList.Visible]" Value="true" />
+            <Set Target="[ItemsTextList.Visible]" Value="false" />
+            <Set Target="[Overview.Visible]" Value="false" />
+          </Actions>
+        </Rule>
+
+        <!-- Initial Focus -->
+        <Rule>
+          <Conditions>
+            <Equality Source="[Application.NavigatingForward]" Value="true"/>
+          </Conditions>
+          <Actions>
+            <Invoke Target="[FocusViewTimer.Start]" />
+          </Actions>
+        </Rule>
+
+        <Changed Source="[FocusViewTimer.Tick]">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[RootScroller.NavigateInto]" />
+          </Actions>
+        </Changed>
+
+        <Changed Source="[FocusViewTimer.Tick]">
+          <Conditions>
+            <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[ChildScroller.NavigateInto]" />
+          </Actions>
+        </Changed>
+
+        <!-- First Unwatched -->
+        <!-- The below default dummy rule is used to navigate to the proper first item.  Using a generic rule or changed does not work the first time -->
+        <Default Target="[Startup]" Value="1" ConditionLogicalOp="And">
+          <Conditions>
+            <Equality Source="[Application.NavigatingForward]" Value="true"/>
+            <Equality Source="[Folder.Children.Count]" ConditionOp="GreaterThan" Value="0" />
+          </Conditions>
+          <Actions>
+            <Invoke Target="[ChildItemRepeater.NavigateIntoIndex]"  index="[Folder.FirstUnwatchedIndex]"/>
+          </Actions>
+        </Default>
+      </Rules>
+
+        <Content>
+            <Panel Layout="Form">
+                <Children>
+                    
+                    <!-- Layout for Root page -->
+                    <Panel Name="RootPanel" Layout="Form">
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowRight HFadeSize="70" VFadeSize="200">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="RootBG,1,-70" Right="RootBG,1,-1" Top="RootBG,.1" Bottom="RootBG,.9"/>
+                                </LayoutInput>
+                            </ui:GlowRight>
+
+                            <!-- List of Items -->
+                            <Scroller Name="RootScroller" Orientation="Vertical" ScrollingData="[RootSD]" FadeAmount="1" FadeSize="80" Navigation="Column,ContainVertical,RememberFocus">
+                                <LayoutInput>
+                                    <FormLayoutInput Right="RootBG,1,-20" Top="RootBG,0,50" Bottom="RootBG,1,-50"/>
+                                </LayoutInput>
+                                <Children>
+                                    <Repeater Name="RootItemRepeater" Source="[Folder.Children]">
+                                        <Layout>
+                                            <FlowLayout Orientation="Vertical" ItemAlignment="Far" Spacing="50,50" />
+                                        </Layout>
+
+                                        <Content>
+                                            <me:RootListItem
+                                                Application="[Application]"
+                                                Index="[RepeatedItemIndex]"
+                                                Item="[RepeatedItem!lib:Item]"
+                                                SelectedIndex="[SelectedIndex]"/>
+                                        </Content>
+                                    </Repeater>
+                                </Children>
+                            </Scroller>
+
+                            <!-- Background Fill -->
+                            <ui:PanelPrimary Name="RootBG">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="Parent,0" Right="[RootRightAnchor]" Top="Parent,0" Bottom="Parent,1"/>
+                                </LayoutInput>
+                            </ui:PanelPrimary>
+                        </Children>
+                    </Panel>
+
+                    <!-- Layout for Child pages -->
+                    <Panel Name="ChildPanel" Layout="Form">
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowTop VFadeSize="35" HFadeSize="200">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="ChildBG,0" Right="InfoBG,1" Top="ChildBG,0,1" Bottom="ChildBG,0,35"/>
+                                </LayoutInput>
+                            </ui:GlowTop>
+
+                            <!-- List of Items -->
+                            <Scroller Name="ChildScroller" Orientation="Vertical" ScrollingData="[ChildSD]" FadeAmount="1" FadeSize="-20" Navigation="Column,ContainVertical,RememberFocus" LayoutInput="[ChildLayoutInput]">
+                                <Children>
+                                    <Repeater Name="ChildItemRepeater" Source="[Folder.Children]" Layout="[ChildRepeaterLayout]">
+                                        <Content>
+                                            <me:ChildListItem
+                                                Application="[Application]"
+                                                Config="[Config]"
+                                                Utility="[Utility]"
+                                                Index="[RepeatedItemIndex]"
+                                                Item="[RepeatedItem!lib:Item]"
+                                                SelectedIndex="[SelectedIndex]"/>
+                                        </Content>
+                                    </Repeater>
+                                </Children>
+                            </Scroller>
+
+                            <!-- Poster -->
+                            <Graphic Name="Thumbnail" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" Margins="0,0,0,30" Visible="false">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="Poster,.05,18" Right="Poster,1,18" Bottom="Poster,1,18" />
+                                </LayoutInput>
+                            </Graphic>
+
+                            <Graphic Name="Poster" MaintainAspectRatio="true" MaximumSize="350,0" SizingPolicy="SizeToConstraint" Margins="0,0,0,30" Visible="false">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="InfoBG,0,20" Top="InfoBG,0,30" />
+                                </LayoutInput>
+                            </Graphic>
+
+                            <!-- Info Panel -->
+                            <Panel Name="ChildInfoPanel" LayoutInput="[ChildInfoLayoutInput]">
+                                <Layout>
+                                    <FlowLayout Orientation="Vertical" ItemAlignment="Near" Spacing="0,0" />
+                                </Layout>
+                                <Children>
+                                    <!-- Banner -->
+                                    <Graphic Name="Banner" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" Margins="0,0,0,10" Visible="false" />
+
+                                <!-- Logo Panel -->
+                                <Panel Name="LogoPanel" Layout="Anchor" MaximumSize="0,100" Visible="false">
+                                  <Children>
+                                    <Graphic Name="Logo" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" MaximumSize="300,100" />
+                                  </Children>
+                                </Panel>
+                                <!-- ClearArt Panel -->
+                                <Panel Name="ClearArtPanel" Layout="Anchor" MaximumSize="0,150" Visible="false">
+                                  <Children>
+                                    <Graphic Name="ClearArt" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" MaximumSize="0,150" />
+                                  </Children>
+                                </Panel>
+                                <!-- ThumbArt Panel -->
+                                  <Panel Name="ThumbArtPanel" Layout="Anchor" MaximumSize="0,150" Visible="false">
+                                    <Children>
+                                      <Graphic Name="ThumbArt" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" MaximumSize="0,150" />
+                                    </Children>
+                                  </Panel>
+                                  <!--st:MarqueeText Name="SubTitle" Color="color://ss:SdC_ItemTitle" Font="font://ss:SdF_ItemTitle" Margins="0,0,0,0" Visible="false" /-->
+                              <md:MiniDetailsPanel Name="InfoPanel" Application="[Application]" Config="[Config]" Item="[SelectedItem]" />
+                              <st:MarqueeText Name="Title" Color="color://ss:SdC_ItemTitle" Font="font://ss:SdF_ItemTitle" Margins="0,0,0,0" Visible="true" />
+                          </Children>
+                         </Panel>
+                                  
+                            <!-- Overview -->
+                            <st:ScrollableText Name="Overview" Color="color://ss:SdC_ItemOverview" Font="font://ss:SdF_ItemOverview" LayoutInput="[OverviewLayoutInput]" Margins="0,10,0,0" Visible="false" />
+
+                            <sil:ScrollableTextList Name="ItemsTextList" Application="[Application]" Config="[Config]" Utility="[Utility]" Folder="[SelectedFolder]" Font="font://ss:SdF_ItemOverview" Color="color://ss:SdC_ItemOverview" LayoutInput="[OverviewLayoutInput]" Margins="0,10,0,0" Visible="false" />
+
+                            <sil:ScrollableThumbList Name="ItemsThumbList" Application="[Application]" Config="[Config]" Utility="[Utility]" Folder="[SelectedFolder]" LayoutInput="[OverviewLayoutInput]" Visible="false" />
+
+                            <md:RatingMediaInfoDetailsPanel Name="RatingMediaInfoPanel" Application="[Application]" Config="[Config]" Item="[SelectedItem]" VerticalAlign="Center" LayoutInput="[RatingMediaInfoLayoutInput]"/>
+
+                            <!-- Background Fill -->
+                            <ui:PanelPrimary Name="ChildBG">
+                                <LayoutInput>
+                                    <FormLayoutInput Name="ChildBGLayoutInput" Left="Parent,0" Right="[ChildSepAnchor]" Top="[ChildTopAnchor]" Bottom="Parent,1"/>
+                                </LayoutInput>
+                            </ui:PanelPrimary>
+
+                            <ui:PanelSecondary Name="InfoBG">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="ChildBG,1" Right="Parent,1" Top="ChildBG,0" Bottom="ChildBG,1"/>
+                                </LayoutInput>
+                            </ui:PanelSecondary>
+                        </Children>
+                    </Panel>
+
+                    <!-- Backdrop -->
+                    <bd:Backdrop Name="Backdrop" Application="[Application]" Config="[Config]" Item="[SelectedItem]" Rotate="[Config.FolderRotateBackdrops]" IsRoot="[Folder.IsRoot]">
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Top="Parent,0" Bottom="Parent,1" Right="Parent,1"/>
+                        </LayoutInput>
+                    </bd:Backdrop>
+                </Children>
+            </Panel>
+        </Content>
+
+    </UI>
+    
+    <UI Name="RootListItem" BaseUI="ib:ItemButton">
+
+        <Properties>
+            <IntRangedValue Name="SelectedIndex" IntRangedValue="$Required"/>
+            <Index Name="Index" Index="$Required"/>
+        </Properties>
+
+        <Rules>
+            <Default Target="[Input.KeyInteractive]" Value="true" />
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="true">
+                <Actions>
+                    <Set Target="[SelectedIndex.Value]" Value="[Index.SourceValue]"/>
+                    <Set Target="[Application.CurrentItem]" Value="[Item]" />
+                    <Set Target="[RootItemName.Color]" Value="color://ss:SdC_RootItemSel" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[SelectedIndex.Value]" SourceValue="[Index.SourceValue]">
+                <Actions>
+                    <Set Target="[RootItemName.Font]" Value="font://ss:SdF_RootItemSel"/>
+                </Actions>
+            </Condition>
+        </Rules>
+
+        <Content>
+            <Text Name="RootItemName" Content="[Item.Name]" Font="font://ss:SdF_RootItem" Color="color://ss:SdC_RootItem" WordWrap="true" HorizontalAlignment="Far" />
+        </Content>
+
+    </UI>
+
+    <UI Name="ChildListItem" BaseUI="ib:ItemButton">
+
+        <Properties>
+            <IntRangedValue Name="SelectedIndex" IntRangedValue="$Required"/>
+            <Index Name="Index" Index="$Required"/>
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+            <sd:AppUtil Name="Utility" AppUtil="$Required" />
+        </Properties>
+
+        <Locals>
+            <cor:Boolean Name="IndicatorPrefs" Boolean="false" />
+            <cor:Boolean Name="WatchedVisible" Boolean="false" />
+            <AnchorLayoutInput Name="NameLayoutInput" Left="Parent,0" Right="Parent,1" Vertical="Center" />
+
+            <ScrollingHandler Name="ScrollingHandler" HandleDirectionalKeys="false" HandleHomeEndKeys="false" HandleMouseWheel="false" HandlePageCommands="false" HandlePageKeys="false" HandlerStage="Bubbled" />
+            <ScrollingData Name="ScrollingData" ScrollStep="4" />
+
+            <Timer Name="ScrollText" Interval="100" AutoRepeat="true" Enabled="false" />
+            <Timer Name="Delay" Interval="5000" AutoRepeat="false" Enabled="false"/>
+            <Timer Name="EndDelay" Interval="5000" AutoRepeat="false" Enabled="false"/>
+        </Locals>
+
+        <Rules>
+            <Default Target="[Input.KeyInteractive]" Value="true" />
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="true">
+                <Actions>
+                    <Set Target="[SelectedIndex.Value]" Value="[Index.SourceValue]"/>
+                    <Set Target="[Application.CurrentItem]" Value="[Item]" />
+                    <Set Target="[ChildItemName.Color]" Value="color://ss:SdC_DetailsItemSel"/>
+                    <Set Target="[Watched.Alpha]" Value="1.0"/>
+                </Actions>
+            </Condition>
+
+            <Changed Source="[Input.KeyFocus]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Input.KeyFocus]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollText.Stop]" />
+                    <Invoke Target="[Delay.Stop]" />
+                    <Invoke Target="[EndDelay.Stop]" />
+                    <Invoke Target="[Delay.Start]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Input.KeyFocus]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Input.KeyFocus]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollText.Stop]" />
+                    <Invoke Target="[Delay.Stop]" />
+                    <Invoke Target="[EndDelay.Stop]" />
+                    <Invoke Target="[ScrollingData.Home]" />
+                </Actions>
+            </Changed>
+            
+            <Condition Source="[SelectedIndex.Value]" SourceValue="[Index.SourceValue]">
+                <Actions>
+                    <Set Target="[ChildItemName.Font]" Value="font://ss:SdF_DetailsItemSel"/>
+                </Actions>
+            </Condition>
+
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[Application.Config.ShowUnwatchedIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.ShowWatchedTickOnFolders]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.EnableListViewTicks]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[IndicatorPrefs]" Value="true"/>
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.Config.ShowUnwatchedIndicator]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Application.Config.ShowWatchedTickOnFolders]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Application.Config.EnableListViewTicks]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[IndicatorPrefs]" Value="false"/>
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[Config.FolderEnableWatchedIndicators]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[WatchedVisible]" Value="true"/>
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item.IsFolder]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="Equals" Value="Series" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[WatchedVisible]" Value="true"/>
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[IndicatorPrefs]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[WatchedVisible]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Watched.Visible]" Value="true" />
+                    <Set Target="[NameLayoutInput.Left]" Value="Watched,1" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[IndicatorPrefs]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[WatchedVisible]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[NameLayoutInput.Left]" Value="Parent,0" />
+                    <Set Target="[Watched.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.Config.EnableListViewTicks]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableWatchedIndicators]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.IsPlayable]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Watched.Content]" Value="resx://Subdued/Subdued.Resources/watched_white" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.Config.ShowWatchedTickOnFolders]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableWatchedIndicators]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.IsFolder]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Watched.Content]" Value="resx://Subdued/Subdued.Resources/watched_white" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.Config.ShowUnwatchedIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableWatchedIndicators]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Watched.Content]" Value="resx://Subdued/Subdued.Resources/unwatched_white" />
+                </Actions>
+            </Rule>
+
+            <Changed Source="[Utility.CurrentTopParent.NewestItems]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.CurrentTopParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.IsItemInList]" list="[Utility.CurrentTopParent.NewestItems]" item="[Item.BaseItem]" ResultTarget="[New.Visible]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.EnableNewItemIndicator]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.CurrentTopParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.IsItemInList]" list="[Utility.CurrentTopParent.NewestItems]" item="[Item.BaseItem]" ResultTarget="[New.Visible]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.FolderEnableNewItemIndicator]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.CurrentTopParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.IsItemInList]" list="[Utility.CurrentTopParent.NewestItems]" item="[Item.BaseItem]" ResultTarget="[New.Visible]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Item.HaveWatched]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.CurrentTopParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.IsItemInList]" list="[Utility.CurrentTopParent.NewestItems]" item="[Item.BaseItem]" ResultTarget="[New.Visible]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.EnableNewItemIndicator]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[New.Visible]" Value="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.FolderEnableNewItemIndicator]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[New.Visible]" Value="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Item.HaveWatched]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[New.Visible]" Value="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Delay.Tick]">
+                <Conditions>
+                    <Equality Source="[ScrollingData.CanScrollDown]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollText.Start]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ScrollText.Tick]">
+                <Conditions>
+                    <Equality Source="[ScrollingData.CanScrollDown]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollingData.ScrollDown]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ScrollText.Tick]">
+                <Conditions>
+                    <Equality Source="[ScrollingData.CanScrollDown]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollText.Stop]" />
+                    <Invoke Target="[EndDelay.Start]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[EndDelay.Tick]">
+                <Actions>
+                    <Invoke Target="[ScrollingData.Home]" />
+                    <Invoke Target="[Delay.Start]" />
+                </Actions>
+            </Changed>
+
+            <Default Target="[ScrollingHandler.ScrollingData]" Value="[ScrollingData]"/>
+        </Rules>
+
+        <Content>
+            <Panel Layout="Anchor">
+                <Children>
+                    <Graphic Name="Watched" Content="image://i:BlankImage" ColorFilter="color://ss:SdC_DetailsItem" MinimumSize="19,19" MaximumSize="19,19" MaintainAspectRatio="true" Margins="0,0,8,2" Visible="false" Alpha="0.6">
+                        <LayoutInput>
+                            <AnchorLayoutInput Left="Parent,0" Vertical="Center" />
+                        </LayoutInput>
+                    </Graphic>
+                    <Panel Name="New" Layout="Anchor" Visible="false">
+                        <LayoutInput>
+                            <AnchorLayoutInput Right="AutoText,1,6" Top="AutoText,0" Bottom="AutoText,1" ContributesToWidth="false" ContributesToHeight="false" />
+                        </LayoutInput>
+                        <Children>
+                            <Graphic Name="NewFG" Content="resx://Subdued/Subdued.Resources/new_fg" ColorFilter="color://ss:SdC_NewItemIconTextColorFilter" SizingPolicy="SizeToConstraint" MaintainAspectRatio="true">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Top="Parent,0" />
+                                </LayoutInput>
+                            </Graphic>
+                            <Graphic Name="NewBG" Content="resx://Subdued/Subdued.Resources/new_bg" ColorFilter="color://ss:SdC_NewItemIconBGColorFilter" SizingPolicy="SizeToConstraint" MaintainAspectRatio="true">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Top="Parent,0" />
+                                </LayoutInput>
+                            </Graphic>
+                        </Children>
+                    </Panel>
+                    <Scroller Name="AutoText" Orientation="Horizontal" FadeSize="-3" ScrollingData="[ScrollingData]" LayoutInput="[NameLayoutInput]">
+                        <Children>
+                            <Text Name="ChildItemName" Content="[Item.Name]" Font="font://ss:SdF_DetailsItem" Color="color://ss:SdC_DetailsItem">
+                                <Animations>
+                                    <Animation Type="Move">
+                                        <Keyframes>
+                                            <PositionKeyframe RelativeTo="Current" Time="0"/>
+                                            <PositionKeyframe RelativeTo="Final" Time="0.1"/>
+                                        </Keyframes>
+                                    </Animation>
+                                </Animations>
+                            </Text>
+                        </Children>
+                    </Scroller>
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+</Mcml>

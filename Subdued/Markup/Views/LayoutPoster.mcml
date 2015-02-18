@@ -1,0 +1,839 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:a="assembly://MediaBrowser/MediaBrowser"
+	  xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:ib="resx://MediaBrowser/MediaBrowser.Resources/ItemButton"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:ss="file://Subdued_Styles.mcml"
+	  xmlns:ui="resx://Subdued/Subdued.Resources/UI"
+	  xmlns:anim="resx://Subdued/Subdued.Resources/Animations"
+	  xmlns:bd="resx://Subdued/Subdued.Resources/Backdrop"
+	  xmlns:pi="resx://Subdued/Subdued.Resources/PosterItemButton"
+	  xmlns:md="resx://Subdued/Subdued.Resources/MiniDetailsPanel"
+	  xmlns:st="resx://Subdued/Subdued.Resources/ScrollableText"
+      xmlns:me="Me"
+	  xmlns:cor="assembly://MSCorLib/System">
+
+    <UI Name="SubduedLayoutPoster">
+
+        <Properties>
+            <a:Application Name="Application" Application="$Required"/>
+            <lib:FolderModel Name="Folder" FolderModel="$Required"/>
+            <Timer Name="InfoTimer" AutoRepeat="false" Interval="250" Enabled="false"/>
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+            <sd:AppUtil Name="Utility" AppUtil="$Required" />
+            <Command Name="SkipBackCommand" />
+            <Command Name="SkipForwardCommand" />
+        </Properties>
+
+        <Locals>
+            <ScrollingHandler Name="ChildScrollingHandler" HandleDirectionalKeys="true" HandleHomeEndKeys="true" HandleMouseWheel="true" HandlePageCommands="true" HandlePageKeys="true" HandlerStage="Bubbled" />
+            <ScrollingData Name="ChildSD" BeginPadding="0" EndPadding="0" />
+
+            <ShortcutHandler Name="SkipBackShortcut" Shortcut="SkipBack" Command="[SkipBackCommand]" Handle="true" HandlerStage="Bubbled" />
+            <ShortcutHandler Name="SkipForwardShortcut" Shortcut="SkipForward" Command="[SkipForwardCommand]" Handle="true" HandlerStage="Bubbled" />
+
+            <cor:Single Name="TopPercent" Single="0" />
+            <cor:Single Name="ChildTopPercent" Single="0" />
+
+            <IntRangedValue Name="SelectedIndex" Value="0"/>
+            <IntRangedValue Name="SelectedIndexVirtual" Value="0"/>
+            <lib:Item Name="SelectedItem" Item="[Folder.SelectedChild]"/>
+
+            <FormLayoutInput Name="ChildScrollerLayoutInput" Left="ChildBG,0,20" Right="ChildBG,1,-20" Top="ChildBG,0,20" Bottom="ChildBG,1,-20" />
+
+            <GridLayout Name="ChildGridLayout" Orientation="Horizontal" AllowWrap="true" Repeat="Always" RepeatGap="50" Columns="0" Rows="0" Spacing="0,0" MajorAlignment="Center" MinorAlignment="Center" />
+
+            <FormLayoutInput Name="TitlePanelSplitLayoutInput" Left="TitleBG,0,20" Right="TitleBG,1,-20" Top="TitleBG,0" Bottom="TitleBG,1" />
+            <FormLayoutInput Name="InfoPanelSplitLayoutInput" Left="InfoBG,0,20" Right="InfoBG,1,-10" Top="InfoBG,0" Bottom="InfoBG,1"/>
+
+            <FormLayoutInput Name="TitlePanelCombinedLayoutInput" Left="TitleInfoBG,0,20" Right="TitleInfoBG,1,-20" Top="TitleInfoBG,0,2" />
+            <FormLayoutInput Name="InfoPanelCombinedLayoutInput" Left="TitleInfoBG,0,20" Right="TitleInfoBG,1,-10" Bottom="TitleInfoBG,1,-2"/>
+
+            <FormLayoutInput Name="TitleBGLayoutInput" Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,0"/>
+            <FormLayoutInput Name="InfoBGLayoutInput" Left="Parent,0" Right="Parent,1" Top="Parent,1" Bottom="Parent,1"/>
+            <FormLayoutInput Name="TitleInfoTopBGLayoutInput" Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,0"/>
+            <FormLayoutInput Name="TitleInfoBottomBGLayoutInput" Left="Parent,0" Right="Parent,1" Top="Parent,1" Bottom="Parent,1"/>
+
+            <FormLayoutInput Name="ChildBGSplitLayoutInput" Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1"/>
+            <FormLayoutInput Name="ChildBGTopLayoutInput" Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1"/>
+            <FormLayoutInput Name="ChildBGBottomLayoutInput" Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1"/>
+            <FormLayoutInput Name="ChildBGOffLayoutInput" Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1"/>
+
+          <FormLayoutInput Name="ItemTitleSplitLayoutInput" Horizontal="Center" Vertical="Center" />
+          <FormLayoutInput Name="ItemLogoSplitLayoutInput" Horizontal="Center" Vertical="Center" />
+          <FormLayoutInput Name="ItemTitleCombinedLayoutInput" Horizontal="Center" Vertical="Near" />
+          <FormLayoutInput Name="ItemLogoCombinedLayoutInput" Horizontal="Center" Vertical="Near" />
+          <FormLayoutInput Name="ItemThumbArtLayoutInput" Horizontal="Far" Vertical="Center" />
+
+            <FormLayoutInput Name="FullDetailsSplitLayoutInput" Horizontal="Center" Vertical="Center" />
+            <FormLayoutInput Name="FullDetailsCombinedLayoutInput" Horizontal="Center" Vertical="Far" />
+
+            <FormLayoutInput Name="GlowTopSplitLayoutInput" Left="TitleBG,0" Right="TitleBG,1" Top="TitleBG,0,1" Bottom="TitleBG,0,35"/>
+            <FormLayoutInput Name="GlowBottomSplitLayoutInput" Left="InfoBG,0" Right="InfoBG,1" Top="InfoBG,1,-35" Bottom="InfoBG,1,-1"/>
+
+            <FormLayoutInput Name="GlowTopCombinedLayoutInput" Left="TitleInfoBG,0" Right="TitleInfoBG,1" Top="TitleInfoBG,0,1" Bottom="TitleInfoBG,0,35"/>
+            <FormLayoutInput Name="GlowBottomCombinedLayoutInput" Left="TitleInfoBG,0" Right="TitleInfoBG,1" Top="TitleInfoBG,1,-35" Bottom="TitleInfoBG,1,-1"/>
+
+          <!--Logo/ClearArt Layouts-->
+          <FormLayoutInput Name="LogoLayoutSplitInput" Left="TitleBG,0,20" Right="TitleBG,1,-20" Top="TitleBG,0" Bottom="TitleBG,1" />
+          <FormLayoutInput Name="LogoLayoutCombinedInput" Left="TitleInfoBG,0,20" Right="TitleInfoBG,1,-20" Bottom="TitleInfoBG,1,-30" />
+          <FormLayoutInput Name="LogoLayoutBottomInput" Left="TitleInfoBG,0,20" Right="TitleInfoBG,1,-20" Top="TitleInfoBG,0" Bottom="TitleInfoBG,1,-30" />
+          <FormLayoutInput Name="LogoLayoutOffInput" Left="Parent,-.7" Top="Parent,0.07"  />
+          
+            <Timer Name="FocusViewTimer" AutoRepeat="false" Interval="500" />
+
+            <Inset Name="ActualGrow" Inset="0,0,0,0" />
+            <Vector3 Name="FakeCenterPoint" Vector3=".5,.5,.5" />
+
+            <cor:Int32 Name="Startup" />
+        </Locals>
+
+        <Rules>
+            <!-- Live Layout -->
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Poster">
+                <Actions>
+                    <Set Target="[Config.AllowLiveLayout]" Value="true" />
+                    <Set Target="[Config.LiveLayoutLeftRightLabel]" Value="" />
+                    <Set Target="[Config.LiveLayoutFwdRewLabel]" Value="" />
+                    <Set Target="[Config.LiveLayoutPgUpDownLabel]" Value="[Application.LocalStrings.#ThumbSizeDispPref!cor:String]" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Poster">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Config.LiveLayoutUpDownLabel]" Value="[Application.LocalStrings.#RootPosterTopLabel!cor:String]" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Poster">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Config.LiveLayoutUpDownLabel]" Value="[Application.LocalStrings.#ChildPosterTopLabel!cor:String]" />
+                </Actions>
+            </Condition>
+
+            <Changed Source="[Config.LayoutUpCommand.Invoked]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Poster" />
+                    <Equality Source="[Config.RootPosterTop]" ConditionOp="GreaterThan" Value="0" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildPanel.Visible]" Value="false" ExclusiveApply="false" />
+                    <Set Target="[Config.RootPosterTop]" Value="[Config.RootPosterTop]">
+                        <Transformer>
+                            <MathTransformer SubtractInt="1" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[ChildPanel.Visible]" Value="true" ExclusiveApply="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.LayoutDownCommand.Invoked]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Poster" />
+                    <Equality Source="[Config.RootPosterTop]" ConditionOp="LessThan" Value="100" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildPanel.Visible]" Value="false" ExclusiveApply="false" />
+                    <Set Target="[Config.RootPosterTop]" Value="[Config.RootPosterTop]">
+                        <Transformer>
+                            <MathTransformer AddInt="1" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[ChildPanel.Visible]" Value="true" ExclusiveApply="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.LayoutUpCommand.Invoked]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Poster" />
+                    <Equality Source="[Config.ChildPosterTop]" ConditionOp="GreaterThan" Value="0" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildPanel.Visible]" Value="false" ExclusiveApply="false" />
+                    <Set Target="[Config.ChildPosterTop]" Value="[Config.ChildPosterTop]">
+                        <Transformer>
+                            <MathTransformer SubtractInt="1" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[ChildPanel.Visible]" Value="true" ExclusiveApply="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.LayoutDownCommand.Invoked]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Poster" />
+                    <Equality Source="[Config.ChildPosterTop]" ConditionOp="LessThan" Value="100" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildPanel.Visible]" Value="false" ExclusiveApply="false" />
+                    <Set Target="[Config.ChildPosterTop]" Value="[Config.ChildPosterTop]">
+                        <Transformer>
+                            <MathTransformer AddInt="1" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[ChildPanel.Visible]" Value="true" ExclusiveApply="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.LayoutPgUpCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Poster" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Folder.DisplayPrefs.IncreaseThumbSize]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.LayoutPgDownCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Poster" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Folder.DisplayPrefs.DecreaseThumbSize]"/>
+                </Actions>
+            </Changed>
+
+            <!-- Shortcut Handlers -->
+            <Changed Source="[SkipBackCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[ChildSD.PageUp]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[SkipForwardCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[ChildSD.PageDown]" />
+                </Actions>
+            </Changed>
+
+            <!-- Grid Reference Size -->
+            <Changed Source="[Folder.ActualThumbSize.Value]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.CalcActualReferenceSize]" thumbSize="[Folder.ActualThumbSize.Value]" showLabel="[Folder.DisplayPrefs.ShowLabels.Value]" labelHeight="global://ss:SdI_PosterLabelHeight" coverArtAdj="[Config.CoverArtAdjustment]" ResultTarget="[ChildGridLayout.ReferenceSize]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Folder.DisplayPrefs.ShowLabels.Value]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.CalcActualReferenceSize]" thumbSize="[Folder.ActualThumbSize.Value]" showLabel="[Folder.DisplayPrefs.ShowLabels.Value]" labelHeight="global://ss:SdI_PosterLabelHeight" coverArtAdj="[Config.CoverArtAdjustment]" ResultTarget="[ChildGridLayout.ReferenceSize]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.ThumbSpacing]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.CalcActualThumbSpacing]" spacing="[Config.ThumbSpacing]" coverArtAdj="[Config.CoverArtAdjustment]" ResultTarget="[ChildGridLayout.Spacing]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.CoverArtAdjustment]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.CalcActualThumbSpacing]" spacing="[Config.ThumbSpacing]" coverArtAdj="[Config.CoverArtAdjustment]" ResultTarget="[ChildGridLayout.Spacing]" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.CalcActualReferenceSize]" thumbSize="[Folder.ActualThumbSize.Value]" showLabel="[Folder.DisplayPrefs.ShowLabels.Value]" labelHeight="global://ss:SdI_PosterLabelHeight" coverArtAdj="[Config.CoverArtAdjustment]" ResultTarget="[ChildGridLayout.ReferenceSize]" />
+                </Actions>
+            </Changed>
+
+            <!-- Thumb Rotation -->
+            <Condition Source="[Config.PosterRotation]" ConditionOp="Equals" SourceValue="None">
+                <Actions>
+                    <Set Target="[ChildScrollerLayoutInput.Right.Percent]" Value="1" />
+                    <Set Target="[ChildScrollerLayoutInput.Right.Offset]" Value="-20" />
+                    <Set Target="[ChildScroller.CenterPointPercent]" Value=".5,.5,.5" />
+                    <Set Target="[ChildScroller.Rotation]" Value="0deg;0,0,0" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.PosterRotation]" ConditionOp="Equals" SourceValue="To Back">
+                <Actions>
+                    <Set Target="[ChildScrollerLayoutInput.Right.Percent]" Value="1" />
+                    <Set Target="[ChildScrollerLayoutInput.Right.Offset]" Value="-20" />
+                    <Set Target="[ChildScroller.CenterPointPercent]" Value=".5,.5,.5" />
+                    <Set Target="[ChildScroller.Rotation]" Value="-30deg;1,0,0" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.PosterRotation]" ConditionOp="Equals" SourceValue="To Right">
+                <Actions>
+                    <Set Target="[ChildScrollerLayoutInput.Right.Percent]" Value="1.3" />
+                    <Set Target="[ChildScrollerLayoutInput.Right.Offset]" Value="0" />
+                    <Set Target="[ChildScroller.CenterPointPercent]" Value="0,.5,.5" />
+                    <Set Target="[ChildScroller.Rotation]" Value="-30deg;0,1,0" />
+                </Actions>
+            </Condition>
+
+            <Changed Source="[Config.SelThumbGrow]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.CalcActualGrow]" thumbSize="[Folder.ActualThumbSize.Value]" growPct="[Config.SelThumbGrow]" centerPointPct="[FakeCenterPoint]" absolute="true" ResultTarget="[ActualGrow]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Folder.ActualThumbSize.Value]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.CalcActualGrow]" thumbSize="[Folder.ActualThumbSize.Value]" growPct="[Config.SelThumbGrow]" centerPointPct="[FakeCenterPoint]" absolute="true" ResultTarget="[ActualGrow]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.DisplayPrefs.VerticalScroll.Value]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.PosterRotation]" ConditionOp="Equals" Value="To Back" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildSD.BeginPadding]" Value="[ActualGrow.Top]">
+                        <Transformer>
+                            <MathTransformer Multiply="3.5" Type="Int32" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[ChildSD.EndPadding]" Value="[ActualGrow.Bottom]" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.DisplayPrefs.VerticalScroll.Value]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.PosterRotation]" ConditionOp="NotEquals" Value="To Back" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildSD.BeginPadding]" Value="[ActualGrow.Top]" />
+                    <Set Target="[ChildSD.EndPadding]" Value="[ActualGrow.Bottom]" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.DisplayPrefs.VerticalScroll.Value]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.PosterRotation]" ConditionOp="Equals" Value="To Right" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildSD.BeginPadding]" Value="[ActualGrow.Left]" />
+                    <Set Target="[ChildSD.EndPadding]" Value="[ActualGrow.Right]">
+                        <Transformer>
+                            <MathTransformer Multiply="3.5" Type="Int32" />
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.DisplayPrefs.VerticalScroll.Value]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.PosterRotation]" ConditionOp="NotEquals" Value="To Right" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildSD.BeginPadding]" Value="[ActualGrow.Left]" />
+                    <Set Target="[ChildSD.EndPadding]" Value="[ActualGrow.Right]" />
+                </Actions>
+            </Rule>
+
+            <!-- Scroll Speed -->
+            <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Fast">
+                <Actions>
+                    <Invoke Target="[ChildItemRepeater.DetachAnimation]" type="Move" />
+                    <Invoke Target="[ChildItemRepeater.AttachAnimation]" animation="animation://anim:ScrollFast" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Medium">
+                <Actions>
+                    <Invoke Target="[ChildItemRepeater.DetachAnimation]" type="Move" />
+                    <Invoke Target="[ChildItemRepeater.AttachAnimation]" animation="animation://anim:ScrollMedium" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Slow">
+                <Actions>
+                    <Invoke Target="[ChildItemRepeater.DetachAnimation]" type="Move" />
+                    <Invoke Target="[ChildItemRepeater.AttachAnimation]" animation="animation://anim:ScrollSlow" />
+                </Actions>
+            </Condition>
+
+            <!-- Panel Sizes/Layouts -->
+            <Default Target="[TitleBGLayoutInput.Bottom.Offset]" Value="global://ss:SdI_TitlePanelHeight" />
+            <Default Target="[TitleInfoTopBGLayoutInput.Bottom.Offset]" Value="global://ss:SdI_TitleInfoPanelHeight" />
+            <Default Target="[ChildBGSplitLayoutInput.Top.Offset]" Value="global://ss:SdI_TitlePanelHeight" />
+            <Default Target="[ChildBGTopLayoutInput.Top.Offset]" Value="global://ss:SdI_TitleInfoPanelHeight" />
+
+            <Rule>
+                <Actions>
+                    <Invoke Target="[Utility.Negate]" number="global://ss:SdI_InfoPanelHeight" ResultTarget="[InfoBGLayoutInput.Top.Offset]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.Negate]" number="global://ss:SdI_TitleInfoPanelHeight" ResultTarget="[TitleInfoBottomBGLayoutInput.Top.Offset]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.Negate]" number="global://ss:SdI_InfoPanelHeight" ResultTarget="[ChildBGSplitLayoutInput.Bottom.Offset]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.Negate]" number="global://ss:SdI_TitleInfoPanelHeight" ResultTarget="[ChildBGBottomLayoutInput.Bottom.Offset]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                </Actions>
+            </Rule>
+
+            <Changed Source="[Config.RootPosterTop]" InitialEvaluate="true" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.PosterRotation]" ConditionOp="NotEquals" Value="To Back" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPercent]" Value="[Config.RootPosterTop!cor:Single]">
+                        <Transformer>
+                            <MathTransformer Divide="100" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[ChildTopPercent]" Value="[Config.RootPosterTop!cor:Single]">
+                        <Transformer>
+                            <MathTransformer Divide="100" />
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.RootPosterTop]" InitialEvaluate="true" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.PosterRotation]" ConditionOp="Equals" Value="To Back" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPercent]" Value="[Config.RootPosterTop!cor:Single]">
+                        <Transformer>
+                            <MathTransformer Divide="100" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[ChildTopPercent]" Value="[Config.RootPosterTop!cor:Single]">
+                        <Transformer>
+                            <MathTransformer Divide="100" Subtract=".08" />
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.ChildPosterTop]" InitialEvaluate="true" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.PosterRotation]" ConditionOp="NotEquals" Value="To Back" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPercent]" Value="[Config.ChildPosterTop!cor:Single]">
+                        <Transformer>
+                            <MathTransformer Divide="100" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[ChildTopPercent]" Value="[Config.ChildPosterTop!cor:Single]">
+                        <Transformer>
+                            <MathTransformer Divide="100" />
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.ChildPosterTop]" InitialEvaluate="true" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.PosterRotation]" ConditionOp="Equals" Value="To Back" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPercent]" Value="[Config.ChildPosterTop!cor:Single]">
+                        <Transformer>
+                            <MathTransformer Divide="100" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[ChildTopPercent]" Value="[Config.ChildPosterTop!cor:Single]">
+                        <Transformer>
+                            <MathTransformer Divide="100" Subtract=".08" />
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Changed>
+
+            <Binding Source="[TopPercent]" Target="[TitleBGLayoutInput.Top.Percent]" />
+            <Binding Source="[TopPercent]" Target="[TitleBGLayoutInput.Bottom.Percent]" />
+            <Binding Source="[TopPercent]" Target="[TitleInfoTopBGLayoutInput.Top.Percent]" />
+            <Binding Source="[TopPercent]" Target="[TitleInfoTopBGLayoutInput.Bottom.Percent]" />
+            <Binding Source="[ChildTopPercent]" Target="[ChildBGSplitLayoutInput.Top.Percent]" />
+            <Binding Source="[ChildTopPercent]" Target="[ChildBGTopLayoutInput.Top.Percent]" />
+            <Binding Source="[ChildTopPercent]" Target="[ChildBGBottomLayoutInput.Top.Percent]" />
+            <Binding Source="[ChildTopPercent]" Target="[ChildBGOffLayoutInput.Top.Percent]" />
+
+            <Condition Source="[Config.FolderSelectedInfoStyle]" ConditionOp="Equals" SourceValue="Split">
+                <Actions>
+                    <Set Target="[TitleBG.Visible]" Value="true" />
+                  <Set Target="[ClearArtPanel.LayoutInput]" Value="[LogoLayoutSplitInput]" />
+                  <Set Target="[ThumbArtPanel.LayoutInput]" Value="[LogoLayoutSplitInput]" />
+                  <Set Target="[LogoPanel.LayoutInput]" Value="[LogoLayoutSplitInput]" />
+                    <Set Target="[InfoBG.Visible]" Value="true" />
+                    <Set Target="[TitlePanel.LayoutInput]" Value="[TitlePanelSplitLayoutInput]" />
+                    <Set Target="[InfoPanel.LayoutInput]" Value="[InfoPanelSplitLayoutInput]" />
+                    <Set Target="[ItemTitle.LayoutInput]" Value="[ItemTitleSplitLayoutInput]" />
+                    <Set Target="[FullDetailsPanel.LayoutInput]" Value="[FullDetailsSplitLayoutInput]" />
+                    <Set Target="[FullDetailsPanel.VerticalAlign]" Value="Center" />
+                    <Set Target="[TitlePanel.Visible]" Value="true" />
+                    <Set Target="[InfoPanel.Visible]" Value="true" />
+                    <Set Target="[ChildBG.LayoutInput]" Value="[ChildBGSplitLayoutInput]" />
+                    <Set Target="[GlowTop.LayoutInput]" Value="[GlowTopSplitLayoutInput]" />
+                    <Set Target="[GlowBottom.LayoutInput]" Value="[GlowBottomSplitLayoutInput]" />
+                    <Set Target="[GlowTop.Visible]" Value="true" />
+                    <Set Target="[GlowBottom.Visible]" Value="true" />
+                    <Set Target="[TitleInfoBG.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.FolderSelectedInfoStyle]" ConditionOp="Equals" SourceValue="Top">
+                <Actions>
+                    <Set Target="[TitleInfoBG.Visible]" Value="true" />
+                  <Set Target="[LogoPanel.LayoutInput]" Value="[LogoLayoutCombinedInput]" />
+                  <Set Target="[ClearArtPanel.LayoutInput]" Value="[LogoLayoutCombinedInput]" />
+                  <Set Target="[ThumbArtPanel.LayoutInput]" Value="[LogoLayoutCombinedInput]" />
+                    <Set Target="[TitleInfoBG.LayoutInput]" Value="[TitleInfoTopBGLayoutInput]" />
+                    <Set Target="[TitlePanel.LayoutInput]" Value="[TitlePanelCombinedLayoutInput]" />
+                    <Set Target="[InfoPanel.LayoutInput]" Value="[InfoPanelCombinedLayoutInput]" />
+                    <Set Target="[ItemTitle.LayoutInput]" Value="[ItemTitleCombinedLayoutInput]" />
+                    <Set Target="[FullDetailsPanel.LayoutInput]" Value="[FullDetailsCombinedLayoutInput]" />
+                    <Set Target="[FullDetailsPanel.VerticalAlign]" Value="Far" />
+                    <Set Target="[TitlePanel.Visible]" Value="true" />
+                    <Set Target="[InfoPanel.Visible]" Value="true" />
+                    <Set Target="[ChildBG.LayoutInput]" Value="[ChildBGTopLayoutInput]" />
+                    <Set Target="[GlowTop.LayoutInput]" Value="[GlowTopCombinedLayoutInput]" />
+                    <Set Target="[GlowTop.Visible]" Value="true" />
+                    <Set Target="[GlowBottom.Visible]" Value="false" />
+                    <Set Target="[TitleBG.Visible]" Value="false" />
+                    <Set Target="[InfoBG.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.FolderSelectedInfoStyle]" ConditionOp="Equals" SourceValue="Bottom">
+                <Actions>
+                    <Set Target="[TitleInfoBG.Visible]" Value="true" />
+                  <Set Target="[LogoPanel.LayoutInput]" Value="[LogoLayoutBottomInput]" />
+                  <Set Target="[ClearArtPanel.LayoutInput]" Value="[LogoLayoutBottomInput]" />
+                  <Set Target="[ThumbArtPanel.LayoutInput]" Value="[LogoLayoutBottomInput]" />
+                    <Set Target="[TitleInfoBG.LayoutInput]" Value="[TitleInfoBottomBGLayoutInput]" />
+                    <Set Target="[TitlePanel.LayoutInput]" Value="[TitlePanelCombinedLayoutInput]" />
+                    <Set Target="[InfoPanel.LayoutInput]" Value="[InfoPanelCombinedLayoutInput]" />
+                    <Set Target="[ItemTitle.LayoutInput]" Value="[ItemTitleCombinedLayoutInput]" />
+                    <Set Target="[FullDetailsPanel.LayoutInput]" Value="[FullDetailsCombinedLayoutInput]" />
+                    <Set Target="[FullDetailsPanel.VerticalAlign]" Value="Far" />
+                    <Set Target="[TitlePanel.Visible]" Value="true" />
+                    <Set Target="[InfoPanel.Visible]" Value="true" />
+                    <Set Target="[ChildBG.LayoutInput]" Value="[ChildBGBottomLayoutInput]" />
+                    <Set Target="[GlowBottom.LayoutInput]" Value="[GlowBottomCombinedLayoutInput]" />
+                    <Set Target="[GlowBottom.Visible]" Value="true" />
+                    <Set Target="[GlowTop.Visible]" Value="false" />
+                    <Set Target="[TitleBG.Visible]" Value="false" />
+                    <Set Target="[InfoBG.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.FolderSelectedInfoStyle]" ConditionOp="Equals" SourceValue="Off">
+                <Actions>
+                    <Set Target="[ChildBG.LayoutInput]" Value="[ChildBGOffLayoutInput]" />
+                    <Set Target="[TitlePanel.Visible]" Value="false" />
+                  <Set Target="[LogoPanel.LayoutInput]" Value="[LogoLayoutOffInput]" />
+                  <Set Target="[ClearArtPanel.LayoutInput]" Value="[LogoLayoutOffInput]" />
+                  <Set Target="[ThumbArtPanel.LayoutInput]" Value="[LogoLayoutOffInput]" />
+                    <Set Target="[InfoPanel.Visible]" Value="false" />
+                    <Set Target="[TitleInfoBG.Visible]" Value="false" />
+                    <Set Target="[GlowTop.Visible]" Value="false" />
+                    <Set Target="[GlowBottom.Visible]" Value="false" />
+                    <Set Target="[TitleBG.Visible]" Value="false" />
+                    <Set Target="[InfoBG.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.FolderShowThumbsBG]" ConditionOp="Equals" SourceValue="false" Target="[ChildBG.Alpha]" Value="0" />
+
+            <Condition Source="[Config.FolderWrapItemList]" ConditionOp="Equals" SourceValue="Always" Target="[ChildGridLayout.Repeat]" Value="Always" />
+            <Condition Source="[Config.FolderWrapItemList]" ConditionOp="Equals" SourceValue="Never" Target="[ChildGridLayout.Repeat]" Value="Never" />
+            <Condition Source="[Config.FolderWrapItemList]" ConditionOp="Equals" SourceValue="When Too Big" Target="[ChildGridLayout.Repeat]" Value="WhenTooBig" />
+
+            <!-- Scroll Handlers -->
+            <Default Target="[ChildScrollingHandler.ScrollingData]" Value="[ChildSD]"/>
+            <Default Target="[ChildSD.Repeater]" Value="[ChildItemRepeater]"/>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[Folder.DisplayPrefs.VerticalScroll.Value]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildScroller.Orientation]" Value="Vertical" />
+                    <Set Target="[ChildScroller.FadeSize]" Value="-20" />
+                    <Set Target="[ChildScroller.Navigation]" Value="ContainVertical,RememberFocus" />
+                    <Set Target="[ChildGridLayout.Orientation]" Value="Horizontal" />
+                    <Set Target="[ChildScrollerLayoutInput.Vertical]" Value="Fill" />
+                    <Set Target="[ChildScrollerLayoutInput.Horizontal]" Value="Center" />
+                </Actions>
+            </Rule>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[Folder.DisplayPrefs.VerticalScroll.Value]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ChildScroller.Orientation]" Value="Horizontal" />
+                    <Set Target="[ChildScroller.FadeSize]" Value="-40" />
+                    <Set Target="[ChildScroller.Navigation]" Value="ContainHorizontal,RememberFocus" />
+                    <Set Target="[ChildGridLayout.Orientation]" Value="Vertical" />
+                    <Set Target="[ChildScrollerLayoutInput.Vertical]" Value="Center" />
+                    <Set Target="[ChildScrollerLayoutInput.Horizontal]" Value="Fill" />
+                </Actions>
+            </Rule>
+
+            <!-- Type Select -->
+            <Changed Source="[Folder.JILShift]">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ChildSD.Scroll]"  amount="[Folder.JILShift]"/>
+                </Actions>
+            </Changed>
+
+            <!-- Selection/Info Display -->
+            <Binding Source="[SelectedIndex.Value]" Target="[Folder.SelectedChildIndex]" />
+
+            <Changed Source="[Folder.SelectedChildIndex]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality ConditionOp="NotEquals" Source="[Folder.SelectedChildIndex]" Value="-1" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[InfoTimer.Enabled]" Value="false" ExclusiveApply="false" />
+                    <Set Target="[InfoTimer.Enabled]" Value="true"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[InfoTimer.Tick]">
+                <Actions>
+                    <Set Target="[SelectedItem]" Value="[Folder.SelectedChild]" />
+                </Actions>
+            </Changed>
+
+            <!-- List Sort/Group Change -->
+            <Changed Source="[Folder.Children]" InitialEvaluate="false">
+                <Actions>
+                    <Set Target="[ChildItemRepeater.Source]" Value="[Folder.Children]" />
+                    <Set Target="[SelectedIndex.Value]" Value="0" />
+                </Actions>
+            </Changed>
+
+            <!-- Backdrop Content -->
+            <Binding Source="[SelectedItem]" Target="[Backdrop.Item]" />
+
+          <!-- Conditions for Title or Fanart views-->
+          <Binding Source="[SelectedItem.Name]" Target="[ItemTitle.Content]" />
+          <Binding Source="[SelectedItem.LogoImage]" Target="[Logo.Content]" />
+          <Binding Source="[SelectedItem.ArtImage]" Target="[ClearArt.Content]" />
+          <Binding Source="[SelectedItem.ThumbnailImage]" Target="[ThumbArt.Content]" />
+
+          <!--Logos-->
+          <Rule>
+            <Conditions>
+              <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="Logo" />
+              <Equality Source="[SelectedItem.HasLogoImage]" ConditionOp="Equals" Value="true" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+            </Conditions>
+            <Actions>
+              <Set Target="[LogoPanel.Visible]" Value="true" />
+              <Set Target="[ItemTitle.Visible]" Value="false" />
+              <Set Target="[ClearArtPanel.Visible]" Value="false" />
+              <Set Target="[ThumbArtPanel.Visible]" Value="false" />
+            </Actions>
+          </Rule>
+
+          <Rule>
+            <Conditions>
+              <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="Logo" />
+              <Equality Source="[SelectedItem.HasLogoImage]" ConditionOp="Equals" Value="false" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+            </Conditions>
+            <Actions>
+              <Set Target="[LogoPanel.Visible]" Value="false" />
+              <Set Target="[ItemTitle.Visible]" Value="true" />
+              <Set Target="[ClearArtPanel.Visible]" Value="false" />
+              <Set Target="[ThumbArtPanel.Visible]" Value="false" />
+            </Actions>
+          </Rule>
+
+          <!--ClearArt-->
+          <Rule>
+            <Conditions>
+              <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="ClearArt" />
+              <Equality Source="[SelectedItem.HasArtImage]" ConditionOp="Equals" Value="true" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+            </Conditions>
+            <Actions>
+              <Set Target="[ClearArtPanel.Visible]" Value="true" />
+              <Set Target="[ItemTitle.Visible]" Value="false" />
+              <Set Target="[LogoPanel.Visible]" Value="false" />
+              <Set Target="[ThumbArtPanel.Visible]" Value="false" />
+            </Actions>
+          </Rule>
+
+          <Rule>
+            <Conditions>
+              <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="ClearArt" />
+              <Equality Source="[SelectedItem.HasArtImage]" ConditionOp="Equals" Value="false" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+            </Conditions>
+            <Actions>
+              <Set Target="[ClearArtPanel.Visible]" Value="false" />
+              <Set Target="[ItemTitle.Visible]" Value="true" />
+              <Set Target="[LogoPanel.Visible]" Value="false" />
+              <Set Target="[ThumbArtPanel.Visible]" Value="false" />
+            </Actions>
+          </Rule>
+
+          <!--ThumbNailArt-->
+          <Rule>
+            <Conditions>
+              <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="ThumbArt" />
+              <Equality Source="[SelectedItem.HasThumbnailImage]" ConditionOp ="Equals" Value="True"/>
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+            </Conditions>
+            <Actions>
+              <Set Target="[ThumbArtPanel.Visible]" Value="true" />
+              <Set Target="[ItemTitle.Visible]" Value="false" />
+              <Set Target="[ClearArtPanel.Visible]" Value="false" />
+              <Set Target="[LogoPanel.Visible]" Value="false" />
+            </Actions>
+          </Rule>
+
+          <Rule>
+            <Conditions>
+              <Equality Source="[Config.FolderClearLogosList]" ConditionOp="Equals" Value="ThumbArt" />
+              <Equality Source="[SelectedItem.HasThumbnailImage]" ConditionOp ="Equals" Value="false"/>
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+              <Equality Source="[SelectedItem.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+            </Conditions>
+            <Actions>
+              <Set Target="[ThumbArtPanel.Visible]" Value="false" />
+              <Set Target="[ItemTitle.Visible]" Value="true" />
+              <Set Target="[ClearArtPanel.Visible]" Value="false" />
+              <Set Target="[LogoPanel.Visible]" Value="false" />
+            </Actions>
+          </Rule>
+
+            <!-- Info Panel -->
+            <Binding Source="[SelectedItem]" Target="[FullDetailsPanel.Item]" />
+
+            <!-- Initial Focus -->
+            <Rule>
+                <Conditions>
+                    <Equality Source="[Application.NavigatingForward]" Value="true"/>
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[FocusViewTimer.Start]" />
+                </Actions>
+            </Rule>
+
+            <Changed Source="[FocusViewTimer.Tick]">
+                <Actions>
+                    <Invoke Target="[ChildScroller.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <!-- First Unwatched -->
+            <!-- The below default dummy rule is used to navigate to the proper first item.  Using a generic rule or changed does not work the first time -->
+            <Default Target="[Startup]" Value="1" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.NavigatingForward]" Value="true"/>
+                    <Equality Source="[Folder.Children.Count]" ConditionOp="GreaterThan" Value="0" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ChildItemRepeater.NavigateIntoIndex]" index="[Folder.FirstUnwatchedIndex]"/>
+                </Actions>
+            </Default>
+        </Rules>
+
+        <Content>
+            <Panel Layout="Form">
+                <Children>
+
+                    <!-- Layout for Child pages -->
+                    <Panel Name="ChildPanel" Layout="Form">
+                        <Children>
+                            <!-- List of Items -->
+                            <Scroller Name="ChildScroller" Orientation="Vertical" ScrollingData="[ChildSD]" FadeAmount="1" FadeSize="-40" LayoutInput="[ChildScrollerLayoutInput]" Navigation="ContainHorizontal,RememberFocus" Rotation="0deg;0,0,0" CenterPointPercent=".5,.5,.5">
+                                <Children>
+                                    <Repeater Name="ChildItemRepeater" Source="[Folder.Children]" Layout="[ChildGridLayout]">
+                                        <Content>
+                                            <pi:PosterItemButton
+                                                Application="[Application]"
+                                                Config="[Config]"
+                                                Utility="[Utility]"
+                                                Index="[RepeatedItemIndex]"
+                                                Folder="[Folder]"
+                                                ThumbRotation="[Config.PosterRotation]"
+                                                Item="[RepeatedItem!lib:Item]"
+                                                SelectedIndex="[SelectedIndex]"
+                                                SelectedIndexVirtual="[SelectedIndexVirtual]"/>
+                                        </Content>
+                                    </Repeater>
+                                </Children>
+                            </Scroller>
+
+                            <!-- Background Glow -->
+                            <ui:GlowTop Name="GlowTop" VFadeSize="35" HFadeSize="200" LayoutInput="[GlowTopSplitLayoutInput]" Visible="false" />
+                            <ui:GlowBottom Name="GlowBottom" VFadeSize="35" HFadeSize="200" LayoutInput="[GlowBottomSplitLayoutInput]" Visible="false" />
+
+                          <!-- Title -->
+                          <Panel Name="TitlePanel" Layout="Form" LayoutInput="[ItemTitleSplitLayoutInput]" Visible="false">
+                            <Children>
+                              <st:MarqueeText Name="ItemTitle" Color="color://ss:SdC_ItemTitle" Font="font://ss:SdF_ItemTitle" LayoutInput="[ItemTitleSplitLayoutInput]" />
+                            </Children>
+                          </Panel>
+
+                          <!-- Logo Panel -->
+                          <Panel Name="LogoPanel" Layout="Form" LayoutInput="[ItemLogoSplitLayoutInput]" MaximumSize="0,100" Visible="false">
+                            <Children>
+                              <Graphic Name="Logo" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" MaximumSize="300,100" />
+                            </Children>
+                          </Panel>
+
+                          <!-- ClearArt Panel -->
+                          <Panel Name="ClearArtPanel" Layout="Form" LayoutInput="[ItemLogoSplitLayoutInput]" MaximumSize="0,200" Visible="false">
+                            <Children>
+                              <Graphic Name="ClearArt" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" MaximumSize="0,200" />
+                            </Children>
+                          </Panel>
+
+                          <!-- ThumbArt Panel -->
+                          <Panel Name="ThumbArtPanel" Layout="Form" LayoutInput="[ItemThumbArtLayoutInput]" MaximumSize="0,200" Visible="false">
+                            <Children>
+                              <Graphic Name="ThumbArt" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" MaximumSize="0,200" />
+                            </Children>
+                          </Panel>
+                            
+                            <!-- Info -->
+                            <Panel Name="InfoPanel" Layout="Form" LayoutInput="[InfoPanelSplitLayoutInput]" Visible="false">
+                                <Children>
+                                    <md:FullDetailsPanel Name="FullDetailsPanel" Application="[Application]" Config="[Config]" Item="[SelectedItem]" VerticalAlign="Far" LayoutInput="[FullDetailsSplitLayoutInput]" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Background Fill -->
+                            <ui:PanelSecondary Name="TitleBG" LayoutInput="[TitleBGLayoutInput]" Visible="false"/>
+                            <ui:PanelSecondary Name="InfoBG" LayoutInput="[InfoBGLayoutInput]" Visible="false"/>
+                            <ui:PanelSecondary Name="TitleInfoBG" LayoutInput="[TitleInfoTopBGLayoutInput]" Visible="false"/>
+                            <ui:PanelPrimary Name="ChildBG" LayoutInput="[ChildBGSplitLayoutInput]" Alpha="1" />
+                        </Children>
+                    </Panel>
+
+                    <!-- Backdrop -->
+                    <bd:Backdrop Name="Backdrop" Application="[Application]" Config="[Config]" Item="[SelectedItem]" Rotate="[Config.FolderRotateBackdrops]" IsRoot="[Folder.IsRoot]">
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Top="Parent,0" Bottom="Parent,1" Right="Parent,1"/>
+                        </LayoutInput>
+                    </bd:Backdrop>
+                </Children>
+            </Panel>
+        </Content>
+
+    </UI>
+
+</Mcml>

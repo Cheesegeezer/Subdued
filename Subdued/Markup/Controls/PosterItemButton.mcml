@@ -1,0 +1,1038 @@
+﻿<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:cor="assembly://MsCorLib/System"
+      xmlns:a="assembly://MediaBrowser/MediaBrowser"
+	  xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:ib="resx://MediaBrowser/MediaBrowser.Resources/ItemButton"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:ui="resx://Subdued/Subdued.Resources/UI"
+	  xmlns:anim="resx://Subdued/Subdued.Resources/Animations"
+	  xmlns:ss="file://Subdued_Styles.mcml"
+	  xmlns:me="Me">
+
+    <UI Name="PosterItemButton" BaseUI="ib:ItemButton">
+        <Properties>
+            <IntRangedValue Name="SelectedIndex" IntRangedValue="$Required"/>
+            <IntRangedValue Name="SelectedIndexVirtual" IntRangedValue="$Required" />
+            <lib:FolderModel Name="Folder" FolderModel="$Required"/>
+            <Index Name="Index" Index="$Required"/>
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+            <sd:AppUtil Name="Utility" AppUtil="$Required" />
+            <lib:Item Name="PosterItem" Item="null" />
+            <cor:Boolean Name="RAL" Boolean="false" />
+            <cor:Boolean Name="GraduatedAlpha" Boolean="false" />
+            <cor:Boolean Name="GraduatedSize" Boolean="false" />
+            <cor:String Name="ThumbRotation" String="None" />
+        </Properties>
+
+        <Locals>
+            <lib:SizeRef Name="RALThumbSize" Value="0,200" />
+            <cor:Boolean Name="ShowParentPoster" Boolean="false" />
+
+            <Vector3 Name="ThumbGrow" Vector3="1,1,1" />
+            <Inset Name="ActualGrow" Inset="0,0,0,0" />
+
+            <cor:Int32 Name="CoverArtAdjNeg" Int32="0" />
+
+            <cor:Int32 Name="FocusFrameAdj" Int32="0" />
+            <cor:Int32 Name="FocusFrameAdjNeg" Int32="0" />
+
+            <Inset Name="PosterDimMargins" Inset="0,0,0,0" />
+            <Inset Name="ShowLabelsMargins" Inset="0,0,0,0" />
+
+            <cor:Boolean Name="WatchedIndicator" Boolean="true" />
+
+            <Rotation Name="PosterRotation" Rotation="0deg;0,0,0" />
+
+            <AnchorLayoutInput Name="PosterLabelLayoutInput" Left="PosterPanel,0" Right="PosterPanel,1" Top="Parent,1" Bottom="Parent,1" />
+
+            <AnchorLayoutInput Name="PosterFocusLayoutInput" Left="Poster,0,0" Right="Poster,1,0" Top="Poster,0,0" Bottom="Poster,1,0" ContributesToWidth="false" ContributesToHeight="false" />
+
+            <AnchorLayoutInput Name="NewAnchorLayout" Right="Poster,1,-4" Top="Poster,0,4" ContributesToWidth="false" ContributesToHeight="false" />
+            <AnchorLayoutInput Name="HDAnchorLayoutBL" Left="Poster,0,4" Bottom="Poster,1,-4" ContributesToWidth="false" ContributesToHeight="false" />
+            <AnchorLayoutInput Name="HDAnchorLayoutBR" Right="Poster,1,-4" Bottom="Poster,1,-4" ContributesToWidth="false" ContributesToHeight="false" />
+            <AnchorLayoutInput Name="WatchedAnchorLayoutTL" Left="Poster,0,4" Top="Poster,0,4" ContributesToWidth="false" ContributesToHeight="false" />
+            <AnchorLayoutInput Name="WatchedAnchorLayoutBL" Left="Poster,0,4" Bottom="Poster,1,-4" ContributesToWidth="false" ContributesToHeight="false" />
+            <AnchorLayoutInput Name="WatchedAnchorLayoutBR" Right="Poster,1,-4" Bottom="Poster,1,-4" ContributesToWidth="false" ContributesToHeight="false" />
+
+            <Animation Name="MoveFast" Type="Move">
+                <Keyframes>
+                    <PositionKeyframe Time="0" RelativeTo="Current" Interpolation="Log" />
+                    <PositionKeyframe Time="0.15" RelativeTo="Final" Interpolation="Log" />
+                </Keyframes>
+            </Animation>
+
+            <Animation Name="MoveMedium" Type="Move">
+                <Keyframes>
+                    <PositionKeyframe Time="0" RelativeTo="Current" Interpolation="Log" />
+                    <PositionKeyframe Time="0.3" RelativeTo="Final" Interpolation="Log" />
+                </Keyframes>
+            </Animation>
+
+            <Animation Name="MoveSlow" Type="Move">
+                <Keyframes>
+                    <PositionKeyframe Time="0" RelativeTo="Current" Interpolation="Log" />
+                    <PositionKeyframe Time="0.5" RelativeTo="Final" Interpolation="Log" />
+                </Keyframes>
+            </Animation>
+        </Locals>
+
+        <Rules>
+            <Default Target="[Input.KeyInteractive]" Value="true" />
+            <Default Target="[Input.MakeTopmostOnFocus]" Value="true" />
+
+            <Rule>
+                <Actions>
+                    <Invoke Target="[Utility.GetOverlayImage]" imageType="hd" ResultTarget="[HDImage.Content]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.GetOverlayImage]" imageType="watched" ResultTarget="[WatchedImage.Content]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.GetOverlayImage]" imageType="unwatched" ResultTarget="[UnwatchedImage.Content]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.GetOverlayImage]" imageType="unwatched" ResultTarget="[UnwatchedCountImageL.Content]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.GetOverlayImage]" imageType="unwatched" ResultTarget="[UnwatchedCountImageR.Content]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.GetOverlayImage]" imageType="new_bg" ResultTarget="[NewBG.Content]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.GetOverlayImage]" imageType="new_fg" ResultTarget="[NewFG.Content]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                </Actions>
+            </Rule>
+
+            <Condition Source="[Config.ColorizePosterOverlayImages]" ConditionOp="Equals" SourceValue="true">
+                <Actions>
+                    <Set Target="[NewBG.ColorFilter]" Value="color://ss:SdC_NewItemIconBGColorFilter" />
+                    <Set Target="[NewFG.ColorFilter]" Value="color://ss:SdC_NewItemIconTextColorFilter" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.WatchedIndicatorPosition]" ConditionOp="Equals" SourceValue="Top-Left">
+                <Actions>
+                    <Set Target="[HD.LayoutInput]" Value="[HDAnchorLayoutBL]" />
+                    <Set Target="[Watched.LayoutInput]" Value="[WatchedAnchorLayoutTL]" />
+                    <Set Target="[Unwatched.LayoutInput]" Value="[WatchedAnchorLayoutTL]" />
+                    <Set Target="[UnwatchedCountL.LayoutInput]" Value="[WatchedAnchorLayoutTL]" />
+                    <Set Target="[UnwatchedCountR.LayoutInput]" Value="[WatchedAnchorLayoutTL]" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.WatchedIndicatorPosition]" ConditionOp="Equals" SourceValue="Bottom-Left">
+                <Actions>
+                    <Set Target="[HD.LayoutInput]" Value="[HDAnchorLayoutBR]" />
+                    <Set Target="[Watched.LayoutInput]" Value="[WatchedAnchorLayoutBL]" />
+                    <Set Target="[Unwatched.LayoutInput]" Value="[WatchedAnchorLayoutBL]" />
+                    <Set Target="[UnwatchedCountL.LayoutInput]" Value="[WatchedAnchorLayoutBL]" />
+                    <Set Target="[UnwatchedCountR.LayoutInput]" Value="[WatchedAnchorLayoutBL]" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.WatchedIndicatorPosition]" ConditionOp="Equals" SourceValue="Bottom-Right">
+                <Actions>
+                    <Set Target="[HD.LayoutInput]" Value="[HDAnchorLayoutBL]" />
+                    <Set Target="[Watched.LayoutInput]" Value="[WatchedAnchorLayoutBR]" />
+                    <Set Target="[Unwatched.LayoutInput]" Value="[WatchedAnchorLayoutBR]" />
+                    <Set Target="[UnwatchedCountL.LayoutInput]" Value="[WatchedAnchorLayoutBR]" />
+                    <Set Target="[UnwatchedCountR.LayoutInput]" Value="[WatchedAnchorLayoutBR]" />
+                </Actions>
+            </Condition>
+
+            <!-- RAL -->
+            <Changed Source="[Config.RootEHSThumbSize]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.BuildSize]" width="0" height="[Config.RootEHSThumbSize]" ResultTarget="[RALThumbSize.Value]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="NotEquals" Value="Song" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowParentPoster]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="Equals" Value="Song" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowParentPoster]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+                    <Equality Source="[Config.RootEHSEpisodeThumbs]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowParentPoster]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+                    <Equality Source="[Config.RootEHSEpisodeThumbs]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowParentPoster]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[ShowParentPoster]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[PosterItem]" Value="[Item]" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[ShowParentPoster]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[PosterItem]" Value="[Item.PhysicalParent]" />
+                </Actions>
+            </Rule>
+
+            <!-- Focus Frame -->
+            <Changed Source="[Config.CoverArtAdjustment]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.Negate]" number="[Config.CoverArtAdjustment]" ResultTarget="[CoverArtAdjNeg]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.CalcFocusFrameAdj]" frameSize="global://ss:SdI_FocusFrameSize" coverArtAdj="[Config.CoverArtAdjustment]" inverse="false" ResultTarget="[FocusFrameAdj]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.CalcFocusFrameAdj]" frameSize="global://ss:SdI_FocusFrameSize" coverArtAdj="[Config.CoverArtAdjustment]" inverse="true" ResultTarget="[FocusFrameAdjNeg]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.BuildInset]" left="[Config.CoverArtAdjustment]" top="[Config.CoverArtAdjustment]" right="[Config.CoverArtAdjustment]" bottom="[Config.CoverArtAdjustment]" ResultTarget="[PosterDimMargins]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.CalcShowLabelsMargins]" labelHeight="global://ss:SdI_PosterLabelHeight" coverArtAdj="[Config.CoverArtAdjustment]" ResultTarget="[ShowLabelsMargins]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Set Target="[PosterLabelLayoutInput.Left.Offset]" Value="[Config.CoverArtAdjustment]" ExclusiveApply="false" />
+                    <Set Target="[PosterLabelLayoutInput.Right.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false" />
+                    <Set Target="[PosterLabelLayoutInput.Top.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false">
+                        <Transformer>
+                            <MathTransformer SubtractInt="global://ss:SdI_PosterLabelHeight" />
+                        </Transformer>
+                    </Set>
+                    <Set Target="[PosterLabelLayoutInput.Bottom.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false" />
+                </Actions>
+            </Changed>
+
+            <Default Target="[PosterFocus.FadeSize]" Value="global://ss:SdI_FocusFrameSize">
+                <Transformer>
+                    <MathTransformer Type="Single" />
+                </Transformer>
+            </Default>
+
+            <Default Target="[PosterFocusH.FadeSize]" Value="global://ss:SdI_FocusFrameSize">
+                <Transformer>
+                    <MathTransformer Type="Single" />
+                </Transformer>
+            </Default>
+
+            <Binding Source="[FocusFrameAdj]" Target="[PosterFocusLayoutInput.Right.Offset]" />
+            <Binding Source="[FocusFrameAdj]" Target="[PosterFocusLayoutInput.Bottom.Offset]" />
+            <Binding Source="[FocusFrameAdjNeg]" Target="[PosterFocusLayoutInput.Left.Offset]" />
+            <Binding Source="[FocusFrameAdjNeg]" Target="[PosterFocusLayoutInput.Top.Offset]" />
+            <Binding Source="[PosterDimMargins]" Target="[PosterDim.Margins]" />
+
+            <!-- Thumb Rotation -->
+            <Rule>
+                <Conditions>
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="None" />
+                    <Equality Source="[Folder.DisplayPrefs.ShowLabels.Value]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Poster.CenterPointPercent]" Value=".5,.5,.5" />
+                    <Set Target="[PosterDim.CenterPointPercent]" Value=".5,.5,.5" />
+                    <Set Target="[PosterFocus.CenterPointPercent]" Value=".5,.5,.5" />
+                    <Set Target="[PosterItemPanel.CenterPointPercent]" Value=".5,.5,0" />
+                    <Set Target="[PosterRotation]" Value="0deg;0,0,0" />
+                </Actions>
+            </Rule>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="None" />
+                    <Equality Source="[Folder.DisplayPrefs.ShowLabels.Value]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Poster.CenterPointPercent]" Value=".5,1,.5" />
+                    <Set Target="[PosterDim.CenterPointPercent]" Value=".5,1,.5" />
+                    <Set Target="[PosterFocus.CenterPointPercent]" Value=".5,1,.5" />
+                    <Set Target="[PosterItemPanel.CenterPointPercent]" Value=".5,1,0" />
+                    <Set Target="[PosterRotation]" Value="0deg;0,0,0" />
+                </Actions>
+            </Rule>
+
+            <Condition Source="[ThumbRotation]" ConditionOp="Equals" SourceValue="To Back">
+                <Actions>
+                    <Set Target="[Poster.CenterPointPercent]" Value=".5,1,.5" />
+                    <Set Target="[PosterDim.CenterPointPercent]" Value=".5,1,.5" />
+                    <Set Target="[PosterFocus.CenterPointPercent]" Value=".5,1,.5" />
+                    <Set Target="[PosterItemPanel.CenterPointPercent]" Value=".5,1,0" />
+                    <Set Target="[PosterRotation]" Value="30deg;1,0,0" />
+                </Actions>
+            </Condition>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="To Right" />
+                    <Equality Source="[Folder.DisplayPrefs.ShowLabels.Value]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Poster.CenterPointPercent]" Value="0,.5,.5" />
+                    <Set Target="[PosterDim.CenterPointPercent]" Value="0,.5,.5" />
+                    <Set Target="[PosterFocus.CenterPointPercent]" Value="0,.5,.5" />
+                    <Set Target="[PosterItemPanel.CenterPointPercent]" Value="0,.5,0" />
+                    <Set Target="[PosterRotation]" Value="30deg;0,1,0" />
+                </Actions>
+            </Rule>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="To Right" />
+                    <Equality Source="[Folder.DisplayPrefs.ShowLabels.Value]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Poster.CenterPointPercent]" Value="0,1,.5" />
+                    <Set Target="[PosterDim.CenterPointPercent]" Value="0,1,.5" />
+                    <Set Target="[PosterFocus.CenterPointPercent]" Value="0,1,.5" />
+                    <Set Target="[PosterItemPanel.CenterPointPercent]" Value="0,.5,0" />
+                    <Set Target="[PosterRotation]" Value="30deg;0,1,0" />
+                </Actions>
+            </Rule>
+
+            <!-- Animations -->
+            <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Fast">
+                <Actions>
+                    <Invoke Target="[New.DetachAnimation]" type="Move" />
+                    <Invoke Target="[New.AttachAnimation]" animation="[MoveFast]" />
+                    <Invoke Target="[HD.DetachAnimation]" type="Move" />
+                    <Invoke Target="[HD.AttachAnimation]" animation="[MoveFast]" />
+                    <Invoke Target="[Watched.DetachAnimation]" type="Move" />
+                    <Invoke Target="[Watched.AttachAnimation]" animation="[MoveFast]" />
+                    <Invoke Target="[Unwatched.DetachAnimation]" type="Move" />
+                    <Invoke Target="[Unwatched.AttachAnimation]" animation="[MoveFast]" />
+                    <Invoke Target="[UnwatchedCountL.DetachAnimation]" type="Move" />
+                    <Invoke Target="[UnwatchedCountL.AttachAnimation]" animation="[MoveFast]" />
+                    <Invoke Target="[UnwatchedCountR.DetachAnimation]" type="Move" />
+                    <Invoke Target="[UnwatchedCountR.AttachAnimation]" animation="[MoveFast]" />
+                    <Invoke Target="[PosterLabel.DetachAnimation]" type="Move" />
+                    <Invoke Target="[PosterLabel.AttachAnimation]" animation="[MoveFast]" />
+                    <Invoke Target="[Poster.DetachAnimation]" type="Scale" />
+                    <Invoke Target="[Poster.AttachAnimation]" animation="animation://anim:ScaleFast" />
+                    <Invoke Target="[PosterDim.DetachAnimation]" type="Scale" />
+                    <Invoke Target="[PosterDim.AttachAnimation]" animation="animation://anim:ScaleFast" />
+                    <Invoke Target="[PosterFocus.DetachAnimation]" type="Scale" />
+                    <Invoke Target="[PosterFocus.AttachAnimation]" animation="animation://anim:ScaleFast" />
+                    <Invoke Target="[PosterDim.DetachAnimation]" type="Alpha" />
+                    <Invoke Target="[PosterDim.AttachAnimation]" animation="animation://anim:AlphaFast" />
+                    <Invoke Target="[PosterFocus.DetachAnimation]" type="Alpha" />
+                    <Invoke Target="[PosterFocus.AttachAnimation]" animation="animation://anim:AlphaFast" />
+                    <Invoke Target="[PosterItemPanel.DetachAnimation]" type="Alpha" />
+                    <Invoke Target="[PosterItemPanel.AttachAnimation]" animation="animation://anim:AlphaFast" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Medium">
+                <Actions>
+                    <Invoke Target="[New.DetachAnimation]" type="Move" />
+                    <Invoke Target="[New.AttachAnimation]" animation="[MoveMedium]" />
+                    <Invoke Target="[HD.DetachAnimation]" type="Move" />
+                    <Invoke Target="[HD.AttachAnimation]" animation="[MoveMedium]" />
+                    <Invoke Target="[Watched.DetachAnimation]" type="Move" />
+                    <Invoke Target="[Watched.AttachAnimation]" animation="[MoveMedium]" />
+                    <Invoke Target="[Unwatched.DetachAnimation]" type="Move" />
+                    <Invoke Target="[Unwatched.AttachAnimation]" animation="[MoveMedium]" />
+                    <Invoke Target="[UnwatchedCountL.DetachAnimation]" type="Move" />
+                    <Invoke Target="[UnwatchedCountL.AttachAnimation]" animation="[MoveMedium]" />
+                    <Invoke Target="[UnwatchedCountR.DetachAnimation]" type="Move" />
+                    <Invoke Target="[UnwatchedCountR.AttachAnimation]" animation="[MoveMedium]" />
+                    <Invoke Target="[PosterLabel.DetachAnimation]" type="Move" />
+                    <Invoke Target="[PosterLabel.AttachAnimation]" animation="[MoveMedium]" />
+                    <Invoke Target="[Poster.DetachAnimation]" type="Scale" />
+                    <Invoke Target="[Poster.AttachAnimation]" animation="animation://anim:ScaleMedium" />
+                    <Invoke Target="[PosterDim.DetachAnimation]" type="Scale" />
+                    <Invoke Target="[PosterDim.AttachAnimation]" animation="animation://anim:ScaleMedium" />
+                    <Invoke Target="[PosterFocus.DetachAnimation]" type="Scale" />
+                    <Invoke Target="[PosterFocus.AttachAnimation]" animation="animation://anim:ScaleMedium" />
+                    <Invoke Target="[PosterDim.DetachAnimation]" type="Alpha" />
+                    <Invoke Target="[PosterDim.AttachAnimation]" animation="animation://anim:AlphaMedium" />
+                    <Invoke Target="[PosterFocus.DetachAnimation]" type="Alpha" />
+                    <Invoke Target="[PosterFocus.AttachAnimation]" animation="animation://anim:AlphaMedium" />
+                    <Invoke Target="[PosterItemPanel.DetachAnimation]" type="Alpha" />
+                    <Invoke Target="[PosterItemPanel.AttachAnimation]" animation="animation://anim:AlphaMedium" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Slow">
+                <Actions>
+                    <Invoke Target="[New.DetachAnimation]" type="Move" />
+                    <Invoke Target="[New.AttachAnimation]" animation="[MoveSlow]" />
+                    <Invoke Target="[HD.DetachAnimation]" type="Move" />
+                    <Invoke Target="[HD.AttachAnimation]" animation="[MoveSlow]" />
+                    <Invoke Target="[Watched.DetachAnimation]" type="Move" />
+                    <Invoke Target="[Watched.AttachAnimation]" animation="[MoveSlow]" />
+                    <Invoke Target="[Unwatched.DetachAnimation]" type="Move" />
+                    <Invoke Target="[Unwatched.AttachAnimation]" animation="[MoveSlow]" />
+                    <Invoke Target="[UnwatchedCountL.DetachAnimation]" type="Move" />
+                    <Invoke Target="[UnwatchedCountL.AttachAnimation]" animation="[MoveSlow]" />
+                    <Invoke Target="[UnwatchedCountR.DetachAnimation]" type="Move" />
+                    <Invoke Target="[UnwatchedCountR.AttachAnimation]" animation="[MoveSlow]" />
+                    <Invoke Target="[PosterLabel.DetachAnimation]" type="Move" />
+                    <Invoke Target="[PosterLabel.AttachAnimation]" animation="[MoveSlow]" />
+                    <Invoke Target="[Poster.DetachAnimation]" type="Scale" />
+                    <Invoke Target="[Poster.AttachAnimation]" animation="animation://anim:ScaleSlow" />
+                    <Invoke Target="[PosterDim.DetachAnimation]" type="Scale" />
+                    <Invoke Target="[PosterDim.AttachAnimation]" animation="animation://anim:ScaleSlow" />
+                    <Invoke Target="[PosterFocus.DetachAnimation]" type="Scale" />
+                    <Invoke Target="[PosterFocus.AttachAnimation]" animation="animation://anim:ScaleSlow" />
+                    <Invoke Target="[PosterDim.DetachAnimation]" type="Alpha" />
+                    <Invoke Target="[PosterDim.AttachAnimation]" animation="animation://anim:AlphaSlow" />
+                    <Invoke Target="[PosterFocus.DetachAnimation]" type="Alpha" />
+                    <Invoke Target="[PosterFocus.AttachAnimation]" animation="animation://anim:AlphaSlow" />
+                    <Invoke Target="[PosterItemPanel.DetachAnimation]" type="Alpha" />
+                    <Invoke Target="[PosterItemPanel.AttachAnimation]" animation="animation://anim:AlphaSlow" />
+                </Actions>
+            </Condition>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.ScrollSpeed]" ConditionOp="Equals" Value="Fast" />
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="To Back" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[PosterItemPanel.DetachAnimation]" type="Rotate" />
+                    <Invoke Target="[PosterItemPanel.AttachAnimation]" animation="animation://anim:RotateFastX" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.ScrollSpeed]" ConditionOp="Equals" Value="Medium" />
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="To Back" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[PosterItemPanel.DetachAnimation]" type="Rotate" />
+                    <Invoke Target="[PosterItemPanel.AttachAnimation]" animation="animation://anim:RotateMediumX" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.ScrollSpeed]" ConditionOp="Equals" Value="Slow" />
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="To Back" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[PosterItemPanel.DetachAnimation]" type="Rotate" />
+                    <Invoke Target="[PosterItemPanel.AttachAnimation]" animation="animation://anim:RotateSlowX" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.ScrollSpeed]" ConditionOp="Equals" Value="Fast" />
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="To Right" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[PosterItemPanel.DetachAnimation]" type="Rotate" />
+                    <Invoke Target="[PosterItemPanel.AttachAnimation]" animation="animation://anim:RotateFastY" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.ScrollSpeed]" ConditionOp="Equals" Value="Medium" />
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="To Right" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[PosterItemPanel.DetachAnimation]" type="Rotate" />
+                    <Invoke Target="[PosterItemPanel.AttachAnimation]" animation="animation://anim:RotateMediumY" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.ScrollSpeed]" ConditionOp="Equals" Value="Slow" />
+                    <Equality Source="[ThumbRotation]" ConditionOp="Equals" Value="To Right" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[PosterItemPanel.DetachAnimation]" type="Rotate" />
+                    <Invoke Target="[PosterItemPanel.AttachAnimation]" animation="animation://anim:RotateSlowY" />
+                </Actions>
+            </Rule>
+
+            <Binding Source="[PosterItem.HasPreferredImage]" Target="[NoPosterLabel.Visible]">
+                <Conditions>
+                    <Equality Source="[PosterItem]" ConditionOp="NotEquals" Value="null" />
+                </Conditions>
+                <Transformer>
+                    <BooleanTransformer Inverse="true"/>
+                </Transformer>
+            </Binding>
+
+            <Binding Source="[RALThumbSize.Value]" Target="[PosterItem.PreferredImageSmallSize]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[PosterItem]" ConditionOp="NotEquals" Value="null" />
+                </Conditions>
+            </Binding>
+
+            <Binding Source="[Folder.ActualThumbSize.Value]" Target="[PosterItem.PreferredImageSmallSize]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[PosterItem]" ConditionOp="NotEquals" Value="null" />
+                </Conditions>
+            </Binding>
+
+            <Binding Source="[PosterItem.PreferredImageSmall]" Target="[Poster.Content]">
+                <Conditions>
+                    <Equality Source="[PosterItem]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Input.KeyFocus]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+
+            <Binding Source="[PosterItem.PreferredImage]" Target="[Poster.Content]">
+                <Conditions>
+                    <Equality Source="[PosterItem]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Input.KeyFocus]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+            </Binding>
+
+            <Binding Source="[Folder.DisplayPrefs.UseBanner.Value]" Target="[Item.PreferBanner]">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+
+            <Changed Source="[Config.SelThumbGrow]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.CalcActualGrowPct]" growPct="[Config.SelThumbGrow]" ResultTarget="[ThumbGrow]" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.CalcActualGrow]" thumbSize="[Folder.ActualThumbSize.Value]" growPct="[Config.SelThumbGrow]" centerPointPct="[Poster.CenterPointPercent]" absolute="false" ResultTarget="[ActualGrow]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.RootEHSThumbSize]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.CalcRALActualGrowPct]" thumbSize="[Config.RootEHSThumbSize]" avail="20" ResultTarget="[ThumbGrow]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Folder.ActualThumbSize.Value]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.CalcActualGrow]" thumbSize="[Folder.ActualThumbSize.Value]" growPct="[Config.SelThumbGrow]" centerPointPct="[Poster.CenterPointPercent]" absolute="false" ResultTarget="[ActualGrow]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Poster.CenterPointPercent]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.CalcActualGrow]" thumbSize="[Folder.ActualThumbSize.Value]" growPct="[Config.SelThumbGrow]" centerPointPct="[Poster.CenterPointPercent]" absolute="false" ResultTarget="[ActualGrow]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <!-- TODO: RAL Actual Grow (?) -->
+
+            <Changed Source="[SelectedIndexVirtual.Value]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.GetUnselectedAlpha]" index="[Index.Value]" selected="[SelectedIndexVirtual.Value]" fullAlpha="1" stepAlpha="[Config.UnselectedThumbAlpha]" graduated="[GraduatedAlpha]" ResultTarget="[PosterItemPanel.Alpha]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="true">
+                <Actions>
+                    <Set Target="[SelectedIndex.Value]" Value="[Index.SourceValue]"/>
+                    <Set Target="[SelectedIndexVirtual.Value]" Value="[Index.Value]"/>
+                    <Set Target="[Application.CurrentItem]" Value="[Item]" />
+                    <Set Target="[Poster.Scale]" Value="[ThumbGrow]" />
+                    <Set Target="[PosterDim.Scale]" Value="[ThumbGrow]" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Right]" numberB="[CoverArtAdjNeg]" ResultTarget="[NewAnchorLayout.Right.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Top]" numberB="[Config.CoverArtAdjustment]" ResultTarget="[NewAnchorLayout.Top.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Left]" numberB="[Config.CoverArtAdjustment]" ResultTarget="[HDAnchorLayoutBL.Left.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Bottom]" numberB="[CoverArtAdjNeg]" ResultTarget="[HDAnchorLayoutBL.Bottom.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Right]" numberB="[CoverArtAdjNeg]" ResultTarget="[HDAnchorLayoutBR.Right.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Bottom]" numberB="[CoverArtAdjNeg]" ResultTarget="[HDAnchorLayoutBR.Bottom.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Left]" numberB="[Config.CoverArtAdjustment]" ResultTarget="[WatchedAnchorLayoutTL.Left.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Top]" numberB="[Config.CoverArtAdjustment]" ResultTarget="[WatchedAnchorLayoutTL.Top.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Left]" numberB="[Config.CoverArtAdjustment]" ResultTarget="[WatchedAnchorLayoutBL.Left.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Bottom]" numberB="[CoverArtAdjNeg]" ResultTarget="[WatchedAnchorLayoutBL.Bottom.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Right]" numberB="[CoverArtAdjNeg]" ResultTarget="[WatchedAnchorLayoutBR.Right.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Invoke Target="[Utility.Add2]" numberA="[ActualGrow.Bottom]" numberB="[CoverArtAdjNeg]" ResultTarget="[WatchedAnchorLayoutBR.Bottom.Offset]" ExclusiveApply="false" InvokePolicy="Synchronous" />
+                    <Set Target="[PosterItemPanel.Rotation]" Value="[PosterRotation]" />
+                    <Set Target="[UnwatchedCountTextL.ColorFilter]" Value="color://ss:SdC_DetailsItemSel" />
+                    <Set Target="[UnwatchedCountTextR.ColorFilter]" Value="color://ss:SdC_DetailsItemSel" />
+                    <Set Target="[PosterLabelText.ColorFilter]" Value="color://ss:SdC_DetailsItemSel" />
+                </Actions>
+            </Condition>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Input.KeyFocus]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.ColorizePosterOverlayImages]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[HDImage.ColorFilter]" Value="color://ss:SdC_DetailsItemSel" />
+                    <Set Target="[WatchedImage.ColorFilter]" Value="color://ss:SdC_DetailsItemSel" />
+                    <Set Target="[UnwatchedImage.ColorFilter]" Value="color://ss:SdC_DetailsItemSel" />
+                    <Set Target="[UnwatchedCountImageL.ColorFilter]" Value="color://ss:SdC_DetailsItemSel" />
+                    <Set Target="[UnwatchedCountImageR.ColorFilter]" Value="color://ss:SdC_DetailsItemSel" />
+                </Actions>
+            </Rule>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="false">
+                <Actions>
+                    <Set Target="[NewAnchorLayout.Right.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false" />
+                    <Set Target="[NewAnchorLayout.Top.Offset]" Value="[Config.CoverArtAdjustment]" ExclusiveApply="false" />
+                    <Set Target="[HDAnchorLayoutBL.Left.Offset]" Value="[Config.CoverArtAdjustment]" ExclusiveApply="false" />
+                    <Set Target="[HDAnchorLayoutBL.Bottom.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false" />
+                    <Set Target="[HDAnchorLayoutBR.Right.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false" />
+                    <Set Target="[HDAnchorLayoutBR.Bottom.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false" />
+                    <Set Target="[WatchedAnchorLayoutTL.Left.Offset]" Value="[Config.CoverArtAdjustment]" ExclusiveApply="false" />
+                    <Set Target="[WatchedAnchorLayoutTL.Top.Offset]" Value="[Config.CoverArtAdjustment]" ExclusiveApply="false" />
+                    <Set Target="[WatchedAnchorLayoutBL.Left.Offset]" Value="[Config.CoverArtAdjustment]" ExclusiveApply="false" />
+                    <Set Target="[WatchedAnchorLayoutBL.Bottom.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false" />
+                    <Set Target="[WatchedAnchorLayoutBR.Right.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false" />
+                    <Set Target="[WatchedAnchorLayoutBR.Bottom.Offset]" Value="[CoverArtAdjNeg]" ExclusiveApply="false" />
+                    <Set Target="[UnwatchedCountTextL.ColorFilter]" Value="color://ss:SdC_DetailsItem" />
+                    <Set Target="[UnwatchedCountTextR.ColorFilter]" Value="color://ss:SdC_DetailsItem" />
+                    <Set Target="[PosterLabelText.ColorFilter]" Value="color://ss:SdC_DetailsItem" />
+                </Actions>
+            </Condition>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Input.KeyFocus]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.ColorizePosterOverlayImages]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[HDImage.ColorFilter]" Value="color://ss:SdC_DetailsItem" />
+                    <Set Target="[WatchedImage.ColorFilter]" Value="color://ss:SdC_DetailsItem" />
+                    <Set Target="[UnwatchedImage.ColorFilter]" Value="color://ss:SdC_DetailsItem" />
+                    <Set Target="[UnwatchedCountImageL.ColorFilter]" Value="color://ss:SdC_DetailsItem" />
+                    <Set Target="[UnwatchedCountImageR.ColorFilter]" Value="color://ss:SdC_DetailsItem" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Input.KeyFocus]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.HideFocusFrame]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[PosterFocus.Alpha]" Value="1" />
+                    <Set Target="[PosterFocus.Scale]" Value="[ThumbGrow]" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[SelectedIndex.Value]" ConditionOp="NotEquals" Value="[Index.SourceValue]" />
+                    <Equality Source="[Application.Config.DimUnselectedPosters]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[PosterDim.Alpha]" Value="1" />
+                </Actions>
+            </Rule>
+
+            <Changed Source="[Utility.CurrentTopParent.NewestItems]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.CurrentTopParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.IsItemInList]" list="[Utility.CurrentTopParent.NewestItems]" item="[Item.BaseItem]" ResultTarget="[New.Visible]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.EnableNewItemIndicator]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.CurrentTopParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.IsItemInList]" list="[Utility.CurrentTopParent.NewestItems]" item="[Item.BaseItem]" ResultTarget="[New.Visible]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.FolderEnableNewItemIndicator]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.CurrentTopParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.IsItemInList]" list="[Utility.CurrentTopParent.NewestItems]" item="[Item.BaseItem]" ResultTarget="[New.Visible]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Item.HaveWatched]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.CurrentTopParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Utility.IsItemInList]" list="[Utility.CurrentTopParent.NewestItems]" item="[Item.BaseItem]" ResultTarget="[New.Visible]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.EnableNewItemIndicator]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.EnableNewItemIndicator]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[New.Visible]" Value="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.FolderEnableNewItemIndicator]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.FolderEnableNewItemIndicator]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[New.Visible]" Value="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Item.HaveWatched]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[New.Visible]" Value="false" />
+                </Actions>
+            </Changed>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.Config.ShowHDIndicatorOnPosters]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.IsHD]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[HD.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.RecentItemOption]" ConditionOp="NotEquals" Value="added" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[WatchedIndicator]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Application.RecentItemOption]" ConditionOp="Equals" Value="added" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[WatchedIndicator]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[WatchedIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.ShowWatchTickInPosterView]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableWatchedIndicators]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.IsPlayable]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Watched.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[WatchedIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.ShowWatchedTickOnFolders]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableWatchedIndicators]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.IsFolder]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Watched.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[WatchedIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.ShowUnwatchedIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableWatchedIndicators]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.IsPlayable]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.HaveWatched]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Unwatched.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[WatchedIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.ShowUnwatchedCount]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableWatchedIndicators]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.IsFolder]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.UnwatchedCountString]" ConditionOp="NotEquals" Value="" />
+                    <Equality Source="[Config.WatchedIndicatorPosition]" ConditionOp="Equals" Value="Bottom-Right" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[UnwatchedCountTextR.Content]" Value="[Item.UnwatchedCountString]" />
+                    <Set Target="[UnwatchedCountR.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[WatchedIndicator]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.ShowUnwatchedCount]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderEnableWatchedIndicators]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.IsFolder]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Item.UnwatchedCountString]" ConditionOp="NotEquals" Value="" />
+                    <Equality Source="[Config.WatchedIndicatorPosition]" ConditionOp="NotEquals" Value="Bottom-Right" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[UnwatchedCountTextL.Content]" Value="[Item.UnwatchedCountString]" />
+                    <Set Target="[UnwatchedCountL.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Binding Source="[Folder.DisplayPrefs.ShowLabels.Value]" Target="[PosterLabel.Visible]">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+
+            <Condition Source="[Config.FolderShowThumbsBG]" ConditionOp="Equals" SourceValue="true" Target="[PosterLabelBG.Alpha]" Value="0" />
+            <Condition Source="[Config.FolderShowThumbsBG]" ConditionOp="Equals" SourceValue="false" Target="[PosterLabelBG.Alpha]" Value="1" />
+
+            <Binding Source="[Folder.PhysicalParent.DisplayPrefs.ShowLabels.Value]" Target="[PosterLabel.Visible]">
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Folder.PhysicalParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Folder.PhysicalParent.DisplayPrefs]" ConditionOp="NotEquals" Value="null" />
+                </Conditions>
+            </Binding>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Folder.PhysicalParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Folder.PhysicalParent.DisplayPrefs]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Folder.PhysicalParent.DisplayPrefs.ShowLabels.Value]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[PosterPanel.Margins]" Value="[ShowLabelsMargins]" />
+                </Actions>
+            </Rule>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder.PhysicalParent.DisplayPrefs.ShowLabels.Value]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[PosterPanel.Margins]" Value="0,0,0,0" />
+                </Actions>
+            </Rule>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Folder.DisplayPrefs.ShowLabels.Value]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[PosterPanel.Margins]" Value="[ShowLabelsMargins]" />
+                </Actions>
+            </Rule>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[RAL]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Folder.DisplayPrefs.ShowLabels.Value]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[PosterPanel.Margins]" Value="0,0,0,0" />
+                </Actions>
+            </Rule>
+        </Rules>
+
+        <Content>
+            <Panel Name="PosterItemPanel" Rotation="0deg;0,0,0" CenterPointPercent=".5,.5,0" Alpha="1">
+                <Layout>
+                    <AnchorLayout SizeToHorizontalChildren="[RAL]" SizeToVerticalChildren="[RAL]" />
+                </Layout>
+                <Children>
+                    <Panel Name="PosterPanel" Layout="Anchor">
+                        <Children>
+                            <Clip Name="PosterDim" Orientation="Vertical" FadeAmount="1" FadeSize="3" Layout="Fill" Scale="1,1,1" CenterPointPercent=".5,.5,.5" Alpha="0">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Poster,0" Right="Poster,1" Top="Poster,0" Bottom="Poster,1" ContributesToWidth="false" ContributesToHeight="false" />
+                                </LayoutInput>
+                                <Children>
+                                    <Clip FadeAmount="1" FadeSize="3" Layout="Fill" Orientation="Horizontal">
+                                        <Children>
+                                            <ColorFill Content="color://ss:SdC_PosterDim" />
+                                        </Children>
+                                    </Clip>
+                                </Children>
+                            </Clip>
+                            <Panel Name="New" LayoutInput="[NewAnchorLayout]" Layout="Anchor" Visible="false">
+                                <Children>
+                                    <Graphic Name="NewFG" MaintainAspectRatio="true">
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="Parent,0" Top="Parent,0" />
+                                        </LayoutInput>
+                                    </Graphic>
+                                    <Graphic Name="NewBG" MaintainAspectRatio="true">
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="Parent,0" Top="Parent,0" />
+                                        </LayoutInput>
+                                    </Graphic>
+                                </Children>
+                            </Panel>
+                            <Panel Name="HD" LayoutInput="[HDAnchorLayoutBL]" Layout="Anchor" Visible="false">
+                                <Children>
+                                    <Graphic Name="HDImage" MaintainAspectRatio="true">
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="Parent,0" Top="Parent,0" />
+                                        </LayoutInput>
+                                    </Graphic>
+                                    <ui:RotatePanelPrimary>
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="HDImage,0" Right="HDImage,1" Top="HDImage,0" Bottom="HDImage,1" />
+                                        </LayoutInput>
+                                    </ui:RotatePanelPrimary>
+                                </Children>
+                            </Panel>
+                            <Panel Name="Watched" LayoutInput="[WatchedAnchorLayoutBR]" Layout="Anchor" Visible="false">
+                                <Children>
+                                    <Graphic Name="WatchedImage" MaintainAspectRatio="true">
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="Parent,0" Top="Parent,0" />
+                                        </LayoutInput>
+                                    </Graphic>
+                                    <ui:RotatePanelPrimary>
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="WatchedImage,0" Right="WatchedImage,1" Top="WatchedImage,0" Bottom="WatchedImage,1" />
+                                        </LayoutInput>
+                                    </ui:RotatePanelPrimary>
+                                </Children>
+                            </Panel>
+                            <Panel Name="Unwatched" LayoutInput="[WatchedAnchorLayoutBR]" Layout="Anchor" Visible="false">
+                                <Children>
+                                    <Graphic Name="UnwatchedImage" MaintainAspectRatio="true">
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="Parent,0" Top="Parent,0" />
+                                        </LayoutInput>
+                                    </Graphic>
+                                    <ui:RotatePanelPrimary>
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="UnwatchedImage,0" Right="UnwatchedImage,1" Top="UnwatchedImage,0" Bottom="UnwatchedImage,1" />
+                                        </LayoutInput>
+                                    </ui:RotatePanelPrimary>
+                                </Children>
+                            </Panel>
+                            <Panel Name="UnwatchedCountL" LayoutInput="[WatchedAnchorLayoutBR]" Layout="Anchor" Visible="false">
+                                <Children>
+                                    <Graphic Name="UnwatchedCountImageL" MaintainAspectRatio="true">
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="Parent,0" Vertical="Center" />
+                                        </LayoutInput>
+                                    </Graphic>
+                                    <Text Name="UnwatchedCountTextL" Content="[Item.UnwatchedCountString]" Font="font://ss:SdF_UnwatchedCount" Color="White" ColorFilter="color://ss:SdC_DetailsItem">
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Vertical="Center" Left="UnwatchedCountImageL,1,2" />
+                                        </LayoutInput>
+                                    </Text>
+                                    <ui:RotatePanelPrimary>
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Right="UnwatchedCountTextL,1,2" Left="UnwatchedCountImageL,0" Top="UnwatchedCountImageL,0" Bottom="UnwatchedCountImageL,1" />
+                                        </LayoutInput>
+                                    </ui:RotatePanelPrimary>
+                                </Children>
+                            </Panel>
+                            <Panel Name="UnwatchedCountR" LayoutInput="[WatchedAnchorLayoutBR]" Layout="Anchor" Visible="false">
+                                <Children>
+                                    <Graphic Name="UnwatchedCountImageR" MaintainAspectRatio="true">
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Right="Parent,1" Vertical="Center" />
+                                        </LayoutInput>
+                                    </Graphic>
+                                    <Text Name="UnwatchedCountTextR" Content="[Item.UnwatchedCountString]" Font="font://ss:SdF_UnwatchedCount" Color="White" ColorFilter="color://ss:SdC_DetailsItem" >
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Vertical="Center" Right="UnwatchedCountImageR,0,-2" />
+                                        </LayoutInput>
+                                    </Text>
+                                    <ui:RotatePanelPrimary>
+                                        <LayoutInput>
+                                            <AnchorLayoutInput Left="UnwatchedCountTextR,0,-2" Right="UnwatchedCountImageR,1" Top="UnwatchedCountImageR,0" Bottom="UnwatchedCountImageR,1" />
+                                        </LayoutInput>
+                                    </ui:RotatePanelPrimary>
+                                </Children>
+                            </Panel>
+                            <Text Name="NoPosterLabel" Content="[Item.Name]" WordWrap="true" Font="font://ss:SdF_PosterLabel" Color="color://ss:SdC_PosterLabel" Margins="10,10,10,10" Visible="false">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Poster,0" Right="Poster,1" Top="Poster,0" Bottom="Poster,1" Horizontal="Center" Vertical="Center" ContributesToWidth="false" ContributesToHeight="false" />
+                                </LayoutInput>
+                            </Text>
+                            <Graphic Name="Poster" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" Scale="1,1,1" CenterPointPercent=".5,.5,.5" />
+                            <Clip Name="PosterFocus" Orientation="Vertical" FadeAmount="1" Layout="Fill" LayoutInput="[PosterFocusLayoutInput]" Scale="1,1,1" CenterPointPercent=".5,.5,.5" Alpha="0">
+                                <Children>
+                                    <Clip Name="PosterFocusH" FadeAmount="1" Layout="Fill" Orientation="Horizontal">
+                                        <Children>
+                                            <ColorFill Content="color://ss:SdC_FocusFrame" />
+                                        </Children>
+                                    </Clip>
+                                </Children>
+                            </Clip>
+                        </Children>
+                    </Panel>
+                    <Panel Name="PosterLabel" Layout="Anchor" LayoutInput="[PosterLabelLayoutInput]" Visible="false">
+                        <Children>
+                            <Text Name="PosterLabelText" Content="[Item.Name]" WordWrap="false" Font="font://ss:SdF_PosterLabel" Color="White" ColorFilter="color://ss:SdC_DetailsItem" Margins="4,0,4,0" />
+                            <ui:RotatePanelPrimary Name="PosterLabelBG" Alpha="1">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1" />
+                                </LayoutInput>
+                            </ui:RotatePanelPrimary>
+                        </Children>
+                    </Panel>
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+</Mcml>

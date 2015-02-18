@@ -1,0 +1,1651 @@
+﻿    <Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:cor="assembly://MsCorLib/System"
+      xmlns:a="assembly://MediaBrowser/MediaBrowser"
+	  xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+	  xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+      xmlns:vm="resx://MediaBrowser/MediaBrowser.Resources/ViewMenu"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:ss="file://Subdued_Styles.mcml"
+	  xmlns:ui="resx://Subdued/Subdued.Resources/UI"
+	  xmlns:imb="resx://Subdued/Subdued.Resources/ImageButton"
+	  xmlns:cmd="resx://Subdued/Subdued.Resources/CommandButton"
+	  xmlns:me="Me">
+
+    <UI Name="UIConfig">
+        <Properties>
+            <a:Application Name="Application" Application="$Required"/>
+            <lib:FolderModel Name="Folder" FolderModel="$Required"/>
+            <sd:MyConfig Name="Config" MyConfig="$Required"/>
+            <Command Name="CloseCommand" Command="$Required" />
+            <Command Name="BackCommand" />
+            <Command Name="NullCommand" />
+        </Properties>
+
+        <Locals>
+            <Command Name="ConfigureCommand" />
+
+            <Command Name="LockConfigCommand" />
+            <Command Name="UnlockConfigCommand" />
+
+            <Command Name="DoCloseCommand" />
+
+            <Command Name="ShowViewCommand" />
+            <Command Name="HideViewCommand" />
+
+            <Command Name="ShowViewOptsCommand" />
+            <Command Name="HideViewOptsCommand" />
+            <Command Name="IncreaseThumbCommand" />
+            <Command Name="DecreaseThumbCommand" />
+
+            <Command Name="ShowEHSViewOptsCommand" />
+            <Command Name="HideEHSViewOptsCommand" />
+            <Command Name="IncreaseEHSHSizeCommand" />
+            <Command Name="DecreaseEHSHSizeCommand" />
+            <Command Name="IncreaseEHSThumbCommand" />
+            <Command Name="DecreaseEHSThumbCommand" />
+
+            <Command Name="ShowSortCommand" />
+            <Command Name="HideSortCommand" />
+
+            <Command Name="ShowGroupCommand" />
+            <Command Name="HideGroupCommand" />
+
+            <Command Name="ShowLayoutCommand" />
+            <Command Name="HideLayoutCommand" />
+
+            <Timer Name="RefocusViewTimer" AutoRepeat="false" Interval="250" />
+
+            <ShortcutHandler Name="BackHandler" Handle="true" Shortcut="Back" HandlerStage="Bubbled" Command="[BackCommand]"/>
+
+            <KeyHandler Name="LeftKey" Key="Left" Modifiers="None" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" Repeat="true" />
+            <KeyHandler Name="RightKey" Key="Right" Modifiers="None" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" Repeat="true" />
+            <KeyHandler Name="UpKey" Key="Up" Modifiers="None" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" Repeat="true" />
+            <KeyHandler Name="DownKey" Key="Down" Modifiers="None" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" Repeat="true" />
+            <KeyHandler Name="PgUpKey" Key="PageUp" Modifiers="None" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" Repeat="true" />
+            <KeyHandler Name="PgDownKey" Key="PageDown" Modifiers="None" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" Repeat="true" />
+
+            <ShortcutHandler Name="FastForward" Shortcut="FastForward" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" />
+            <ShortcutHandler Name="Rewind" Shortcut="Rewind" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" />
+            <ShortcutHandler Name="ChannelUp" Shortcut="ChannelUp" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" />
+            <ShortcutHandler Name="ChannelDown" Shortcut="ChannelDown" Command="[NullCommand]" Handle="false" HandlerStage="Bubbled" />
+
+            <BooleanChoice Name="FolderShowAsText" Value="[Config.FolderShowAsText]" />
+            <BooleanChoice Name="FolderShowBackdrop" Value="[Config.FolderShowBackdrop]" />
+            <BooleanChoice Name="FolderShowBackdropOverlay" Value="[Config.FolderShowBackdropOverlay]" />
+            <BooleanChoice Name="FolderRotateBackdrops" Value="[Config.FolderRotateBackdrops]" />
+            <BooleanChoice Name="FolderShowNPV" Value="[Config.FolderShowNPV]" />
+            <BooleanChoice Name="FolderShowTextBG" Value="[Config.FolderShowTextBG]" />
+            <BooleanChoice Name="FolderShowThumbsBG" Value="[Config.FolderShowThumbsBG]" />
+            <BooleanChoice Name="FolderShowTopPanel" Value="[Config.FolderShowTopPanel]" />
+            <BooleanChoice Name="FolderEnableWatchedIndicators" Value="[Config.FolderEnableWatchedIndicators]" />
+            <BooleanChoice Name="FolderEnableNewItemIndicator" Value="[Config.FolderEnableNewItemIndicator]" />
+          
+            <BooleanChoice Name="RootEHSShowInfo" Value="[Config.RootEHSShowInfo]" />
+            <BooleanChoice Name="RootEHSRALBackdrop" Value="[Config.RootEHSRALBackdrop]" />
+            <BooleanChoice Name="RootEHSEpisodeThumbs" Value="[Config.RootEHSEpisodeThumbs]" />
+
+            <Choice Name="FolderOrientation">
+                <Options>
+                    <cor:String String="Horizontal" />
+                    <cor:String String="Vertical" />
+                </Options>
+            </Choice>
+
+            <Choice Name="FolderWrapItemList">
+                <Options>
+                    <cor:String String="Never" />
+                    <cor:String String="When Too Big" />
+                    <cor:String String="Always" />
+                </Options>
+            </Choice>
+
+            <Choice Name="FolderInfoDisplay">
+                <Options>
+                    <cor:String String="Overview" />
+                    <cor:String String="Text List" />
+                    <cor:String String="Thumb List" />
+                </Options>
+            </Choice>
+
+          <Choice Name="FolderClearLogosList">
+            <Options>
+              <cor:String String="Logo"/>
+              <cor:String String="ClearArt" />
+              <cor:String String="ThumbArt" />
+              <cor:String String="Off" />
+            </Options>
+          </Choice>
+          
+            <Choice Name="FolderSelectedInfoStyle">
+                <Options>
+                    <cor:String String="Split" />
+                    <cor:String String="Top" />
+                    <cor:String String="Bottom" />
+                    <cor:String String="Off" />
+                </Options>
+            </Choice>
+        </Locals>
+
+        <Rules>
+            <Rule>
+                <Conditions>
+                    <Equality Source="[Application.Config.ShowConfigButton]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ViewStyleButton.Visible]" Value="false" />
+                    <Set Target="[ViewOptsButton.Visible]" Value="false" />
+                    <Set Target="[EHSViewOptsButton.Visible]" Value="false" />
+                    <Set Target="[SortButton.Visible]" Value="false" />
+                    <Set Target="[GroupButton.Visible]" Value="false" />
+                    <Set Target="[LayoutButton.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ViewStyleButton.Visible]" Value="false" />
+                    <Set Target="[ViewOptsButton.Visible]" Value="false" />
+                    <Set Target="[EHSViewOptsButton.Visible]" Value="true" />
+                    <Set Target="[SortButton.Visible]" Value="false" />
+                    <Set Target="[GroupButton.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderOrientation]" ConditionOp="Equals" Value="Horizontal" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[EHSHSizePanel.Visible]" Value="true" />
+                    <Set Target="[EHSHideThumbsBG.Visible]" Value="true" />
+                    <Set Target="[EHSShowTopPanel.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Binding Source="[Application.Config.ShowConfigButton]" Target="[ConfigButton.Visible]" />
+            <Binding Source="[Application.Config.ShowConfigButton]" Target="[LockConfigButton.Visible]" />
+            <Binding Source="[Application.Config.ShowConfigButton]" Target="[UnlockConfigButton.Visible]">
+                <Transformer>
+                    <BooleanTransformer Inverse="true" />
+                </Transformer>
+            </Binding>
+            
+            <Changed Source="[BackCommand.Invoked]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[MainMenuPanel.Visible]" Value="true" />
+                    <Equality Source="[ViewMenuPanel.Visible]" Value="false" />
+                    <Equality Source="[ViewOptsPanel.Visible]" Value="false" />
+                    <Equality Source="[EHSViewOptsPanel.Visible]" Value="false" />
+                    <Equality Source="[SortMenuPanel.Visible]" Value="false" />
+                    <Equality Source="[GroupMenuPanel.Visible]" Value="false" />
+                    <Equality Source="[LiveLayoutPanel.Visible]" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[CloseCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[BackCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[ViewMenuPanel.Visible]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[HideViewCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[BackCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[ViewOptsPanel.Visible]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[HideViewOptsCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[BackCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[EHSViewOptsPanel.Visible]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[HideEHSViewOptsCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[BackCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[SortMenuPanel.Visible]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[HideSortCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[BackCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[GroupMenuPanel.Visible]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[HideGroupCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[BackCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[LiveLayoutPanel.Visible]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[HideLayoutCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ConfigureCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[Application.OpenConfiguration]" showFullOptions="true" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[LockConfigCommand.Invoked]">
+                <Actions>
+                    <Set Target="[Application.Config.ShowConfigButton]" Value="false" />
+                    <Invoke Target="[DoCloseCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[UnlockConfigCommand.Invoked]">
+                <Actions>
+                    <Set Target="[Application.Config.ShowConfigButton]" Value="true" />
+                    <Invoke Target="[DoCloseCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[DoCloseCommand.Invoked]">
+                <Actions>
+                    <Set Target="[SortMenuPanel.Visible]" Value="false" />
+                    <Set Target="[GroupMenuPanel.Visible]" Value="false" />
+                    <Set Target="[ViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[EHSViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[LiveLayoutPanel.Visible]" Value="false" />
+                    <Set Target="[ViewMenuPanel.Visible]" Value="false" />
+                    <Invoke Target="[CloseCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ShowViewCommand.Invoked]">
+                <Actions>
+                    <Set Target="[SortMenuPanel.Visible]" Value="false" />
+                    <Set Target="[GroupMenuPanel.Visible]" Value="false" />
+                    <Set Target="[ViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[EHSViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[LiveLayoutPanel.Visible]" Value="false" />
+                    <Set Target="[ViewMenuPanel.Visible]" Value="true" />
+                    <Invoke Target="[ViewMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HideViewCommand.Invoked]">
+                <Actions>
+                    <Set Target="[ViewMenuPanel.Visible]" Value="false" />
+                    <Invoke Target="[MainMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ShowViewOptsCommand.Invoked]">
+                <Actions>
+                    <Set Target="[SortMenuPanel.Visible]" Value="false" />
+                    <Set Target="[GroupMenuPanel.Visible]" Value="false" />
+                    <Set Target="[ViewMenuPanel.Visible]" Value="false" />
+                    <Set Target="[LiveLayoutPanel.Visible]" Value="false" />
+                    <Set Target="[EHSViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[ViewOptsPanel.Visible]" Value="true" />
+                    <Invoke Target="[ViewOptsPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HideViewOptsCommand.Invoked]">
+                <Actions>
+                    <Set Target="[ViewOptsPanel.Visible]" Value="false" />
+                    <Invoke Target="[MainMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ShowEHSViewOptsCommand.Invoked]">
+                <Actions>
+                    <Set Target="[SortMenuPanel.Visible]" Value="false" />
+                    <Set Target="[GroupMenuPanel.Visible]" Value="false" />
+                    <Set Target="[ViewMenuPanel.Visible]" Value="false" />
+                    <Set Target="[LiveLayoutPanel.Visible]" Value="false" />
+                    <Set Target="[ViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[EHSViewOptsPanel.Visible]" Value="true" />
+                    <Invoke Target="[EHSViewOptsPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HideEHSViewOptsCommand.Invoked]">
+                <Actions>
+                    <Set Target="[EHSViewOptsPanel.Visible]" Value="false" />
+                    <Invoke Target="[MainMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Folder.DisplayPrefs.ViewType.Chosen]" >
+                <Conditions>
+                    <Equality Source="[ViewMenuPanel.Visible]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[RefocusViewTimer.Start]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[IncreaseThumbCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[Folder.DisplayPrefs.IncreaseThumbSize]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[DecreaseThumbCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[Folder.DisplayPrefs.DecreaseThumbSize]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[IncreaseEHSHSizeCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[Config.RootEHSHListSize]" ConditionOp="LessThan" Value="400" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Config.RootEHSHListSize]" Value="[Config.RootEHSHListSize]">
+                        <Transformer>
+                            <MathTransformer AddInt="10" />
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[DecreaseEHSHSizeCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[Config.RootEHSHListSize]" ConditionOp="GreaterThan" Value="100" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Config.RootEHSHListSize]" Value="[Config.RootEHSHListSize]">
+                        <Transformer>
+                            <MathTransformer SubtractInt="10" />
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[IncreaseEHSThumbCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[Config.RootEHSThumbSize]" ConditionOp="LessThan" Value="300" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Config.RootEHSThumbSize]" Value="[Config.RootEHSThumbSize]">
+                        <Transformer>
+                            <MathTransformer AddInt="10" />
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[DecreaseEHSThumbCommand.Invoked]">
+                <Conditions>
+                    <Equality Source="[Config.RootEHSThumbSize]" ConditionOp="GreaterThan" Value="200" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Config.RootEHSThumbSize]" Value="[Config.RootEHSThumbSize]">
+                        <Transformer>
+                            <MathTransformer SubtractInt="10" />
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ShowSortCommand.Invoked]">
+                <Actions>
+                    <Set Target="[ViewMenuPanel.Visible]" Value="false" />
+                    <Set Target="[ViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[EHSViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[GroupMenuPanel.Visible]" Value="false" />
+                    <Set Target="[LiveLayoutPanel.Visible]" Value="false" />
+                    <Set Target="[SortMenuPanel.Visible]" Value="true" />
+                    <Invoke Target="[SortMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HideSortCommand.Invoked]">
+                <Actions>
+                    <Set Target="[SortMenuPanel.Visible]" Value="false" />
+                    <Invoke Target="[MainMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+            <Changed Source="[ShowGroupCommand.Invoked]">
+                <Actions>
+                    <Set Target="[ViewMenuPanel.Visible]" Value="false" />
+                    <Set Target="[ViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[EHSViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[SortMenuPanel.Visible]" Value="false" />
+                    <Set Target="[LiveLayoutPanel.Visible]" Value="false" />
+                    <Set Target="[GroupMenuPanel.Visible]" Value="true" />
+                    <Invoke Target="[GroupMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HideGroupCommand.Invoked]">
+                <Actions>
+                    <Set Target="[GroupMenuPanel.Visible]" Value="false" />
+                    <Invoke Target="[MainMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ShowLayoutCommand.Invoked]">
+                <Actions>
+                    <Set Target="[MainMenuPanel.Visible]" Value="false" />
+                    <Set Target="[ViewMenuPanel.Visible]" Value="false" />
+                    <Set Target="[ViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[EHSViewOptsPanel.Visible]" Value="false" />
+                    <Set Target="[SortMenuPanel.Visible]" Value="false" />
+                    <Set Target="[GroupMenuPanel.Visible]" Value="false" />
+                    <Set Target="[LiveLayoutPanel.Visible]" Value="true" />
+                    <Set Target="[LeftKey.Command]" Value="[Config.LayoutLeftCommand]" />
+                    <Set Target="[RightKey.Command]" Value="[Config.LayoutRightCommand]" />
+                    <Set Target="[UpKey.Command]" Value="[Config.LayoutUpCommand]" />
+                    <Set Target="[DownKey.Command]" Value="[Config.LayoutDownCommand]" />
+                    <Set Target="[PgUpKey.Command]" Value="[Config.LayoutPgUpCommand]" />
+                    <Set Target="[PgDownKey.Command]" Value="[Config.LayoutPgDownCommand]" />
+                    <Set Target="[FastForward.Command]" Value="[Config.LayoutFwdCommand]" />
+                    <Set Target="[Rewind.Command]" Value="[Config.LayoutRewCommand]" />
+                    <Set Target="[ChannelDown.Command]" Value="[Config.LayoutPgDownCommand]" />
+                    <Set Target="[ChannelDown.Command]" Value="[Config.LayoutPgDownCommand]" />
+                    <Set Target="[LeftKey.Handle]" Value="true" />
+                    <Set Target="[RightKey.Handle]" Value="true" />
+                    <Set Target="[UpKey.Handle]" Value="true" />
+                    <Set Target="[DownKey.Handle]" Value="true" />
+                    <Set Target="[PgUpKey.Handle]" Value="true" />
+                    <Set Target="[PgDownKey.Handle]" Value="true" />
+                    <Set Target="[FastForward.Handle]" Value="true" />
+                    <Set Target="[Rewind.Handle]" Value="true" />
+                    <Set Target="[ChannelUp.Handle]" Value="true" />
+                    <Set Target="[ChannelDown.Handle]" Value="true" />
+                    <Invoke Target="[LiveLayoutPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HideLayoutCommand.Invoked]">
+                <Actions>
+                    <Set Target="[LeftKey.Command]" Value="[NullCommand]" />
+                    <Set Target="[RightKey.Command]" Value="[NullCommand]" />
+                    <Set Target="[UpKey.Command]" Value="[NullCommand]" />
+                    <Set Target="[DownKey.Command]" Value="[NullCommand]" />
+                    <Set Target="[PgUpKey.Command]" Value="[NullCommand]" />
+                    <Set Target="[PgDownKey.Command]" Value="[NullCommand]" />
+                    <Set Target="[FastForward.Command]" Value="[NullCommand]" />
+                    <Set Target="[Rewind.Command]" Value="[NullCommand]" />
+                    <Set Target="[ChannelUp.Command]" Value="[NullCommand]" />
+                    <Set Target="[ChannelDown.Command]" Value="[NullCommand]" />
+                    <Set Target="[LeftKey.Handle]" Value="false" />
+                    <Set Target="[RightKey.Handle]" Value="false" />
+                    <Set Target="[UpKey.Handle]" Value="false" />
+                    <Set Target="[DownKey.Handle]" Value="false" />
+                    <Set Target="[PgUpKey.Handle]" Value="false" />
+                    <Set Target="[PgDownKey.Handle]" Value="false" />
+                    <Set Target="[FastForward.Handle]" Value="false" />
+                    <Set Target="[Rewind.Handle]" Value="false" />
+                    <Set Target="[ChannelUp.Handle]" Value="false" />
+                    <Set Target="[ChannelDown.Handle]" Value="false" />
+                    <Set Target="[LiveLayoutPanel.Visible]" Value="false" />
+                    <Set Target="[MainMenuPanel.Visible]" Value="true" />
+                    <Invoke Target="[MainMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <!--
+            <Changed Source="[Folder.DisplayPrefs.ViewType.Chosen]" >
+                <Actions>
+                    <Invoke Target="[HideViewCommand.Invoke]" />
+                </Actions>
+            </Changed>
+            -->
+
+            <Binding Source="[FolderShowAsText.Value]" Target="[Config.FolderShowAsText]" />
+            <Binding Source="[FolderShowBackdrop.Value]" Target="[Config.FolderShowBackdrop]" />
+            <Binding Source="[FolderShowBackdropOverlay.Value]" Target="[Config.FolderShowBackdropOverlay]" />
+            <Binding Source="[FolderRotateBackdrops.Value]" Target="[Config.FolderRotateBackdrops]" />
+            <Binding Source="[FolderShowNPV.Value]" Target="[Config.FolderShowNPV]" />
+            <Binding Source="[FolderShowTextBG.Value]" Target="[Config.FolderShowTextBG]" />
+            <Binding Source="[FolderShowThumbsBG.Value]" Target="[Config.FolderShowThumbsBG]" />
+            <Binding Source="[FolderShowTopPanel.Value]" Target="[Config.FolderShowTopPanel]" />
+            <Binding Source="[FolderEnableWatchedIndicators.Value]" Target="[Config.FolderEnableWatchedIndicators]" />
+            <Binding Source="[FolderEnableNewItemIndicator.Value]" Target="[Config.FolderEnableNewItemIndicator]" />
+            <Binding Source="[FolderOrientation.Chosen!cor:String]" Target="[Config.FolderOrientation]" />
+            <Binding Source="[FolderWrapItemList.Chosen!cor:String]" Target="[Config.FolderWrapItemList]" />
+            <Binding Source="[FolderInfoDisplay.Chosen!cor:String]" Target="[Config.FolderInfoDisplay]" />
+            <Binding Source="[FolderSelectedInfoStyle.Chosen!cor:String]" Target="[Config.FolderSelectedInfoStyle]" />
+            <Binding Source="[FolderClearLogosList.Chosen!cor:String]" Target="[Config.FolderClearLogosList]" />
+
+            <Binding Source="[RootEHSShowInfo.Value]" Target="[Config.RootEHSShowInfo]" />
+            <Binding Source="[RootEHSRALBackdrop.Value]" Target="[Config.RootEHSRALBackdrop]" />
+            <Binding Source="[RootEHSEpisodeThumbs.Value]" Target="[Config.RootEHSEpisodeThumbs]" />
+
+            <Changed Source="[Folder.DisplayPrefs.SortOrders.Chosen]" >
+                <Actions>
+                    <Invoke Target="[HideSortCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Folder.DisplayPrefs.IndexByChoice.Chosen]" >
+                <Actions>
+                    <Invoke Target="[HideGroupCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[RefocusViewTimer.Tick]">
+                <Actions>
+                    <Invoke Target="[ViewMenuPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+            
+            <!-- Visibility -->
+            <Condition Source="[Folder.IsRoot]" ConditionOp="Equals" SourceValue="true">
+                <Actions>
+                    <Set Target="[SortButton.Visible]" Value="false" />
+                    <Set Target="[GroupButton.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[Folder.ItemTypeString]" ConditionOp="Equals" Value="ArtistAlbum" />
+                    <Equality Source="[Folder.ItemTypeString]" ConditionOp="Equals" Value="MusicAlbum" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ViewStyleButton.Visible]" Value="false" />
+                    <Set Target="[SortButton.Visible]" Value="false" />
+                    <Set Target="[GroupButton.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="NotEquals" Value="Detail" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowTopPanel.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Condition Source="[Folder.DisplayPrefs.IndexByChoice.Chosen!cor:String]" ConditionOp="NotEquals" SourceValue="[Application.LocalStrings.#NoneDispPref!cor:String]" Target="[SortButton.Enabled]" Value="false"/>
+
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Poster" Target="[VerticalScroll.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Thumb" Target="[VerticalScroll.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="ThumbStrip" Target="[VerticalScroll.Visible]" Value="false" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="CoverFlow" Target="[VerticalScroll.Visible]" Value="false" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail" Target="[VerticalScroll.Visible]" Value="false" />
+
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Poster" Target="[ShowLabels.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Thumb" Target="[ShowLabels.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="ThumbStrip" Target="[ShowLabels.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="CoverFlow" Target="[ShowLabels.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail" Target="[ShowLabels.Visible]" Value="false" />
+
+            <Condition Source="[Folder.IsRoot]" ConditionOp="Equals" SourceValue="true" Target="[InfoDisplay.Visible]" Value="false" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Poster" Target="[InfoDisplay.Visible]" Value="false" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Thumb" Target="[InfoDisplay.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="ThumbStrip" Target="[InfoDisplay.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="CoverFlow" Target="[InfoDisplay.Visible]" Value="false" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail" Target="[InfoDisplay.Visible]" Value="true" />
+
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail" Target="[ThumbSizePanel.Visible]" Value="false" />
+
+            <Condition Source="[Config.TopPanelStyle]" ConditionOp="Equals" SourceValue="Off" Target="[ShowTopPanel.Enabled]" Value="false" />
+            <Condition Source="[Config.TopPanelStyle]" ConditionOp="Equals" SourceValue="Off" Target="[EHSShowTopPanel.Enabled]" Value="false" />
+
+            <Binding Source="[Application.Config.ShowBackdrop]" Target="[ShowBackdrop.Enabled]" />
+            <Binding Source="[Application.Config.ShowBackdrop]" Target="[ShowBackdropOverlay.Enabled]" />
+            <Binding Source="[Application.Config.ShowBackdrop]" Target="[RotateBackdrops.Enabled]" />
+            <Binding Source="[Application.Config.ShowBackdrop]" Target="[EHSShowBackdrop.Enabled]" />
+            <Binding Source="[Application.Config.ShowBackdrop]" Target="[EHSShowBackdropOverlay.Enabled]" />
+            <Binding Source="[Application.Config.ShowBackdrop]" Target="[EHSRotateBackdrops.Enabled]" />
+
+            <Binding Source="[Config.EnableNewItemIndicator]" Target="[EnableNewItemIndicator.Enabled]" />
+
+            <Condition Source="[Config.NowPlayingStyle]" ConditionOp="Equals" SourceValue="Off" Target="[ShowNPV.Enabled]" Value="false" />
+
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Poster" Target="[HideThumbsBG.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Thumb" Target="[HideThumbsBG.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="ThumbStrip" Target="[HideThumbsBG.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="CoverFlow" Target="[HideThumbsBG.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail" Target="[HideThumbsBG.Visible]" Value="false" />
+            
+          
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Poster" Target="[SelectedInfoStyle.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Thumb" Target="[SelectedInfoStyle.Visible]" Value="false" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="ThumbStrip" Target="[SelectedInfoStyle.Visible]" Value="false" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="CoverFlow" Target="[SelectedInfoStyle.Visible]" Value="true" />
+            <Condition Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" SourceValue="Detail" Target="[SelectedInfoStyle.Visible]" Value="false" />
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Detail" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[WrapItemList.Visible]" Value="false" />
+                    <Set Target="[UseBanner.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="CoverFlow" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowAsText.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[EnableWatchedIndicators.Visible]" Value="false" />
+                    <Set Target="[EnableNewItemIndicator.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <!-- Live Layout -->
+            <Binding Source="[Config.AllowLiveLayout]" Target="[LayoutButton.Visible]" />
+
+            <Binding Source="[Config.LiveLayoutLeftRightLabel]" Target="[LayoutLeftRightLabel.Content]" />
+            <Binding Source="[Config.LiveLayoutUpDownLabel]" Target="[LayoutUpDownLabel.Content]" />
+            <Binding Source="[Config.LiveLayoutFwdRewLabel]" Target="[LayoutFwdRewLabel.Content]" />
+            <Binding Source="[Config.LiveLayoutPgUpDownLabel]" Target="[LayoutPgUpDownLabel.Content]" />
+            
+            <Condition Source="[Config.LiveLayoutLeftRightLabel]" ConditionOp="Equals" SourceValue="" Target="[LayoutLeftRightPanel.Visible]" Value="false" />
+            <Condition Source="[Config.LiveLayoutUpDownLabel]" ConditionOp="Equals" SourceValue="" Target="[LayoutUpDownPanel.Visible]" Value="false" />
+            <Condition Source="[Config.LiveLayoutFwdRewLabel]" ConditionOp="Equals" SourceValue="" Target="[LayoutFwdRewPanel.Visible]" Value="false" />
+            <Condition Source="[Config.LiveLayoutPgUpDownLabel]" ConditionOp="Equals" SourceValue="" Target="[LayoutPgUpDownPanel.Visible]" Value="false" />
+        </Rules>
+
+        <Content>
+            <Panel Layout="Form">
+                <Children>
+                    <!-- Main Menu Panel -->
+                    <Panel Name="MainMenuPanel" Layout="Anchor">
+                        <LayoutInput>
+                            <FormLayoutInput Horizontal="Center" Vertical="Center" />
+                        </LayoutInput>
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowTop VFadeSize="35" HFadeSize="200">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="MainTitleBG,0" Right="MainTitleBG,1" Top="MainTitleBG,0,1" Bottom="MainTitleBG,0,35"/>
+                                </LayoutInput>
+                            </ui:GlowTop>
+
+                            <ui:GlowBottom VFadeSize="35" HFadeSize="200" Visible="true">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="MainBG,0" Right="MainBG,1" Top="MainBG,1,-35" Bottom="MainBG,1,-1"/>
+                                </LayoutInput>
+                            </ui:GlowBottom>
+
+                            <!-- Main Menu -->
+                            <Text Content="[Application.LocalStrings.#OptionsLabel!cor:String]" Color="color://ss:SdC_PopupMenuTitle" Font="font://ss:SdF_PopupMenuTitle">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="MainTitleBG,0" Right="MainTitleBG,1" Top="MainTitleBG,0" Bottom="MainTitleBG,1" Vertical="Center" Horizontal="Center" />
+                                </LayoutInput>
+                            </Text>
+
+                            <Panel Name="OptionsPanel" Layout="VerticalFlow" Navigation="Column,ContainAll,RememberFocus">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0,20" Top="Parent,0,60" />
+                                </LayoutInput>
+                                <Children>
+                                    <cmd:CommandButton Name="UnlockConfigButton"
+                                                       Text="[Application.LocalStrings.#UnlockConfigLabel!cor:String]"
+                                                       Command="[UnlockConfigCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Visible="false" />
+
+                                    <cmd:CommandButton Name="ConfigButton"
+                                                       Text="[Application.LocalStrings.#ConfigureLabel!cor:String]"
+                                                       Command="[ConfigureCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Visible="true" />
+                                    
+                                    <cmd:CommandButton Name="ViewStyleButton"
+                                                       Text="[Application.LocalStrings.#ViewStyleLabel!cor:String]"
+                                                       Command="[ShowViewCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Visible="true"
+                                                       Enabled="true" />
+                                    
+                                    <cmd:CommandButton Name="ViewOptsButton"
+                                                       Text="[Application.LocalStrings.#ViewOptionsLabel!cor:String]"
+                                                       Command="[ShowViewOptsCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Visible="true"
+                                                       Enabled="true" />
+
+                                    <cmd:CommandButton Name="EHSViewOptsButton"
+                                                       Text="[Application.LocalStrings.#ViewOptionsLabel!cor:String]"
+                                                       Command="[ShowEHSViewOptsCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Visible="false"
+                                                       Enabled="true" />
+
+                                    <cmd:CommandButton Name="SortButton"
+                                                       Text="[Application.LocalStrings.#SortByLabel!cor:String]"
+                                                       Command="[ShowSortCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Visible="true"
+                                                       Enabled="true"/>
+                                    
+                                    <cmd:CommandButton Name="GroupButton"
+                                                       Text="[Application.LocalStrings.#GroupByLabel!cor:String]"
+                                                       Command="[ShowGroupCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Visible="true"
+                                                       Enabled="true" />
+
+                                    <cmd:CommandButton Name="LayoutButton"
+                                                       Text="[Application.LocalStrings.#LiveLayoutLabel!cor:String]"
+                                                       Command="[ShowLayoutCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Visible="true"
+                                                       Enabled="true" />
+
+                                    <cmd:CommandButton Name="LockConfigButton"
+                                                       Text="[Application.LocalStrings.#LockConfigLabel!cor:String]"
+                                                       Command="[LockConfigCommand]"
+                                                       Margins="0,20,0,0"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Visible="false" />
+
+                                    <cmd:CommandButton Name="CloseMainButton"
+                                                       Text="[Application.LocalStrings.#CloseCMenu!cor:String]"
+                                                       Command="[DoCloseCommand]"
+                                                       Margins="0,20,0,0"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Background Fill -->
+                            <ui:PanelPopupTitle Name="MainTitleBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="MainBG,0" Right="MainBG,1" Top="MainBG,0,-40" Bottom="MainBG,0"/>
+                                </LayoutInput>
+                            </ui:PanelPopupTitle>
+
+                            <ui:PanelPopupList Name="MainBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="OptionsPanel,1,30" Top="Parent,0,40" Bottom="OptionsPanel,1,20"/>
+                                </LayoutInput>
+                            </ui:PanelPopupList>
+                        </Children>
+                    </Panel>
+
+                    <!-- View Menu Panel -->
+                    <Panel Name="ViewMenuPanel" Layout="Anchor" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Vertical="Center" Left="MainMenuPanel,1,1" />
+                        </LayoutInput>
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowTop VFadeSize="35" HFadeSize="200">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="ViewTitleBG,0" Right="ViewTitleBG,1" Top="ViewTitleBG,0,1" Bottom="ViewTitleBG,0,35"/>
+                                </LayoutInput>
+                            </ui:GlowTop>
+
+                            <ui:GlowBottom VFadeSize="35" HFadeSize="200" Visible="true">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="ViewBG,0" Right="ViewBG,1" Top="ViewBG,1,-35" Bottom="ViewBG,1,-1"/>
+                                </LayoutInput>
+                            </ui:GlowBottom>
+
+                            <!-- View Menu -->
+                            <Text Content="[Application.LocalStrings.#ViewStyleLabel!cor:String]" Color="color://ss:SdC_PopupMenuTitle" Font="font://ss:SdF_PopupMenuTitle">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="ViewTitleBG,0" Right="ViewTitleBG,1" Top="ViewTitleBG,0" Bottom="ViewTitleBG,1" Vertical="Center" Horizontal="Center" />
+                                </LayoutInput>
+                            </Text>
+
+                            <Panel Name="ViewMenuSubPanel" Layout="VerticalFlow" Navigation="Column,ContainAll,RememberFocus">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0,20" Top="Parent,0,60" />
+                                </LayoutInput>
+                                <Children>
+                                    <me:RadioGroup Model="[Folder.DisplayPrefs.ViewType]" Margins="0,0,0,20" />
+
+                                    <cmd:CommandButton Name="CloseViewButton"
+                                                       Text="[Application.LocalStrings.#CloseCMenu!cor:String]"
+                                                       Command="[HideViewCommand]"
+                                                       Margins="0,20,0,0"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Background Fill -->
+                            <ui:PanelPopupTitle Name="ViewTitleBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="ViewMenuSubPanel,1,30" Top="Parent,0" Bottom="Parent,0,40"/>
+                                </LayoutInput>
+                            </ui:PanelPopupTitle>
+
+                            <ui:PanelPopupList Name="ViewBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="ViewMenuSubPanel,1,30" Top="Parent,0,40" Bottom="ViewMenuSubPanel,1,20"/>
+                                </LayoutInput>
+                            </ui:PanelPopupList>
+                        </Children>
+                    </Panel>
+
+                    <!-- View Options Panel -->
+                    <Panel Name="ViewOptsPanel" Layout="Anchor" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Vertical="Center" Left="MainMenuPanel,1,1" />
+                        </LayoutInput>
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowTop VFadeSize="35" HFadeSize="200">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="ViewOptsTitleBG,0" Right="ViewOptsTitleBG,1" Top="ViewOptsTitleBG,0,1" Bottom="ViewOptsTitleBG,0,35"/>
+                                </LayoutInput>
+                            </ui:GlowTop>
+
+                            <ui:GlowBottom VFadeSize="35" HFadeSize="200" Visible="true">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="ViewOptsBG,0" Right="ViewOptsBG,1" Top="ViewOptsBG,1,-35" Bottom="ViewOptsBG,1,-1"/>
+                                </LayoutInput>
+                            </ui:GlowBottom>
+
+                            <!-- View Menu -->
+                            <Text Content="[Application.LocalStrings.#ViewOptionsLabel!cor:String]" Color="color://ss:SdC_PopupMenuTitle" Font="font://ss:SdF_PopupMenuTitle">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="ViewOptsTitleBG,0" Right="ViewOptsTitleBG,1" Top="ViewOptsTitleBG,0" Bottom="ViewOptsTitleBG,1" Vertical="Center" Horizontal="Center" />
+                                </LayoutInput>
+                            </Text>
+                          
+                          
+                            <!--View Options for PopUp Config -->
+                            <Panel Name="ViewOptsSubPanel" Layout="VerticalFlow" Navigation="Column,ContainAll,RememberFocus">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0,20" Top="Parent,0,60" />
+                                </LayoutInput>
+                                <Children>
+                                    <me:CheckBox Name="ShowTopPanel" Label="[Application.LocalStrings.#ShowTopPanelLabel!cor:String]" Checked="[FolderShowTopPanel]" Visible="false" Enabled="true" />
+                                    <me:CheckBox Name="ShowAsText" Label="[Application.LocalStrings.#ShowAsTextLabel!cor:String]" Checked="[FolderShowAsText]" Visible="false" />
+                                    <me:CheckBox Name="ShowBackdrop" Label="[Application.LocalStrings.#ShowBackdropLabel!cor:String]" Checked="[FolderShowBackdrop]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="ShowBackdropOverlay" Label="[Application.LocalStrings.#ShowBackdropOverlayLabel!cor:String]" Checked="[FolderShowBackdropOverlay]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="RotateBackdrops" Label="[Application.LocalStrings.#RotateBackdropsLabel!cor:String]" Checked="[FolderRotateBackdrops]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="ShowNPV" Label="[Application.LocalStrings.#ShowNPVLabel!cor:String]" Checked="[FolderShowNPV]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="HideThumbsBG" Label="[Application.LocalStrings.#ShowThumbsBGLabel!cor:String]" Checked="[FolderShowThumbsBG]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="VerticalScroll" Label="[Application.LocalStrings.#VerticalScrollDispPref!cor:String]" Checked="[Folder.DisplayPrefs.VerticalScroll]" Visible="true" />
+                                    <me:CheckBox Name="UseBanner" Label="[Application.LocalStrings.#UseBannersDispPref!cor:String]" Checked="[Folder.DisplayPrefs.UseBanner]" Visible="true" />
+                                    <me:CheckBox Name="ShowLabels" Label="[Application.LocalStrings.#ShowLabelsDispPref!cor:String]" Checked="[Folder.DisplayPrefs.ShowLabels]" Visible="true" />
+                                    <me:CheckBox Name="EnableWatchedIndicators" Label="[Application.LocalStrings.#EnableWatchedIndicatorsLabel!cor:String]" Checked="[FolderEnableWatchedIndicators]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="EnableNewItemIndicator" Label="[Application.LocalStrings.#ShowNewItemIndicatorLabel!cor:String]" Checked="[FolderEnableNewItemIndicator]" Visible="true" Enabled="true" />
+                                    <me:SpinnerText Name="WrapItemList" Model="[FolderWrapItemList]" Label="[Application.LocalStrings.#WrapItemListLabel!cor:String]" DefaultString="[Config.FolderWrapItemList]" Visible="true" />
+                                    <me:SpinnerText Name="SelectedInfoStyle" Model="[FolderSelectedInfoStyle]" Label="[Application.LocalStrings.#SelectedInfoStyleLabel!cor:String]" DefaultString="[Config.FolderSelectedInfoStyle]" Visible="true" />
+                                    <me:SpinnerText Name="InfoDisplay" Model="[FolderInfoDisplay]" Label="[Application.LocalStrings.#FolderDisplayLabel!cor:String]" DefaultString="[Config.FolderInfoDisplay]" Visible="true" />
+                                  <me:SpinnerText Name="FanartDisplay" Model="[FolderClearLogosList]" Label="[Application.LocalStrings.#FanartItemListLabel!cor:String]" DefaultString="[Config.FolderClearLogosList]" Visible="true"/>
+                                    <Panel Name="ThumbSizePanel" Margins="0,20,0,0" Navigation="Row" Visible="true">
+                                        <Layout>
+                                            <FlowLayout Orientation="Horizontal" ItemAlignment="Center"/>
+                                        </Layout>
+                                        <Children>
+                                            <Text Content="[Application.LocalStrings.#ThumbSizeDispPref!cor:String]" Color="color://ss:SdC_PopupMenuItem" Font="font://ss:SdF_PopupMenuItem"/>
+                                            <imb:ImageButton Command="[DecreaseThumbCommand]" Image="resx://Subdued/Subdued.Resources/minus" />
+                                            <imb:ImageButton Command="[IncreaseThumbCommand]" Image="resx://Subdued/Subdued.Resources/plus" />
+                                        </Children>
+                                    </Panel>
+
+                                    <cmd:CommandButton Name="CloseViewOptsButton"
+                                                       Text="[Application.LocalStrings.#CloseCMenu!cor:String]"
+                                                       Command="[HideViewOptsCommand]"
+                                                       Margins="0,20,0,0"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Background Fill -->
+                            <ui:PanelPopupTitle Name="ViewOptsTitleBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="ViewOptsSubPanel,1,30" Top="Parent,0" Bottom="Parent,0,40"/>
+                                </LayoutInput>
+                            </ui:PanelPopupTitle>
+
+                            <ui:PanelPopupList Name="ViewOptsBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="ViewOptsSubPanel,1,30" Top="Parent,0,40" Bottom="ViewOptsSubPanel,1,20"/>
+                                </LayoutInput>
+                            </ui:PanelPopupList>
+                        </Children>
+                    </Panel>
+
+                    <!-- EHS View Options Panel -->
+                    <Panel Name="EHSViewOptsPanel" Layout="Anchor" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Vertical="Center" Left="MainMenuPanel,1,1" />
+                        </LayoutInput>
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowTop VFadeSize="35" HFadeSize="200">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="EHSViewOptsTitleBG,0" Right="EHSViewOptsTitleBG,1" Top="EHSViewOptsTitleBG,0,1" Bottom="EHSViewOptsTitleBG,0,35"/>
+                                </LayoutInput>
+                            </ui:GlowTop>
+
+                            <ui:GlowBottom VFadeSize="35" HFadeSize="200" Visible="true">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="EHSViewOptsBG,0" Right="EHSViewOptsBG,1" Top="EHSViewOptsBG,1,-35" Bottom="EHSViewOptsBG,1,-1"/>
+                                </LayoutInput>
+                            </ui:GlowBottom>
+
+                            <!-- View Menu -->
+                            <Text Content="[Application.LocalStrings.#ViewOptionsLabel!cor:String]" Color="color://ss:SdC_PopupMenuTitle" Font="font://ss:SdF_PopupMenuTitle">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="EHSViewOptsTitleBG,0" Right="EHSViewOptsTitleBG,1" Top="EHSViewOptsTitleBG,0" Bottom="EHSViewOptsTitleBG,1" Vertical="Center" Horizontal="Center" />
+                                </LayoutInput>
+                            </Text>
+
+                            <Panel Name="EHSViewOptsSubPanel" Layout="VerticalFlow" Navigation="Column,ContainAll,RememberFocus">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0,20" Top="Parent,0,60" />
+                                </LayoutInput>
+                                <Children>
+                                    <me:SpinnerText Name="EHSOrientation" Model="[FolderOrientation]" Label="[Application.LocalStrings.#OrientationStr!cor:String]" DefaultString="[Config.FolderOrientation]" Visible="true" />
+                                    <me:CheckBox Name="EHSShowTopPanel" Label="[Application.LocalStrings.#ShowTopPanelLabel!cor:String]" Checked="[FolderShowTopPanel]" Visible="false" Enabled="true" />
+                                    <me:CheckBox Name="EHSShowBackdrop" Label="[Application.LocalStrings.#ShowBackdropLabel!cor:String]" Checked="[FolderShowBackdrop]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="EHSShowBackdropOverlay" Label="[Application.LocalStrings.#ShowBackdropOverlayLabel!cor:String]" Checked="[FolderShowBackdropOverlay]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="EHSRotateBackdrops" Label="[Application.LocalStrings.#RotateBackdropsLabel!cor:String]" Checked="[FolderRotateBackdrops]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="EHSShowNPV" Label="[Application.LocalStrings.#ShowNPVLabel!cor:String]" Checked="[FolderShowNPV]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="EHSHideTextBG" Label="[Application.LocalStrings.#ShowTextBGLabel!cor:String]" Checked="[FolderShowTextBG]" Visible="true" Enabled="true" />
+                                    <me:CheckBox Name="EHSHideThumbsBG" Label="[Application.LocalStrings.#ShowThumbsBGLabel!cor:String]" Checked="[FolderShowThumbsBG]" Visible="false" Enabled="true" />
+                                    <me:CheckBox Name="EHSShowLabels" Label="[Application.LocalStrings.#ShowLabelsDispPref!cor:String]" Checked="[Folder.DisplayPrefs.ShowLabels]" Visible="true" />
+                                    <me:CheckBox Name="EHSShowInfo" Label="[Application.LocalStrings.#EHSShowInfoLabel!cor:String]" Checked="[RootEHSShowInfo]" Visible="true" />
+                                    <me:CheckBox Name="EHSRALBackdrop" Label="[Application.LocalStrings.#EHSRALBackdropLabel!cor:String]" Checked="[RootEHSRALBackdrop]" Visible="true" />
+                                    <me:CheckBox Name="EHSEpisodeThumbs" Label="[Application.LocalStrings.#EHSEpisodeThumbsLabel!cor:String]" Checked="[RootEHSEpisodeThumbs]" Visible="true" />
+                                    <me:CheckBox Name="EHSEnableWatchedIndicators" Label="[Application.LocalStrings.#EnableWatchedIndicatorsLabel!cor:String]" Checked="[FolderEnableWatchedIndicators]" Visible="true" Enabled="true" />
+                                    <me:SpinnerText Name="EHSWrapItemList" Model="[FolderWrapItemList]" Label="[Application.LocalStrings.#WrapItemListLabel!cor:String]" DefaultString="[Config.FolderWrapItemList]" Visible="true" />
+
+                                    <Panel Name="EHSHSizePanel" Margins="0,20,0,0" Navigation="Row" Visible="false">
+                                        <Layout>
+                                            <FlowLayout Orientation="Horizontal" ItemAlignment="Center"/>
+                                        </Layout>
+                                        <Children>
+                                            <Text Content="[Application.LocalStrings.#EHSHListSizeLabel!cor:String]" Color="color://ss:SdC_PopupMenuItem" Font="font://ss:SdF_PopupMenuItem"/>
+                                            <imb:ImageButton Command="[DecreaseEHSHSizeCommand]" Image="resx://Subdued/Subdued.Resources/minus" />
+                                            <imb:ImageButton Command="[IncreaseEHSHSizeCommand]" Image="resx://Subdued/Subdued.Resources/plus" />
+                                        </Children>
+                                    </Panel>
+
+                                    <Panel Name="EHSThumbSizePanel" Margins="0,0,0,0" Navigation="Row" Visible="true">
+                                        <Layout>
+                                            <FlowLayout Orientation="Horizontal" ItemAlignment="Center"/>
+                                        </Layout>
+                                        <Children>
+                                            <Text Content="[Application.LocalStrings.#EHSThumbSizeLabel!cor:String]" Color="color://ss:SdC_PopupMenuItem" Font="font://ss:SdF_PopupMenuItem"/>
+                                            <imb:ImageButton Command="[DecreaseEHSThumbCommand]" Image="resx://Subdued/Subdued.Resources/minus" />
+                                            <imb:ImageButton Command="[IncreaseEHSThumbCommand]" Image="resx://Subdued/Subdued.Resources/plus" />
+                                        </Children>
+                                    </Panel>
+
+                                    <cmd:CommandButton Name="CloseEHSViewOptsButton"
+                                                       Text="[Application.LocalStrings.#CloseCMenu!cor:String]"
+                                                       Command="[HideEHSViewOptsCommand]"
+                                                       Margins="0,20,0,0"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Background Fill -->
+                            <ui:PanelPopupTitle Name="EHSViewOptsTitleBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="EHSViewOptsSubPanel,1,30" Top="Parent,0" Bottom="Parent,0,40"/>
+                                </LayoutInput>
+                            </ui:PanelPopupTitle>
+
+                            <ui:PanelPopupList Name="EHSViewOptsBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="EHSViewOptsSubPanel,1,30" Top="Parent,0,40" Bottom="EHSViewOptsSubPanel,1,20"/>
+                                </LayoutInput>
+                            </ui:PanelPopupList>
+                        </Children>
+                    </Panel>
+
+                    <!-- Sort Menu Panel -->
+                    <Panel Name="SortMenuPanel" Layout="Anchor" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Vertical="Center" Left="MainMenuPanel,1,1" />
+                        </LayoutInput>
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowTop VFadeSize="35" HFadeSize="200">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="SortTitleBG,0" Right="SortTitleBG,1" Top="SortTitleBG,0,1" Bottom="SortTitleBG,0,35"/>
+                                </LayoutInput>
+                            </ui:GlowTop>
+
+                            <ui:GlowBottom VFadeSize="35" HFadeSize="200" Visible="true">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="SortBG,0" Right="SortBG,1" Top="SortBG,1,-35" Bottom="SortBG,1,-1"/>
+                                </LayoutInput>
+                            </ui:GlowBottom>
+
+                            <!-- Sort Menu -->
+                            <Text Content="[Application.LocalStrings.#SortByLabel!cor:String]" Color="color://ss:SdC_PopupMenuTitle" Font="font://ss:SdF_PopupMenuTitle">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="SortTitleBG,0" Right="SortTitleBG,1" Top="SortTitleBG,0" Bottom="SortTitleBG,1" Vertical="Center" Horizontal="Center" />
+                                </LayoutInput>
+                            </Text>
+
+                            <Panel Name="SortOptsPanel" Layout="VerticalFlow" Navigation="Column,ContainAll,RememberFocus">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0,20" Top="Parent,0,60" />
+                                </LayoutInput>
+                                <Children>
+                                    <me:RadioGroup Model="[Folder.DisplayPrefs.SortOrders]" Margins="0,0,0,20" />
+
+                                    <cmd:CommandButton Name="CloseSortButton"
+                                                       Text="[Application.LocalStrings.#CloseCMenu!cor:String]" 
+                                                       Command="[HideSortCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Background Fill -->
+                            <ui:PanelPopupTitle Name="SortTitleBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="SortOptsPanel,1,30" Top="Parent,0" Bottom="Parent,0,40"/>
+                                </LayoutInput>
+                            </ui:PanelPopupTitle>
+
+                            <ui:PanelPopupList Name="SortBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="SortOptsPanel,1,30" Top="Parent,0,40" Bottom="SortOptsPanel,1,20"/>
+                                </LayoutInput>
+                            </ui:PanelPopupList>
+                        </Children>
+                    </Panel>
+
+                    <!-- Group Menu Panel -->
+                    <Panel Name="GroupMenuPanel" Layout="Anchor" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Vertical="Center" Left="MainMenuPanel,1,1" />
+                        </LayoutInput>
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowTop VFadeSize="35" HFadeSize="200">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="GroupTitleBG,0" Right="GroupTitleBG,1" Top="GroupTitleBG,0,1" Bottom="GroupTitleBG,0,35"/>
+                                </LayoutInput>
+                            </ui:GlowTop>
+
+                            <ui:GlowBottom VFadeSize="35" HFadeSize="200" Visible="true">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="GroupBG,0" Right="GroupBG,1" Top="GroupBG,1,-35" Bottom="GroupBG,1,-1"/>
+                                </LayoutInput>
+                            </ui:GlowBottom>
+
+                            <!-- Group Menu -->
+                            <Text Content="[Application.LocalStrings.#GroupByLabel!cor:String]" Color="color://ss:SdC_PopupMenuTitle" Font="font://ss:SdF_PopupMenuTitle">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="GroupTitleBG,0" Right="GroupTitleBG,1" Top="GroupTitleBG,0" Bottom="GroupTitleBG,1" Vertical="Center" Horizontal="Center" />
+                                </LayoutInput>
+                            </Text>
+
+                            <Panel Name="GroupOptsPanel" Layout="VerticalFlow" Navigation="Column,ContainAll,RememberFocus">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0,20" Top="Parent,0,60" />
+                                </LayoutInput>
+                                <Children>
+                                    <me:RadioGroup Model="[Folder.DisplayPrefs.IndexByChoice]" Margins="0,0,0,20" />
+
+                                    <cmd:CommandButton Name="CloseGroupButton"
+                                                       Text="[Application.LocalStrings.#CloseCMenu!cor:String]"
+                                                       Command="[HideGroupCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Background Fill -->
+                            <ui:PanelPopupTitle Name="GroupTitleBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="GroupOptsPanel,1,30" Top="Parent,0" Bottom="Parent,0,40"/>
+                                </LayoutInput>
+                            </ui:PanelPopupTitle>
+
+                            <ui:PanelPopupList Name="GroupBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="GroupOptsPanel,1,30" Top="Parent,0,40" Bottom="GroupOptsPanel,1,20"/>
+                                </LayoutInput>
+                            </ui:PanelPopupList>
+                        </Children>
+                    </Panel>
+
+                    <!-- Live Layout Panel -->
+                    <Panel Name="LiveLayoutPanel" Layout="Anchor" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Horizontal="Center" Vertical="Center" />
+                        </LayoutInput>
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowTop VFadeSize="35" HFadeSize="200">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="LayoutTitleBG,0" Right="LayoutTitleBG,1" Top="LayoutTitleBG,0,1" Bottom="LayoutTitleBG,0,35"/>
+                                </LayoutInput>
+                            </ui:GlowTop>
+
+                            <ui:GlowBottom VFadeSize="35" HFadeSize="200" Visible="true">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="LayoutBG,0" Right="LayoutBG,1" Top="LayoutBG,1,-35" Bottom="LayoutBG,1,-1"/>
+                                </LayoutInput>
+                            </ui:GlowBottom>
+
+                            <!-- Main Menu -->
+                            <Text Content="[Application.LocalStrings.#LiveLayoutLabel!cor:String]" Color="color://ss:SdC_PopupMenuTitle" Font="font://ss:SdF_PopupMenuTitle">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="LayoutTitleBG,0" Right="LayoutTitleBG,1" Top="LayoutTitleBG,0" Bottom="LayoutTitleBG,1" Vertical="Center" Horizontal="Center" />
+                                </LayoutInput>
+                            </Text>
+
+                            <Panel Name="LayoutOptionsPanel" Layout="VerticalFlow" Navigation="Column,ContainAll,RememberFocus">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0,20" Top="Parent,0,60" />
+                                </LayoutInput>
+                                <Children>
+                                    <Panel Name="LayoutLeftRightPanel" Layout="HorizontalFlow" Visible="true">
+                                        <Children>
+                                            <Text Content="[Application.LocalStrings.#LeftRightStr!cor:String]" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Content=": " Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Name="LayoutLeftRightLabel" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                        </Children>
+                                    </Panel>
+                                    <Panel Name="LayoutUpDownPanel" Layout="HorizontalFlow" Visible="true">
+                                        <Children>
+                                            <Text Content="[Application.LocalStrings.#UpDownStr!cor:String]" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Content=": " Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Name="LayoutUpDownLabel" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                        </Children>
+                                    </Panel>
+                                    <Panel Name="LayoutFwdRewPanel" Layout="HorizontalFlow" Visible="true">
+                                        <Children>
+                                            <Text Content="[Application.LocalStrings.#FwdRewStr!cor:String]" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Content=": " Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Name="LayoutFwdRewLabel" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                        </Children>
+                                    </Panel>
+                                    <Panel Name="LayoutPgUpDownPanel" Layout="HorizontalFlow" Visible="true">
+                                        <Children>
+                                            <Text Content="[Application.LocalStrings.#PgUpDownStr!cor:String]" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Content=", " Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Content="[Application.LocalStrings.#ChUpDownStr!cor:String]" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Content=": " Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                            <Text Name="LayoutPgUpDownLabel" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" WordWrap="true" />
+                                        </Children>
+                                    </Panel>
+
+                                    <cmd:CommandButton Name="CloseLayoutButton"
+                                                       Text="[Application.LocalStrings.#LiveLayoutMessage!cor:String]"
+                                                       Command="[HideLayoutCommand]"
+                                                       Font="font://ss:SdF_PopupMenuItem"
+                                                       SelFont="font://ss:SdF_PopupMenuItem"
+                                                       Color="color://ss:SdC_PopupMenuItem"
+                                                       SelColor="color://ss:SdC_PopupMenuItemSel"
+                                                       Margins="0,20,0,0" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Background Fill -->
+                            <ui:PanelPopupTitle Name="LayoutTitleBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="LayoutBG,0" Right="LayoutBG,1" Top="LayoutBG,0,-40" Bottom="LayoutBG,0"/>
+                                </LayoutInput>
+                            </ui:PanelPopupTitle>
+
+                            <ui:PanelPopupList Name="LayoutBG">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Left="Parent,0" Right="LayoutOptionsPanel,1,30" Top="Parent,0,40" Bottom="LayoutOptionsPanel,1,20"/>
+                                </LayoutInput>
+                            </ui:PanelPopupList>
+                        </Children>
+                    </Panel>
+
+                    <ColorFill Name="OverlayBG" Content="color://ss:SdC_PopupMenuBG" Visible="true">
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1"/>
+                        </LayoutInput>
+                    </ColorFill>
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+    <UI Name="RadioGroup" >
+        <Properties>
+            <Choice Name="Model" Choice="$Required" />
+            <Size Name="BoxSize" Size="34,34"/>
+        </Properties>
+
+        <Rules>
+            <Default Target="[Input.MakeTopmostOnFocus]" Value="true"/>
+            <Default Target="[Input.KeyInteractive]" Value="true" />
+            <Binding Source="[Model.Options]" Target="[Repeater.Source]" />
+        </Rules>
+        <Content>
+            <Panel>
+                <Children>
+                    <Repeater Name="Repeater" ContentName="RadioButton" Navigation="RememberFocus" DefaultFocusIndex="[Model.DefaultIndex]" >
+                        <Layout>
+                            <FlowLayout Orientation="Vertical" Spacing="5,0" ItemAlignment="Near" />
+                        </Layout>
+                    </Repeater>
+                </Children>
+            </Panel>
+        </Content>
+        <Content Name="RadioButton">
+            <me:SimpleRadioButton Model="[Model]" Option="[RepeatedItem!cor:String]" BoxSize="[BoxSize]" />
+        </Content>
+    </UI>
+
+    <UI Name="SimpleRadioButton">
+        <Properties>
+            <Choice       Name="Model" Choice="$Required"/>
+            <cor:String   Name="Option" String="$Required"/>
+            <Size Name="BoxSize" Size="34,34"/>
+        </Properties>
+        
+        <Locals>
+            <ClickHandler Name="Clicker" HandleEnterSpaceKeys ="true" HandlePrimaryMouseButton ="true" HandlerStage="Bubbled"/>
+        </Locals>
+        
+        <Rules>
+            <Default Target="[Input.KeyInteractive]" Value="true" />
+
+            <Changed Source="[Clicker.Invoked]">
+                <Actions>
+                    <Set Target="[Model.Chosen]" Value="[Option]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Model.Chosen]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen]" Value="[Option]" />
+                    <Equality Source="[Input.KeyFocus]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:RadioSelectFocus" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Model.Chosen]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen]" Value="[Option]" />
+                    <Equality Source="[Input.KeyFocus]" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:RadioSelectNoFocus" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Model.Chosen]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen]"  ConditionOp="NotEquals" Value="[Option]" />
+                    <Equality Source="[Input.KeyFocus]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:RadioFocus" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Model.Chosen]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen]" ConditionOp="NotEquals" Value="[Option]" />
+                    <Equality Source="[Input.KeyFocus]" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:RadioNoFocus" />
+                </Actions>
+            </Changed>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="true">
+                <Conditions>
+                    <Equality Source="[Model.Chosen]" Value="[Option]" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:RadioSelectFocus" />
+                    <Set Target="[OptionLabel.Color]" Value="color://ss:SdC_PopupMenuItemSel" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="true">
+                <Conditions>
+                    <Equality Source="[Model.Chosen]" ConditionOp="NotEquals" Value="[Option]" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:RadioFocus" />
+                    <Set Target="[OptionLabel.Color]" Value="color://ss:SdC_PopupMenuItemSel" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="false">
+                <Conditions>
+                    <Equality Source="[Model.Chosen]" Value="[Option]" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:RadioSelectNoFocus" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="false">
+                <Conditions>
+                    <Equality Source="[Model.Chosen]"  ConditionOp="NotEquals" Value="[Option]" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:RadioNoFocus" />
+                </Actions>
+            </Condition>
+        </Rules>
+
+        <Content>
+            <Panel Name="Root">
+                <Layout>
+                    <FlowLayout Orientation="Horizontal" ItemAlignment="Center"/>
+                </Layout>
+                <Children>
+
+                    <Graphic Content="image://i:RadioNoFocus" Name="BoxImage" MinimumSize="[BoxSize]" MaximumSize="[BoxSize]" />
+                    <Text Name="OptionLabel" Content="[Option]" Color="color://ss:SdC_PopupMenuItem" Font="font://ss:SdF_PopupMenuItem"/>
+                </Children>
+            </Panel>
+        </Content>
+
+    </UI>
+
+    <UI Name="CheckBox">
+        <Properties>
+            <BooleanChoice Name="Checked" BooleanChoice="$Required" />
+            <cor:String Name="Label" String="$Required" />
+            <EditableText Name="FocusItem" />
+            <cor:Boolean Name="Enabled" Boolean="true" />
+        </Properties>
+
+        <Locals>
+            <ClickHandler Name="Clicker" />
+        </Locals>
+
+        <Rules>
+            <Binding Source="[Enabled]" Target="[Input.KeyInteractive]" />
+            <Binding Source="[Label]" Target="[Lbl.Content]"/>
+
+            <Condition Source="[Enabled]" ConditionOp="Equals" SourceValue="false" Target="[CBPanel.Alpha]" Value="0.3" />
+
+            <Changed Source="[Clicker.Invoked]">
+                <Actions>
+                    <Set Target="[Checked.Value]" Value="[Checked.Value]">
+                        <Transformer>
+                            <BooleanTransformer Inverse="true"/>
+                        </Transformer>
+                    </Set>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Checked.Value]">
+                <Conditions>
+                    <Equality Source="[Checked.Value]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:CheckBoxCheckedFocus" />
+                </Actions>
+            </Changed>
+
+            <Condition Source="[Clicker.Clicking]" SourceValue="true">
+                <Conditions>
+                    <Equality Source="[Checked.Value]" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:CheckBoxCheckedFocus" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Clicker.Clicking]" SourceValue="true">
+                <Conditions>
+                    <Equality Source="[Checked.Value]" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:CheckBoxUncheckedFocus" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="true">
+                <Actions>
+                    <Set Target="[FocusItem.Value]" Value="[Label]" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="true">
+                <Conditions>
+                    <Equality Source="[Checked.Value]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:CheckBoxCheckedFocus" />
+                    <Set Target="[Lbl.Color]" Value="color://ss:SdC_PopupMenuItemSel" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="true">
+                <Conditions>
+                    <Equality Source="[Checked.Value]" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:CheckBoxUncheckedFocus" />
+                    <Set Target="[Lbl.Color]" Value="color://ss:SdC_PopupMenuItemSel" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="false">
+                <Conditions>
+                    <Equality Source="[Checked.Value]" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:CheckBoxCheckedNoFocus" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="false">
+                <Conditions>
+                    <Equality Source="[Checked.Value]" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BoxImage.Content]" Value="image://i:CheckBoxUncheckedNoFocus" />
+                </Actions>
+            </Condition>
+
+        </Rules>
+
+        <Content>
+            <Panel Name="CBPanel" Alpha="1">
+                <Layout>
+                    <FlowLayout Orientation="Horizontal" ItemAlignment="Center" />
+                </Layout>
+                <Children>
+                    <Graphic Name="BoxImage" Content="image://i:CheckBoxUncheckedNoFocus" MaximumSize="34,34" />
+                    <Text Name="Lbl" Color="color://ss:SdC_PopupMenuItem" Font="font://ss:SdF_PopupMenuItem" Margins="5,0,0,0" />
+                </Children>
+            </Panel>
+        </Content>
+
+    </UI>
+
+    <UI Name="SimpleSpinner">
+
+        <Properties>
+            <IValueRange Name="Model" IValueRange="$Required" />
+            <Color Name="BackgroundColor" Color="Transparent" />
+            <FormatTransformer Name="LabelTransformer" Format="{0}" />
+            <cor:String Name="Label" String="" />
+            <EditableText Name="FocusItem" />
+        </Properties>
+
+        <Locals>
+            <InvokeCommand Name="Previous" Target="[Model.PreviousValue]" />
+            <InvokeCommand Name="Next" Target="[Model.NextValue]" />
+            <cor:Boolean Name="HasFocus" />
+        </Locals>
+
+        <Rules>
+            <Binding Source="[Model.Value]" Target="[Value.Content]" Transformer="[LabelTransformer]" />
+            <Binding Source="[Model.HasNextValue]" Target="[Next.Available]"/>
+            <Binding Source="[Model.HasPreviousValue]" Target="[Previous.Available]"/>
+
+            <Condition Source="[Input.DeepKeyFocus]" SourceValue="true">
+                <Actions>
+                    <Set Target="[FocusItem.Value]" Value="[Label]" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.DeepKeyFocus]" SourceValue="true" Target="[HasFocus]" Value="[Input.DeepKeyFocus]" />
+            <Condition Source="[Input.DeepMouseFocus]" SourceValue="true" Target="[HasFocus]" Value="[Input.DeepMouseFocus]" />
+
+        </Rules>
+
+        <Content>
+            <Panel Navigation="Row">
+                <Layout>
+                    <FlowLayout Orientation="Horizontal" />
+                </Layout>
+                <Children>
+
+                    <Text Name="Text" Content="[Label]" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" Margins="0,0,5,0" />
+
+                    <!-- Previous button -->
+                    <vm:ImageBtn Name="btnPrevious" Focused="image://i:DecrementFocus"
+                                 NonFocused="image://i:DecrementNoFocus"
+                                 Command="[Previous]"/>
+
+                    <!-- Next button -->
+                    <vm:ImageBtn Name="btnNext" Focused="image://i:IncrementFocus"
+                                 NonFocused="image://i:IncrementNoFocus"
+                                 Command="[Next]"/>
+
+                    <!-- Current value -->
+                    <ColorFill Name="Background" Content="Transparent" MinimumSize="80,35" MaximumSize="175,35" Padding="5,0,0,5">
+                        <Children>
+                            <Text Name="Value" Font="font://ss:SdF_PopupMenuItem" Color="color://ss:SdC_PopupMenuItem" />
+                        </Children>
+                    </ColorFill>
+
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+    <UI Name="SpinnerText" BaseUI="me:SimpleSpinner">
+        <Properties>
+            <cor:String Name="DefaultString" String="Default"/>
+            <Choice Name="Model" Choice="$Required" />
+        </Properties>
+
+        <Locals>
+            <cor:Boolean Name="InitialFocusSet" Boolean="false"/>
+            <Timer Name="CheckInitialFocus" Interval="20" Enabled="false"/>
+        </Locals>
+
+        <Rules>
+            <Default Target="[Model.Default]"  Value="[DefaultString]" />
+            <!--<Default Target="[Background.Content]"  Value="SlateBlue" />-->
+
+            <!-- Set timer to check that we succeeded -->
+            <Rule>
+                <Conditions>
+                    <Equality Source="[InitialFocusSet]" Value="false"/>
+                    <IsValid Source="[DefaultString]"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[InitialFocusSet]" Value="true"/>
+                    <Set Target="[CheckInitialFocus.Enabled]" Value="true"/>
+                </Actions>
+            </Rule>
+
+            <!-- If focus isn't on the right item, move to the next position -->
+            <Changed Source="[CheckInitialFocus.Tick]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen!cor:String]" ConditionOp="NotEquals" Value="[DefaultString]"/>
+                    <Equality Source="[Model.HasNextValue]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Model.NextValue]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <!-- Shutdown the timer object once item is found -->
+            <Changed Source="[CheckInitialFocus.Tick]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen!cor:String]" ConditionOp="Equals" Value="[DefaultString]"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[CheckInitialFocus.Enabled]" Value="false"/>
+                </Actions>
+            </Changed>
+
+        </Rules>
+
+    </UI>
+</Mcml>

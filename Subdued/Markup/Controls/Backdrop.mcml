@@ -1,0 +1,323 @@
+﻿<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:cor="assembly://MsCorLib/System"
+      xmlns:a="assembly://MediaBrowser/MediaBrowser"
+	  xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:ss="file://Subdued_Styles.mcml"
+	  xmlns:sil="resx://Subdued/Subdued.Resources/ScrollableItemList"
+	  xmlns:me="Me">
+
+    <UI Name="Backdrop">
+        <Properties>
+            <a:Application Name="Application" Application="$Required"/>
+            <lib:Item Name="Item" Item="$Required"/>
+            <cor:Boolean Name="Rotate" Boolean="false" />
+            <cor:Boolean Name="IsRoot" Boolean="false" />
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+            <sd:AppUtil Name="Utility" />
+        </Properties>
+
+        <Locals>
+            <a:MultiBackdrop Name="MultiBackdrop"/>
+            <Timer Name="StartTimer" Interval="[Application.Config.BackdropLoadDelay]" AutoRepeat="false" Enabled="false"/>
+            <cor:Boolean Name="StartElapsed" Boolean="false" />
+            <cor:Boolean Name="ShowNPV" Boolean="false" />
+
+            <lib:FolderModel Name="Folder" FolderModel="null" />
+
+            <FormLayoutInput Name="CoverWallLayoutInput" Left="Parent,0,-20" Right="Parent,1,20" Top="Parent,0,-20" Bottom="Parent,1,20" />
+
+            <BooleanChoice Name="CoverWallVisible" Value="false" />
+        </Locals>
+
+        <Rules>
+            <Changed Source="[Item]" InitialEvaluate="true">
+                <Actions>
+                    <Set Target="[StartElapsed]" Value="false" />
+                    <Invoke Target="[Utility.LoadBackdropImage]" item="[Item]" InvokePolicy="Synchronous" />
+                    <Invoke Target="[StartTimer.Stop]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[StartTimer.Start]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                </Actions>
+            </Changed>
+
+            <Condition Source="[Item.IsFolder]" ConditionOp="Equals" SourceValue="true" Target="[Folder]" Value="[Item!lib:FolderModel]" />
+            <Condition Source="[Item.IsFolder]" ConditionOp="Equals" SourceValue="false" Target="[Folder]" Value="null" />
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.CoverWallRootBackdrop]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder]" ConditionOp="NotEquals" Value="null" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Config.IsCoverWallBackdropFolder]" folder="[Folder.Name]" ResultTarget="[CoverWallVisible.Value]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.CoverWallRootBackdrop]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Folder]" ConditionOp="Equals" Value="null" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[CoverWallVisible.Value]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Condition Source="[CoverWallVisible.Value]" SourceValue="false">
+                <Actions>
+                    <Set Target="[CoverWallBackdrop.Visible]" Value="true" />
+                    <Set Target="[CoverWall.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[CoverWallVisible.Value]" SourceValue="true">
+                <Actions>
+                    <Set Target="[CoverWall.Visible]" Value="true" />
+                    <Set Target="[CoverWallBackdrop.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Binding Source="[Config.CoverWallScroll]" Target="[CoverWall.Direction]" />
+
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[IsRoot]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Config.CoverWallRootBackdrop]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[CoverWallVisible.Value]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Condition Source="[Config.CoverWallRotation]" ConditionOp="Equals" SourceValue="None">
+                <Actions>
+                    <Set Target="[CoverWall.CenterPointPercent]" Value=".5,.5,.5" />
+                    <Set Target="[CoverWall.Rotation]" Value="0deg;0,0,0" />
+                    <Set Target="[CoverWallLayoutInput.Bottom.Percent]" Value="1" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.CoverWallRotation]" ConditionOp="Equals" SourceValue="To Back">
+                <Actions>
+                    <Set Target="[CoverWall.CenterPointPercent]" Value=".5,0,.5" />
+                    <Set Target="[CoverWall.Rotation]" Value="-30deg;1,0,0" />
+                    <Set Target="[CoverWallLayoutInput.Bottom.Percent]" Value="1.08" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.CoverWallRotation]" ConditionOp="Equals" SourceValue="To Right">
+                <Actions>
+                    <Set Target="[CoverWall.CenterPointPercent]" Value="1,.5,.5" />
+                    <Set Target="[CoverWall.Rotation]" Value="-30deg;0,1,0" />
+                    <Set Target="[CoverWallLayoutInput.Bottom.Percent]" Value="1" />
+                </Actions>
+            </Condition>
+
+            <Changed Source="[StartTimer.Tick]">
+                <Actions>
+                    <Set Target="[StartElapsed]" Value="true" />
+                    <Set Target="[Backdrop.Content]" Value="[Item.BackdropImage]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[StartTimer.Tick]">
+                <Conditions>
+                    <Equality Source="[IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.CoverWallRootBackdrop]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[CoverWall.Folder]" Value="[Folder]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[StartTimer.Tick]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Rotate]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[MultiBackdrop.BeginRotation]">
+                        <item>
+                            <lib:Item Item="[Item]" />
+                        </item>
+                    </Invoke>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Item.BackdropImage]">
+                <Conditions>
+                    <Equality Source="[StartElapsed]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Backdrop.Content]" Value="[Item.BackdropImage]" />
+                </Actions>
+            </Changed>
+
+            <!--<Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[Application.PlaybackController.IsPlaying]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.PlaybackController.IsPaused]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowNPV]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.PlaybackController.IsPlaying]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Application.PlaybackController.IsPaused]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowNPV]" Value="false" />
+                </Actions>
+            </Rule>
+            
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[ShowNPV]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.NowPlayingStyle]" ConditionOp="Equals" Value="Backdrop" />
+                    <Equality Source="[Config.FolderShowNPV]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[NPV.Visible]" Value="true" />
+                </Actions>
+            </Rule>-->
+
+          
+          <Changed Source="[Application.ShowNowPlaying]" InitialEvaluate="true">
+            <Conditions>
+              <Equality Source="[Config.FolderShowNPV]" ConditionOp="Equals" Value="true" />
+              <Equality Source="[Config.NowPlayingStyle]" ConditionOp="Equals" Value="Backdrop" />
+              <Equality Source="[Application.ShowNowPlaying]" Value="true" />
+            </Conditions>
+            <Actions>
+              <Set Target="[NPV.Visible]" Value="true" />
+            </Actions>
+          </Changed>
+          <Default Target="[NPV.Visible]" Value="false"/>
+          
+            
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.Config.ShowBackdrop]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderShowBackdrop]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Backdrop.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.TopPanelStyle]" ConditionOp="Equals" Value="Double Panel" />
+                    <Equality Source="[IsRoot]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BackdropFade.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.TopPanelStyle]" ConditionOp="Equals" Value="Single Panel" />
+                    <Equality Source="[Config.ShowClockConfigAtTop]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[IsRoot]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BackdropFade.Visible]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.Config.ShowBackdrop]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Config.FolderShowBackdropOverlay]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[BackdropOverlay.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.ShowRootBackground]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.MainBackdrop]" ConditionOp="NotEquals" Value="null" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[MainBG.Content]" Value="[Application.MainBackdrop!Image]" />
+                    <Set Target="[MainBG.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Binding Source="[Application.Config.ShowThemeBackground]" Target="[ThemeBG.Visible]" />
+        </Rules>
+        
+        <Content>
+            <Panel Layout="Form">
+                <Children>
+                    <Clip Name="BackdropFade" FadeAmount="1" FadeSize="120" ShowNear="false" Layout="Fill" Orientation="Vertical" Visible="true">
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,0,120" />
+                        </LayoutInput>
+                        <Children>
+                            <ColorFill Content="color://ss:SdC_BackdropFade" />
+                        </Children>
+                    </Clip>
+                    <ColorFill Name="BackdropOverlay" Content="color://ss:SdC_BackdropOverlay" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1" />
+                        </LayoutInput>
+                    </ColorFill>
+                    <Panel Name="NPV" Layout="Fill" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1" />
+                        </LayoutInput>
+                        <Children>
+                            <Video MouseInteractive="false" />
+                            <ColorFill Content="0,0,0" />
+                        </Children>
+                    </Panel>
+                    <sil:CoverWall Name="CoverWall" Application="[Application]" Config="[Config]" Folder="[Folder]" AllPlayable="true" Rotation="0deg;0,0,0" CenterPointPercent=".5,.5,.5" Visible="false" LayoutInput="[CoverWallLayoutInput]" />
+                    <Panel Name="CoverWallBackdrop" Layout="Fill" Visible="true" >
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1" />
+                        </LayoutInput>
+                        <Children>
+                            <Graphic Name="Backdrop" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" Visible="false">
+                                <Animations>
+                                    <Animation Type="ContentChangeHide">
+                                        <Keyframes>
+                                            <AlphaKeyframe RelativeTo="Current" Time="0.0" Value="1"/>
+                                            <AlphaKeyframe RelativeTo="Current" Time="[Application.Config.BackdropTransitionInterval]" Value="0"/>
+                                        </Keyframes>
+                                    </Animation>
+                                    <Animation Type="ContentChangeShow">
+                                        <Keyframes>
+                                            <AlphaKeyframe RelativeTo="Current" Time="0.0" Value="0"/>
+                                            <AlphaKeyframe RelativeTo="Final" Time="[Application.Config.BackdropTransitionInterval]" Value="1"/>
+                                        </Keyframes>
+                                    </Animation>
+                                </Animations>
+                            </Graphic>
+                        </Children>
+                    </Panel>
+                    <Graphic Name="MainBG" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1" />
+                        </LayoutInput>
+                    </Graphic>
+                    <ColorFill Name="ThemeBG" Content="color://ss:SdC_ThemeBG" Visible="false">
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1" />
+                        </LayoutInput>
+                    </ColorFill>
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+</Mcml>

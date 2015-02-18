@@ -1,0 +1,68 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+      xmlns:cor ="assembly://mscorlib/System"
+      xmlns:me = "Me"
+	  xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+      xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:ss="file://Subdued_Styles.mcml"
+      >
+
+    <UI Name="MPAARating">
+        <Properties>
+            <lib:Item Name="Item" Item="$Required"/>
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+        </Properties>
+       
+        <Locals>
+            <lib:Ratings Name="Ratings" />
+            <cor:String Name="RatingString" String="" />
+
+            <Image Name="BoxImage" Source="resx://Subdued/Subdued.Resources/rated_empty" NineGrid="8,14,8,14" />
+        </Locals>
+        
+        <Rules>
+            <Binding Source="[Item.OfficialRating]" Target="[RatingString]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="NotEquals" Value="Season" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="NotEquals" Value="Episode" />
+                </Conditions>
+            </Binding>
+
+            <Binding Source="[Item.PhysicalParent.OfficialRating]" Target="[RatingString]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.PhysicalParent]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="Equals" Value="Season" />
+                </Conditions>
+            </Binding>
+
+            <Binding Source="[Item.Series.OfficialRating]" Target="[RatingString]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Item]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.Series]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Item.ItemTypeString]" ConditionOp="Equals" Value="Episode" />
+                </Conditions>
+            </Binding>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Config.ShowMediaInfoMovieRatingImage]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[RatingString]" ConditionOp="NotEquals" Value="" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Image.Visible]" Value="true"/>
+                    <Invoke Target="[Ratings.RatingImage]" rating="[RatingString]" ResultTarget="[Image.Content]" />
+                </Actions>
+            </Rule>
+
+            <Condition Source="[Config.ColorizeRatingsImages]" ConditionOp="Equals" SourceValue="true" Target="[Image.ColorFilter]" Value="color://ss:SdC_InfoIconsColorFilter" />
+            <Condition Source="[Config.ColorizeRatingsImages]" ConditionOp="Equals" SourceValue="false" Target="[Image.ColorFilter]" Value="255,255,255" />
+        </Rules>
+
+        <Content>
+            <Graphic Name="Image" Visible="false" SizingPolicy="SizeToContent" MaintainAspectRatio="true" />
+        </Content>
+    </UI>
+
+</Mcml>

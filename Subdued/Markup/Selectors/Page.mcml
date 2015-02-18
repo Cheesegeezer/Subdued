@@ -1,0 +1,749 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+      xmlns:cor="assembly://MsCorLib/System"
+      xmlns:a="assembly://MediaBrowser/MediaBrowser"
+      xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:s="file://Styles_DoNotEdit.mcml"
+      xmlns:f="file://Fonts_DoNotEdit.mcml"
+      xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+      xmlns:np="resx://MediaBrowser/MediaBrowser.Resources/NowPlayingViewport"
+      xmlns:vm="resx://MediaBrowser/MediaBrowser.Resources/ViewMenu"
+      xmlns:pda="resx://Subdued/Subdued.Resources/PageDetailArea"
+      xmlns:sd="assembly://Subdued/Subdued"
+      xmlns:ss="file://Subdued_Styles.mcml"
+	  xmlns:ui="resx://Subdued/Subdued.Resources/UI"
+	  xmlns:uic="resx://Subdued/Subdued.Resources/UIConfig"
+	  xmlns:cm="resx://Subdued/Subdued.Resources/ContextMenu"
+	  xmlns:ib="resx://Subdued/Subdued.Resources/ImageButton"
+	  xmlns:cb="resx://Subdued/Subdued.Resources/CommandButton"
+	  xmlns:bi="resx://Subdued/Subdued.Resources/BusyIndicator"
+      xmlns:pc="resx://Subdued/Subdued.Resources/PCIndicatorButton"
+	  xmlns:sil="resx://Subdued/Subdued.Resources/ScrollableItemList"
+      xmlns:me="Me">
+
+    <UI Name="PageSubdued">
+        <Properties>
+            <a:Application Name="Application" Application="$Required"/>
+            <lib:FolderModel Name="Folder" FolderModel="$Required"/>
+            <sd:AppUtil Name="Utility" />
+        </Properties>
+
+        <Locals>
+            <sd:IdleHandler Name="IdleHandler" IdleTimeoutMins="[Utility.ThemeConfig.CoverWallSSTimeout]" />
+            <sd:Clock Name="Clock"/>
+
+            <TypingHandler Name="TypingHandler" HandlerStage="Bubbled" TypingPolicy="TripleTap" >
+                <EditableText>
+                    <EditableText Value="" />
+                </EditableText>
+            </TypingHandler>
+
+            <Timer Name="HideFindAsYouType" Interval="3000" AutoRepeat="false"/>
+
+            <Command Name="FullScreenCommand" />
+            <Command Name="ShowOptionsCommand" />
+            <Command Name="HideOptionsCommand" />
+
+            <Command Name="ShowContextMenuCommand" />
+            <Command Name="HideContextMenuCommand" />
+            <Command Name="ShowPlayMenuCommand" />
+            <Command Name="HidePlayMenuCommand" />
+
+            <Command Name="CloseUserMenuCommand" />
+            <Command Name="SwitchUserCommand" />
+
+          <Command Name="Configure" />
+
+            <KeyHandler Name="SwitchKey" Key="D3" Handle="false" Modifiers="Shift" HandlerStage="Bubbled"/>
+            <ShortcutHandler Name="BackHandler"   Handle="false" Shortcut="Back" HandlerStage="Bubbled"/>
+
+            <FormLayoutInput Name="CoverWallLayoutInput" Left="Parent,0,-20" Right="Parent,1,20" Top="Parent,0,-20" Bottom="Parent,1,20" />
+
+            <FormLayoutInput Name="StatusPanelLayoutInput" Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,0,0" />
+            <FormLayoutInput Name="ConfigPanelLayoutInput" Left="StatusPanel,0" Right="StatusPanel,1" Top="StatusPanel,1" Bottom="StatusPanel,1,0" />
+
+            <FormLayoutInput Name="ClockPanelTopLayoutInput" Left="StatusPanel,0" Top="StatusPanel,0" Bottom="StatusPanel,1" Vertical="Center" Horizontal="Near" />
+            <FormLayoutInput Name="ClockPanelBottomLayoutInput" Left="ConfigPanel,0" Top="ConfigPanel,0" Bottom="ConfigPanel,1" Vertical="Center" Horizontal="Near" />
+
+            <FormLayoutInput Name="ConfigPanelTopLayoutInput" Right="StatusPanel,1" Top="StatusPanel,0" Bottom="StatusPanel,1" Vertical="Center" Horizontal="Far" />
+            <FormLayoutInput Name="ConfigPanelBottomLayoutInput" Right="ConfigPanel,1" Top="ConfigPanel,0" Bottom="ConfigPanel,1" Vertical="Center" Horizontal="Far" />
+
+            <cor:Boolean Name="ShowNPV" Boolean="false" />
+
+            <cor:String Name="TopPanelStyle" String="Off" />
+        </Locals>
+
+        <Rules>
+            <!-- Set Folder Config Context -->
+            <!-- IMPORTANT: There are timing issues using Folder.ActualThumbSize when the folder's display prefs haven't been loaded
+                            yet.  So call LoadDisplayPrefs early and synchronously to ensure that all is initialized properly. -->
+            <Rule>
+                <Actions>
+                    <Invoke Target="[Utility.GetFolderPrefsId]" folder="[Folder.PhysicalParent]" ResultTarget="[Utility.ThemeConfig.ParentFolderId]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.GetFolderPrefsId]" folder="[Folder]" ResultTarget="[Utility.ThemeConfig.FolderId]" InvokePolicy="Synchronous" ExclusiveApply="false" />
+                    <Invoke Target="[Utility.LoadDisplayPrefs]" folder="[Folder]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Rule>
+
+            <Binding Source="[Folder]" Target="[Utility.CurrentParent]" />
+
+          <!-- QUIT MEDIA BROWSER PREVENTER IF ENABLED IN CONFIG-->
+          <Binding Source="[Utility.ThemeConfig.AskToQuit]" Target="[BackHandler.Handle]">
+            <Conditions>
+              <Equality Source="[Folder.IsRoot]" Value="true"/>
+            </Conditions>
+          </Binding>
+          <Changed Source="[BackHandler.Invoked]">
+            <Conditions>
+              <Equality Source="[Folder.IsRoot]" Value="true"/>
+              <Equality Source="[Utility.ThemeConfig.AskToQuit]" Value="true"/>
+            </Conditions>
+            <Actions>
+              <Invoke Target="[Utility.AskToQuit]"/>
+            </Actions>
+          </Changed>
+
+            <!-- Cover Wall Screen Saver -->
+            <Binding Source="[Utility.ThemeConfig.CoverWallScroll]" Target="[CoverWall.Direction]" />
+            <Binding Source="[Utility.ThemeConfig.CoverWallSSTimeout]" Target="[IdleHandler.IdleTimeoutMins]" />
+
+            <Condition Source="[Utility.ThemeConfig.CoverWallRotation]" ConditionOp="Equals" SourceValue="None">
+                <Actions>
+                    <Set Target="[CoverWall.CenterPointPercent]" Value=".5,.5,.5" />
+                    <Set Target="[CoverWall.Rotation]" Value="0deg;0,0,0" />
+                    <Set Target="[CoverWallLayoutInput.Bottom.Percent]" Value="1" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Utility.ThemeConfig.CoverWallRotation]" ConditionOp="Equals" SourceValue="To Back">
+                <Actions>
+                    <Set Target="[CoverWall.CenterPointPercent]" Value=".5,0,.5" />
+                    <Set Target="[CoverWall.Rotation]" Value="-30deg;1,0,0" />
+                    <Set Target="[CoverWallLayoutInput.Bottom.Percent]" Value="1.08" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Utility.ThemeConfig.CoverWallRotation]" ConditionOp="Equals" SourceValue="To Right">
+                <Actions>
+                    <Set Target="[CoverWall.CenterPointPercent]" Value="1,.5,.5" />
+                    <Set Target="[CoverWall.Rotation]" Value="-30deg;0,1,0" />
+                    <Set Target="[CoverWallLayoutInput.Bottom.Percent]" Value="1" />
+                </Actions>
+            </Condition>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Utility.ThemeConfig.CoverWallScreenSaver]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[IdleHandler.IsIdle]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.PlaybackController.IsPlaying]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[CoverWall.Folder]" Value="[Folder]" />
+                    <Set Target="[CoverWallPanel.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[Utility.ThemeConfig.CoverWallScreenSaver]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[IdleHandler.IsIdle]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Application.PlaybackController.IsPlaying]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[CoverWallPanel.Visible]" Value="false" />
+                    <Set Target="[CoverWall.Folder]" Value="null" />
+                </Actions>
+            </Rule>
+
+            <!-- Status Panel Visibility -->
+            <Default Target="[StatusPanelLayoutInput.Bottom.Offset]" Value="global://ss:SdI_BreadcrumbPanelHeight" />
+            <Default Target="[ConfigPanelLayoutInput.Bottom.Offset]" Value="global://ss:SdI_ClockPanelHeight" />
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.CurrentItem]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.ThemeConfig.FolderOrientation]" ConditionOp="Equals" Value="Horizontal" />
+                    <Equality Source="[Utility.ThemeConfig.FolderShowTopPanel]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.ThemeConfig.TopPanelStyle]" ConditionOp="NotEquals" Value="Off" />
+                    <Equality Source="[Application.CurrentItem.IsFolder]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Utility.EnableChildCount]" Value="true" InvokePolicy="Synchronous" />
+                    <Set Target="[Utility.CurrentItem]" Value="[Application.CurrentItem]" InvokePolicy="Synchronous" />
+                    <Set Target="[StatusBreadcrumb.Visible]" Value="false" />
+                    <Set Target="[ChildCount.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Binding Source="[Utility.ChildCountString]" Target="[ChildCount.Content]" />
+
+            <!-- If it is a non-root folder -->
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPanelStyle]" Value="[Utility.ThemeConfig.TopPanelStyle]" />
+                </Actions>
+            </Rule>
+
+            <!-- If it is a root, EHS, horizontal folder -->
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.ThemeConfig.FolderOrientation]" ConditionOp="Equals" Value="Horizontal" />
+                    <Equality Source="[Utility.ThemeConfig.FolderShowTopPanel]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPanelStyle]" Value="[Utility.ThemeConfig.TopPanelStyle]" />
+                </Actions>
+            </Rule>
+
+            <!-- If it is a root, non-EHS, non-Details folder -->
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="NotEquals" Value="Detail" />
+                    <Equality Source="[Utility.ThemeConfig.FolderShowTopPanel]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPanelStyle]" Value="[Utility.ThemeConfig.TopPanelStyle]" />
+                </Actions>
+            </Rule>
+
+            <!-- If it is a root, EHS, vertical folder -->
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.ThemeConfig.FolderOrientation]" ConditionOp="Equals" Value="Vertical" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPanelStyle]" Value="Off" />
+                </Actions>
+            </Rule>
+
+            <!-- If it is a root, EHS, horizontal, shop top panel off folder -->
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.ThemeConfig.FolderOrientation]" ConditionOp="Equals" Value="Horizontal" />
+                    <Equality Source="[Utility.ThemeConfig.FolderShowTopPanel]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPanelStyle]" Value="Off" />
+                </Actions>
+            </Rule>
+
+            <!-- If it is a root, non-EHS, Details folder -->
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="Equals" Value="Detail" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPanelStyle]" Value="Off" />
+                </Actions>
+            </Rule>
+
+            <!-- If it is a root, non-EHS, non-Details, show top panel off folder -->
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.Config.EnableRootPage]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Folder.DisplayPrefs.ViewTypeString]" ConditionOp="NotEquals" Value="Detail" />
+                    <Equality Source="[Utility.ThemeConfig.FolderShowTopPanel]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[TopPanelStyle]" Value="Off" />
+                </Actions>
+            </Rule>
+
+            <Binding Source="[Utility.ThemeConfig.ShowIndexOfCount]" Target="[IndexOfCount.Visible]">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+
+            <Changed Source="[Folder.SelectedChildIndex]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.FormatIndexOfCount]" index="[Folder.SelectedChildIndex]" count="[Folder.Children.Count]" ResultTarget="[IndexOfCountText.Content]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Folder.Children.Count]" InitialEvaluate="true">
+                <Actions>
+                    <Invoke Target="[Utility.FormatIndexOfCount]" index="[Folder.SelectedChildIndex]" count="[Folder.Children.Count]" ResultTarget="[IndexOfCountText.Content]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <!-- Clock -->
+            <Binding Source="[Application.Config.ShowClock]" Target="[StatusClock.Visible]" />
+            
+            <Binding Source="[Clock.Time]" Target="[StatusClock.Content]">
+                <Conditions>
+                    <Equality Source="[Application.Config.ShowClock]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+            </Binding>
+
+            <!-- Activity -->
+            <Binding Source="[Application.Information.MajorActivity]" Target="[ActivityIndicator.Visible]"  />
+
+            <!-- EHS Options -->
+            <Binding Source="[Application.Config.ShowConfigButton]" Target="[ConfigBtn.Visible]">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" Value="false" />
+                </Conditions>
+            </Binding>
+          
+            
+            
+            <!-- Options -->
+            <Changed Source="[Configure.Invoked]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Folder.IsRoot]" Value="true" />
+                    <Equality Source="[Application.Config.EnableRootPage]" Value="true"/>
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Application.OpenConfiguration]" showFullOptions="true" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ShowOptionsCommand.Invoked]">
+                <Actions>
+                    <Set Target="[UIConfig.Visible]" Value="true" />
+                    <Invoke Target="[UIConfig.NavigateInto]" />
+                    <Set Target="[ViewPanel.Enabled]" Value="false" />
+                    <Set Target="[FullScreenButton.Enabled]" Value="false" />
+                    <Set Target="[ConfigBtn.Enabled]" Value="false" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HideOptionsCommand.Invoked]">
+                <Actions>
+                    <Set Target="[ViewPanel.Enabled]" Value="true" />
+                    <Set Target="[FullScreenButton.Enabled]" Value="true" />
+                    <Set Target="[ConfigBtn.Enabled]" Value="true" />
+                    <Set Target="[UIConfig.Visible]" Value="false" />
+                    <Invoke Target="[ViewPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[TypingHandler.DisplayValue]">
+                <Conditions>
+                    <Equality Source="[TypingHandler.DisplayValue]" ConditionOp="Equals" Value="*" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ShowContextMenuCommand.Invoke]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ShowContextMenuCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[Application.ResetContextMenu]" />
+                    <Set Target="[ViewPanel.Enabled]" Value="false" />
+                    <Set Target="[FullScreenButton.Enabled]" Value="false" />
+                    <Set Target="[ConfigBtn.Enabled]" Value="false" />
+                    <Set Target="[TypingHandler.EditableText.Value]" Value="" />
+                    <Set Target="[FindAsYouTypePanel.Visible]" Value="false" />
+                    <Set Target="[ContextMenu.Visible]" Value="true"/>
+                    <Invoke Target="[ContextMenu.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HideContextMenuCommand.Invoked]">
+                <Actions>
+                    <Set Target="[ViewPanel.Enabled]" Value="true" />
+                    <Set Target="[FullScreenButton.Enabled]" Value="true" />
+                    <Set Target="[ConfigBtn.Enabled]" Value="true" />
+                    <Invoke Target="[ViewPanel.NavigateInto]" />
+                    <Set Target="[ContextMenu.Visible]" Value="false" />
+                    <Set Target="[FindAsYouTypePanel.Visible]" Value="true" />
+                </Actions>
+            </Changed>
+
+            <Rule>
+                <Conditions>
+                    <Equality Source="[Application.DisplayPopupPlay]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[Application.DisplayPopupPlay]" Value="false" />
+                    <Invoke Target="[ShowPlayMenuCommand.Invoke]" />
+                </Actions>
+            </Rule>
+
+            <Changed Source="[ShowPlayMenuCommand.Invoked]">
+                <Actions>
+                    <Set Target="[ViewPanel.Enabled]" Value="false" />
+                    <Set Target="[FullScreenButton.Enabled]" Value="false" />
+                    <Set Target="[ConfigBtn.Enabled]" Value="false" />
+                    <Set Target="[FindAsYouTypePanel.Visible]" Value="false" />
+                    <Set Target="[PlayMenu.Visible]" Value="true"/>
+                    <Invoke Target="[PlayMenu.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HidePlayMenuCommand.Invoked]">
+                <Actions>
+                    <Set Target="[ViewPanel.Enabled]" Value="true" />
+                    <Set Target="[FullScreenButton.Enabled]" Value="true" />
+                    <Set Target="[ConfigBtn.Enabled]" Value="true" />
+                    <Invoke Target="[ViewPanel.NavigateInto]" />
+                    <Set Target="[PlayMenu.Visible]" Value="false" />
+                    <Set Target="[FindAsYouTypePanel.Visible]" Value="true" />
+                </Actions>
+            </Changed>
+
+            <!--MBC 3.0.97 USER SWITCHING-->
+          <Rule>
+            <Conditions>
+              <Equality Source="[Application.DisplayUserMenu]" ConditionOp="Equals" Value="true" />
+            </Conditions>
+            <Actions>
+              <Set Target="[UserMenu.Visible]" Value="true" />
+              <Invoke Target="[UserMenu.NavigateInto]" />
+            </Actions>
+          </Rule>
+
+          <Changed Source="[SwitchUserCommand.Invoked]">
+            <Actions>
+              <Set Target="[Application.DisplayUserMenu]" Value="true"/>
+              <Set Target="[ContextMenu.Visible]" Value="false" />
+            </Actions>
+          </Changed>
+
+          <Changed Source="[CloseUserMenuCommand.Invoked]">
+            <Actions>
+              <Set Target="[Application.DisplayUserMenu]" Value="false" />
+              <Invoke Target="[ViewPanel.NavigateInto]" />
+            </Actions>
+          </Changed>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Modified Source="[SwitchKey.Invoked]" />
+                    <Equality Source="[Application.Config.ShowConfigButton]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Folder.DisplayPrefs.ToggleViewTypes]" />
+                </Actions>
+            </Rule>
+
+            <Changed Source="[FullScreenCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[Application.PlaybackController.GoToFullScreen]"/>
+                </Actions>
+            </Changed>
+
+            <Binding Source="[FindAsYouType.Content]" Target="[ShadowLabel.Content]" />
+            <Binding Source="[TypingHandler.DisplayValue]" Target="[FindAsYouType.Content]" />
+            <Binding Source="[TypingHandler.DisplayValue]" Target="[Folder.TripleTapSelect]" />
+
+            <Changed Source="[TypingHandler.DisplayValue]" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[TypingHandler.DisplayValue]" ConditionOp="NotEquals" Value="" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[HideFindAsYouType.Start]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[HideFindAsYouType.Tick]">
+                <Actions>
+                    <Set Target="[TypingHandler.EditableText.Value]" Value="" />
+                </Actions>
+            </Changed>
+
+            <!-- Now Playing -->
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[Application.PlaybackController.IsPlaying]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Application.PlaybackController.IsPaused]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowNPV]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.PlaybackController.IsPlaying]" ConditionOp="Equals" Value="false" />
+                    <Equality Source="[Application.PlaybackController.IsPaused]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[ShowNPV]" Value="false" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[ShowNPV]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.ThemeConfig.NowPlayingStyle]" ConditionOp="Equals" Value="Small" />
+                    <Equality Source="[Utility.ThemeConfig.FolderShowNPV]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[NowPlaying.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <Rule ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[ShowNPV]" ConditionOp="Equals" Value="true" />
+                    <Equality Source="[Utility.ThemeConfig.NowPlayingStyle]" ConditionOp="Equals" Value="Backdrop" />
+                    <Equality Source="[Utility.ThemeConfig.FolderShowNPV]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[FullScreenButton.Visible]" Value="true" />
+                </Actions>
+            </Rule>
+
+            <!-- Top Panel -->
+            <Condition Source="[TopPanelStyle]" SourceValue="Double Panel">
+                <Actions>
+                    <Set Target="[TitlePanel.Visible]" Value="true" />
+                    <Set Target="[StatusBG.Visible]" Value="true" />
+                    <Set Target="[StatusGlow.Visible]" Value="false" />
+                    <Set Target="[ConfigBG.Visible]" Value="true" />
+                    <Set Target="[ConfigGlow.Visible]" Value="true" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[TopPanelStyle]" SourceValue="Single Panel">
+                <Actions>
+                    <Set Target="[TitlePanel.Visible]" Value="true" />
+                    <Set Target="[StatusBG.Visible]" Value="true" />
+                    <Set Target="[StatusGlow.Visible]" Value="true" />
+                    <Set Target="[ConfigBG.Visible]" Value="false" />
+                    <Set Target="[ConfigGlow.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[TopPanelStyle]" SourceValue="No Panels">
+                <Actions>
+                    <Set Target="[TitlePanel.Visible]" Value="true" />
+                    <Set Target="[StatusBG.Visible]" Value="false" />
+                    <Set Target="[StatusGlow.Visible]" Value="false" />
+                    <Set Target="[ConfigBG.Visible]" Value="false" />
+                    <Set Target="[ConfigGlow.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[TopPanelStyle]" SourceValue="Off">
+                <Actions>
+                    <Set Target="[TitlePanel.Visible]" Value="false" />
+                    <Set Target="[StatusBG.Visible]" Value="false" />
+                    <Set Target="[StatusGlow.Visible]" Value="false" />
+                    <Set Target="[ConfigBG.Visible]" Value="false" />
+                    <Set Target="[ConfigGlow.Visible]" Value="false" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Utility.ThemeConfig.ShowClockConfigAtTop]" SourceValue="true">
+                <Actions>
+                    <Set Target="[ClockPanel.LayoutInput]" Value="[ClockPanelTopLayoutInput]" />
+                    <Set Target="[ConfigButtonsPanel.LayoutInput]" Value="[ConfigPanelTopLayoutInput]" />
+                    <Set Target="[StatusClock.Color]" Value="color://ss:SdC_Breadcrumb" />
+                    <Set Target="[ActivityIndicator.OverlayColor]" Value="color://ss:SdC_TitleButtonsColorFilter" />
+                    <Set Target="[FullScreenButton.OverlayColor]" Value="color://ss:SdC_TitleButtonsColorFilter" />
+                    <Set Target="[PCIBtn.OverlayColor]" Value="color://ss:SdC_TitleButtonsColorFilter" />
+                    <Set Target="[ConfigBtn.OverlayColor]" Value="color://ss:SdC_TitleButtonsColorFilter" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Utility.ThemeConfig.ShowClockConfigAtTop]" SourceValue="false">
+                <Actions>
+                    <Set Target="[ClockPanel.LayoutInput]" Value="[ClockPanelBottomLayoutInput]" />
+                    <Set Target="[ConfigButtonsPanel.LayoutInput]" Value="[ConfigPanelBottomLayoutInput]" />
+                    <Set Target="[StatusClock.Color]" Value="color://ss:SdC_Clock" />
+                    <Set Target="[ActivityIndicator.OverlayColor]" Value="color://ss:SdC_StatusButtonsColorFilter" />
+                    <Set Target="[FullScreenButton.OverlayColor]" Value="color://ss:SdC_StatusButtonsColorFilter" />
+                    <Set Target="[PCIBtn.OverlayColor]" Value="color://ss:SdC_StatusButtonsColorFilter" />
+                    <Set Target="[ConfigBtn.OverlayColor]" Value="color://ss:SdC_StatusButtonsColorFilter" />
+                </Actions>
+            </Condition>
+        </Rules>
+
+        <Content>
+            <Panel Layout="Center">
+                <Animations>
+                    <Animation Type="Hide">
+                        <Keyframes>
+                            <AlphaKeyframe Time="0.0" Value="1" RelativeTo="Current" Interpolation="EaseIn"/>
+                            <AlphaKeyframe Time="0.3" Value="1" RelativeTo="Current" Interpolation="EaseIn"/>
+                            <AlphaKeyframe Time="0.6" Value="0" RelativeTo="Final"/>
+                        </Keyframes>
+                    </Animation>
+                </Animations>
+                <Children>
+                    <Clip Layout="Form" Padding="[Application.Config.OverScanPadding]" Scale="[Application.Config.OverScanScaling]" CenterPointPercent="0.5,0.5,0.5">
+                        <Children>
+                            <!-- Cover Wall Screensaver -->
+                            <Panel Name="CoverWallPanel" Layout="Fill" Visible="false" LayoutInput="[CoverWallLayoutInput]">
+                                <Children>
+                                    <sil:CoverWall Name="CoverWall" Application="[Application]" Config="[Utility.ThemeConfig]" Folder="null" ScreenSaver="true" AllPlayable="true" Rotation="0deg;0,0,0" CenterPointPercent=".5,.5,.5" />
+                                    <ColorFill Content="color://ss:SdC_ThemeBG" />
+                                </Children>
+                                <Animations>
+                                    <Animation Type="Hide">
+                                        <Keyframes>
+                                            <AlphaKeyframe RelativeTo="Current" Time="0.0" Value="1"/>
+                                            <AlphaKeyframe RelativeTo="Current" Time="0.5" Value="0"/>
+                                        </Keyframes>
+                                    </Animation>
+                                    <Animation Type="Show">
+                                        <Keyframes>
+                                            <AlphaKeyframe RelativeTo="Current" Time="0.0" Value="0"/>
+                                            <AlphaKeyframe RelativeTo="Final" Time="0.5" Value="1"/>
+                                        </Keyframes>
+                                    </Animation>
+                                </Animations>
+                            </Panel>
+                            
+                            <uic:UIConfig Name="UIConfig"
+                                          Application="[Application]"
+                                          Config="[Utility.ThemeConfig]"
+                                          Folder="[Folder]"
+                                          CloseCommand="[HideOptionsCommand]"
+                                          Visible="false">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1" />
+                                </LayoutInput>
+                            </uic:UIConfig>
+
+                            <!-- find in list panel - highest Z-Order -->
+                            <Panel Name="FindAsYouTypePanel" >
+                                <LayoutInput>
+                                    <FormLayoutInput Bottom="Parent,1,-30" Right="Parent,1,-30"/>
+                                </LayoutInput>
+                                <Layout>
+                                    <FlowLayout ItemAlignment="Center"/>
+                                </Layout>
+                                <Children>
+                                    <ColorFill Content="Transparent" Padding="8,0,8,-3" Layout="Anchor">
+                                        <Children>
+                                            <Text Name="FindAsYouType" Font="font://ss:SdF_FindAsYouType" Content="" Color="color://ss:SdC_FindAsYouType"  />
+                                            <Text Name="ShadowLabel" Content="" Color="255, 0, 0, 0" Font="font://ss:SdF_FindAsYouType">
+                                                <LayoutInput>
+                                                    <AnchorLayoutInput Top="FindAsYouType, 0, 2" Left="FindAsYouType, 0, 2"/>
+                                                </LayoutInput>
+                                            </Text>
+                                        </Children>
+                                    </ColorFill>
+                                </Children>
+                            </Panel>
+
+                            <!-- Context Menu -->
+                            <cm:ContextMenu Name="ContextMenu" Application="[Application]" CloseCommand="[HideContextMenuCommand]" Visible="false" MenuType="Context" />
+
+                            <!-- Play Menu -->
+                            <cm:ContextMenu Name="PlayMenu" Application="[Application]" CloseCommand="[HidePlayMenuCommand]" Visible="false" MenuType="Play" />
+
+                          <!--USER SWITCHING MENU-->
+                            <cm:UserMenu Name="UserMenu" Application="[Application]" CloseCommand="[CloseUserMenuCommand]" Visible="false" MenuType="User"/>
+                          
+                            <!-- Clock/Busy -->
+                            <Panel Name="ClockPanel" Margins="20,0,0,0" LayoutInput="[ClockPanelBottomLayoutInput]">
+                                <Layout>
+                                    <FlowLayout Orientation="Horizontal" ItemAlignment="Center" />
+                                </Layout>
+                                <Children>
+                                    <Text Name="StatusClock" Color="color://ss:SdC_Clock" Font="font://ss:SdF_Clock" Visible="[Application.Config.ShowClock]" />
+                                    <bi:BusyIndicator Name="ActivityIndicator" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Visible="false" Margins="10,0,0,0" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Full Screen/PCI/Config -->
+                            <Panel Name="ConfigButtonsPanel" Margins="0,0,20,0" LayoutInput="[ConfigPanelBottomLayoutInput]">
+                                <Layout>
+                                    <FlowLayout Orientation="Horizontal" ItemAlignment="Center" />
+                                </Layout>
+                                <Children>
+                                    <ib:ImageButton Name="UserMenuBtn" Command="[SwitchUserCommand]" Image="[Application.CurrentUser.PrimaryImage]" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Size="0,20" Visible="true" />
+                                    <ib:ImageButton Name="FullScreenButton" Command="[FullScreenCommand]" Image="resx://Subdued/Subdued.Resources/watch" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Visible="false" />
+                                    <pc:PCIndicatorButton Name="PCIBtn" Config="[Utility.ThemeConfig]" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Application="[Application]" />
+                                    <ib:ImageButton Name="ConfigBtn" Command="[ShowOptionsCommand]" Image="resx://Subdued/Subdued.Resources/config" OverlayColor="color://ss:SdC_StatusButtonsColorFilter" Visible="true" />
+                                </Children>
+                            </Panel>
+
+                            <!-- Status Panel -->
+                            <Panel Name="StatusPanel" Layout="Form" LayoutInput="[StatusPanelLayoutInput]">
+                                <Children>
+                                    <!-- Status Glow -->
+                                    <ui:GlowBottom Name="StatusGlow" VFadeSize="30" HFadeSize="200" Visible="false">
+                                        <LayoutInput>
+                                            <FormLayoutInput Left="StatusBG,0" Right="StatusBG,1" Top="StatusBG,1,-30" Bottom="StatusBG,1,-1"/>
+                                        </LayoutInput>
+                                    </ui:GlowBottom>
+
+                                    <!-- Breakcrumb -->
+                                    <Panel Name="TitlePanel" Layout="HorizontalFlow" Visible="true">
+                                        <LayoutInput>
+                                            <FormLayoutInput Vertical="Center" Horizontal="Center" />
+                                        </LayoutInput>
+                                        <Children>
+                                            <Text Name="ChildCount" Color="color://ss:SdC_Breadcrumb" Font="font://ss:SdF_Breadcrumb" Visible="false" />
+                                            <Text Name="StatusBreadcrumb" Content="[Application.BreadCrumbs]" Color="color://ss:SdC_Breadcrumb" Font="font://ss:SdF_Breadcrumb" Visible="true" />
+                                            <Panel Name="IndexOfCount" Layout="HorizontalFlow" Visible="false">
+                                                <Children>
+                                                    <Text Content=" | " Color="color://ss:SdC_Breadcrumb" Font="font://ss:SdF_Breadcrumb" />
+                                                    <Text Name="IndexOfCountText" Color="color://ss:SdC_Breadcrumb" Font="font://ss:SdF_Breadcrumb" />
+                                                </Children>
+                                            </Panel>
+                                        </Children>
+                                    </Panel>
+
+                                    <!-- Background Fill -->
+                                    <ui:PanelPrimary Name="StatusBG" Visible="true">
+                                        <LayoutInput>
+                                            <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1"/>
+                                        </LayoutInput>
+                                    </ui:PanelPrimary>
+                                </Children>
+                            </Panel>
+
+                            <!-- Config Panel -->
+                            <Panel Name="ConfigPanel" Layout="Form" LayoutInput="[ConfigPanelLayoutInput]">
+                                <Children>
+                                    <!-- Background Glow -->
+                                    <ui:GlowBottom Name="ConfigGlow" VFadeSize="30" HFadeSize="200" Visible="true">
+                                        <LayoutInput>
+                                            <FormLayoutInput Left="ConfigBG,0" Right="ConfigBG,1" Top="ConfigBG,1,-30" Bottom="ConfigBG,1,-1"/>
+                                        </LayoutInput>
+                                    </ui:GlowBottom>
+
+                                    <!-- Background Fill -->
+                                    <ui:PanelSecondary Name="ConfigBG">
+                                        <LayoutInput>
+                                            <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" Bottom="Parent,1"/>
+                                        </LayoutInput>
+                                    </ui:PanelSecondary>
+                                </Children>
+                            </Panel>
+                            
+                            <!-- View Details-->
+                            <pda:PageDetailAreaSubdued Name="ViewPanel" Folder="[Folder]" Application="[Application]" Config="[Utility.ThemeConfig]" Utility="[Utility]">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="Parent,.0" Top="Parent,0" Bottom="Parent,1" Right="Parent,1"/>
+                                </LayoutInput>
+                            </pda:PageDetailAreaSubdued>
+
+                            <!-- Now Playing View -->
+                            <np:NowPlayingViewport Name="NowPlaying" FocusOrder="10" Application="[Application]" Visible="false">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="Parent,0,10" Top="ConfigPanel,1,10" />
+                                </LayoutInput>
+                            </np:NowPlayingViewport>
+
+                        </Children>
+                    </Clip>
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+</Mcml>

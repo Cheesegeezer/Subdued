@@ -1,0 +1,137 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+      xmlns:cor ="assembly://MSCorLib/System"
+      xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:bi="resx://Subdued/Subdued.Resources/BusyIndicator"
+      xmlns:me = "Me"
+	  xmlns:ss="file://Subdued_Styles.mcml"
+      >
+
+    <UI Name="MediaInfoPanel">
+        <Properties>
+            <lib:Item Name="Item" Item="$Required"/>
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+            <Size Name="MaxIconSize" Size="0,75"/>
+            <StripAlignment Name="StripAlign" StripAlignment="Near" />
+            <sd:AppUtil Name="Utility" />
+            <cor:Boolean Name="ShowAll" Boolean="true" />
+        </Properties>
+
+        <Locals>
+            <FlowLayout Name="PanelLayout" Orientation="Horizontal" Spacing="0,0" AllowWrap="true" StripAlignment="Far"/>
+        </Locals>
+
+        <Rules>
+            <Rule>
+                <Actions>
+                    <Invoke Target="[Config.CheckActiveMediaInfoIconsSet]" InvokePolicy="AsynchronousNormal" />
+                </Actions>
+            </Rule>
+            
+            <Rule ConditionLogicalOp="Or">
+                <Conditions>
+                    <Equality Source="[Config.MediaInfoIconsSet]" ConditionOp="Equals" Value="Mono" />
+                    <Equality Source="[Config.MediaInfoIconsSet]" ConditionOp="Equals" Value="Custom Mono" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[MediaImage.ColorFilter]" Value="color://ss:SdC_InfoIconsColorFilter" />
+                    <Set Target="[VideoImage.ColorFilter]" Value="color://ss:SdC_InfoIconsColorFilter" />
+                    <Set Target="[HDImage.ColorFilter]" Value="color://ss:SdC_InfoIconsColorFilter" />
+                    <Set Target="[AspectImage.ColorFilter]" Value="color://ss:SdC_InfoIconsColorFilter" />
+                    <Set Target="[AudioImage.ColorFilter]" Value="color://ss:SdC_InfoIconsColorFilter" />
+                    <Set Target="[AudioChannelImage.ColorFilter]" Value="color://ss:SdC_InfoIconsColorFilter" />
+                </Actions>
+            </Rule>
+
+            <Changed Source="[Item.MediaInfo]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Item]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Config.MediaInfoIconsExtracted]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[MediaImage.Content]" Value="[Item.MediaTypeImage]"/>
+                    <Set Target="[VideoImage.Content]" Value="[Item.MediaInfo.VideoCodecImage]"/>
+                    <Set Target="[HDImage.Content]" Value="[Item.HDTypeImage]"/>
+                    <Set Target="[AspectImage.Content]" Value="[Item.AspectRatioImage]"/>
+                    <Set Target="[AudioImage.Content]" Value="[Item.MediaInfo.AudioCodecImage]"/>
+                    <Set Target="[AudioChannelImage.Content]" Value="[Item.MediaInfo.AudioChannelImage]"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Config.MediaInfoIconsExtracted]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Item]" ConditionOp="NotEquals" Value="null" />
+                    <Equality Source="[Config.MediaInfoIconsExtracted]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[MediaImage.Content]" Value="[Item.MediaTypeImage]"/>
+                    <Set Target="[VideoImage.Content]" Value="[Item.MediaInfo.VideoCodecImage]"/>
+                    <Set Target="[HDImage.Content]" Value="[Item.HDTypeImage]"/>
+                    <Set Target="[AspectImage.Content]" Value="[Item.AspectRatioImage]"/>
+                    <Set Target="[AudioImage.Content]" Value="[Item.MediaInfo.AudioCodecImage]"/>
+                    <Set Target="[AudioChannelImage.Content]" Value="[Item.MediaInfo.AudioChannelImage]"/>
+                </Actions>
+            </Changed>
+
+            <Binding Source="[Config.MediaInfoIconsExtracted]" Target="[LoadingIndicator.Visible]">
+                <Transformer>
+                    <BooleanTransformer Inverse="true" />
+                </Transformer>
+            </Binding>
+
+            <Binding Source="[StripAlign]" Target="[PanelLayout.StripAlignment]" />
+
+            <Binding Source="[Config.ShowMediaInfoMediaImage]" Target="[MediaImage.Visible]">
+                <Conditions>
+                    <Equality Source="[ShowAll]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+            
+            <Binding Source="[Config.ShowMediaInfoVideoImage]" Target="[VideoImage.Visible]">
+                <Conditions>
+                    <Equality Source="[ShowAll]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+            
+            <Binding Source="[Config.ShowMediaInfoHDImage]" Target="[HDImage.Visible]">
+                <Conditions>
+                    <Equality Source="[ShowAll]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+
+            <Binding Source="[Config.ShowMediaInfoAspectImage]" Target="[AspectImage.Visible]">
+                <Conditions>
+                    <Equality Source="[ShowAll]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+
+            <Binding Source="[Config.ShowMediaInfoAudioImage]" Target="[AudioImage.Visible]">
+                <Conditions>
+                    <Equality Source="[ShowAll]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+
+            <Binding Source="[Config.ShowMediaInfoAudioChannelImage]" Target="[AudioChannelImage.Visible]">
+                <Conditions>
+                    <Equality Source="[ShowAll]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+            </Binding>
+        </Rules>
+
+        <Content>
+            <Panel Layout="[PanelLayout]">
+                <Children>
+                    <bi:BusyIndicator Name="LoadingIndicator" OverlayColor="color://ss:SdC_InfoIconsColorFilter" Visible="false" />
+                    <Graphic Name="MediaImage" MaximumSize="[MaxIconSize]" SizingPolicy="SizeToContent" MaintainAspectRatio="true" />
+                    <Graphic Name="VideoImage" MaximumSize="[MaxIconSize]" SizingPolicy="SizeToContent" MaintainAspectRatio="true" />
+                    <Graphic Name="HDImage" MaximumSize="[MaxIconSize]" SizingPolicy="SizeToContent" MaintainAspectRatio="true" />
+                    <Graphic Name="AspectImage" MaximumSize="[MaxIconSize]" SizingPolicy="SizeToContent" MaintainAspectRatio="true" />
+                    <Graphic Name="AudioImage" MaximumSize="[MaxIconSize]" SizingPolicy="SizeToContent" MaintainAspectRatio="true" />
+                    <Graphic Name="AudioChannelImage" MaximumSize="[MaxIconSize]" SizingPolicy="SizeToContent" MaintainAspectRatio="true" />
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+</Mcml>

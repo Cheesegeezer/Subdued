@@ -1,0 +1,245 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:cor="assembly://MSCorLib/System"
+      xmlns:a="assembly://MediaBrowser/MediaBrowser"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:cb="resx://MediaBrowser/MediaBrowser.Resources/CheckBox"
+      xmlns:vm="resx://MediaBrowser/MediaBrowser.Resources/ViewMenu"
+      xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+	  xmlns:s="file://Styles_DoNotEdit.mcml"
+	  xmlns:f="file://Fonts_DoNotEdit.mcml"
+      xmlns:me="Me"
+>
+  <!--*****************************************************************************************************************
+
+    This is the config panel for your theme.  Modify this to include any theme-specific options you require.
+    You must also handle the saving/loading of any of these options somewhere in your assembly.
+
+  *********************************************************************************************************************-->
+
+    <UI Name="ConfigPanelViews">
+        <Properties>
+            <a:Application Name="Application" Application="$Required"/>
+            <EditableText Name="FocusItem" />
+            <sd:AppUtil Name="Utility" />
+        </Properties>
+
+        <Locals>
+            <Inset Name="CMargin" Inset="25,0,0,0" />
+
+            <Choice Name="CoverflowRotation">
+                <Options>
+                    <cor:String String="None" />
+                    <cor:String String="To Back" />
+                    <cor:String String="To Right" />
+                </Options>
+            </Choice>
+
+            <Choice Name="PosterRotation">
+                <Options>
+                    <cor:String String="None" />
+                    <cor:String String="To Back" />
+                    <cor:String String="To Right" />
+                </Options>
+            </Choice>
+
+            <Choice Name="ThumbRotation">
+                <Options>
+                    <cor:String String="None" />
+                    <cor:String String="To Back" />
+                    <cor:String String="To Right" />
+                </Options>
+            </Choice>
+
+            <Choice Name="ThumbstripRotation">
+                <Options>
+                    <cor:String String="None" />
+                    <cor:String String="To Back" />
+                    <cor:String String="To Right" />
+                </Options>
+            </Choice>
+
+            <BooleanChoice Name="ChildThumbBanner" Value="[Utility.ThemeConfig.ChildThumbBanner]" />
+            <BooleanChoice Name="ChildThumbMiniBackdrop" Value="[Utility.ThemeConfig.ChildThumbMiniBackdrop]" />
+            <BooleanChoice Name="ChildThumbstripMiniBackdrop" Value="[Utility.ThemeConfig.ChildThumbstripMiniBackdrop]" />
+            <BooleanChoice Name="ChildSeasonEpisodeOverlay" Value="[Utility.ThemeConfig.ChildSeasonEpisodeOverlay]" />
+            <BooleanChoice Name="ShowDiscImage" Value="[Utility.ThemeConfig.ShowDiscImage]" />
+            <BooleanChoice Name="ShowWeather" Value="[Utility.ThemeConfig.ShowWeather]" />
+        </Locals>
+
+        <Rules>
+            <Binding Source="[CoverflowRotation.Chosen!cor:String]" Target="[Utility.ThemeConfig.CoverflowRotation]" />
+            <Binding Source="[PosterRotation.Chosen!cor:String]" Target="[Utility.ThemeConfig.PosterRotation]" />
+            <Binding Source="[ThumbRotation.Chosen!cor:String]" Target="[Utility.ThemeConfig.ThumbRotation]" />
+            <Binding Source="[ThumbstripRotation.Chosen!cor:String]" Target="[Utility.ThemeConfig.ThumbstripRotation]" />
+
+            <Binding Source="[ChildThumbBanner.Value]" Target="[Utility.ThemeConfig.ChildThumbBanner]" />
+            <Binding Source="[ChildThumbMiniBackdrop.Value]" Target="[Utility.ThemeConfig.ChildThumbMiniBackdrop]" />
+            <Binding Source="[ChildThumbstripMiniBackdrop.Value]" Target="[Utility.ThemeConfig.ChildThumbstripMiniBackdrop]" />
+            <Binding Source="[ChildSeasonEpisodeOverlay.Value]" Target="[Utility.ThemeConfig.ChildSeasonEpisodeOverlay]" />
+            <Binding Source="[ShowDiscImage.Value]" Target="[Utility.ThemeConfig.ShowDiscImage]" />
+            <Binding Source="[ShowWeather.Value]" Target="[Utility.ThemeConfig.ShowWeather]" />
+        </Rules>
+
+        <Content>
+            <Panel Layout="HorizontalFlow">
+                <Children>
+                    <Panel Layout="VerticalFlow">
+                        <Children>
+                            <me:TextHeader Text="[Application.LocalStrings.#ExtendedViewOptionsLabel!cor:String]" />
+                            <me:SpinnerText Model="[CoverflowRotation]" FocusItem="[FocusItem]"  Label="[Application.LocalStrings.#CoverflowRotationLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.CoverflowRotation]" TextSize="230,0" />
+                            <me:SpinnerText Model="[PosterRotation]" FocusItem="[FocusItem]"  Label="[Application.LocalStrings.#PosterRotationLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.PosterRotation]" TextSize="230,0" />
+                            <me:SpinnerText Model="[ThumbRotation]" FocusItem="[FocusItem]"  Label="[Application.LocalStrings.#ThumbRotationLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.ThumbRotation]" TextSize="230,0" />
+                            <me:SpinnerText Model="[ThumbstripRotation]" FocusItem="[FocusItem]"  Label="[Application.LocalStrings.#ThumbstripRotationLabel!cor:String]" Color="color://s:FontColorLight" Font="font://f:CP_ConfigItemFont" ValueFont="font://f:CP_ConfigItemFont" Margins="[CMargin]" DefaultString="[Utility.ThemeConfig.ThumbstripRotation]" TextSize="230,0" />
+                          <cb:CheckBox Label="[Application.LocalStrings.#ChildThumbShowBannerLabel!cor:String]" Checked="[ChildThumbBanner]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                          <cb:CheckBox Label="[Application.LocalStrings.#ChildThumbMiniBackdropLabel!cor:String]" Checked="[ChildThumbMiniBackdrop]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                          <cb:CheckBox Label="[Application.LocalStrings.#ChildThumbStripMiniBackdropLabel!cor:String]" Checked="[ChildThumbstripMiniBackdrop]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                          <cb:CheckBox Label="[Application.LocalStrings.#ChildSeasonEpisodeOverlayLabel!cor:String]" Checked="[ChildSeasonEpisodeOverlay]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                          
+                        </Children>
+                    </Panel>
+                    <Panel Layout="VerticalFlow" Padding="0,0,20,0">
+                        <Children>
+                            <me:TextHeader Text="[Application.LocalStrings.#ExtraViewOptionsLabel!cor:String]" />
+                            <cb:CheckBox Label="[Application.LocalStrings.#ShowWeatherLabel!cor:String]" Checked="[ShowWeather]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                          <cb:CheckBox Label="[Application.LocalStrings.#ShowDiscImageLabel!cor:String]" Checked="[ShowDiscImage]" FocusItem="[FocusItem]" Margins="[CMargin]" Font="font://f:CP_ConfigItemFont"/>
+                        </Children>
+                    </Panel>
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+    <UI Name="TextHeader">
+        <Properties>
+            <cor:String Name="Text" String="$Required" />
+            <cor:Boolean Name="WordWrap" Boolean="false" />
+            <Font Name="Font" Font="font://f:CP_ConfigHeaderFont" />
+            <Inset Name="Margin" Inset="10,5,10,5"/>
+        </Properties>
+        <Locals>
+            <Color Name="Color" Color="color://s:FontColorLight" />
+        </Locals>
+        <Content>
+            <Text Color="[Color]" Content="[Text]" Font="[Font]" Margins="[Margin]" WordWrap="[WordWrap]" />
+        </Content>
+    </UI>
+
+    <UI Name="SimpleSpinner">
+
+        <Properties>
+            <IValueRange Name="Model" IValueRange="$Required" />
+            <Color Name="BackgroundColor" Color="Transparent" />
+            <FormatTransformer Name="LabelTransformer" Format="{0}" />
+            <Font Name="Font" Font="$Required"/>
+            <Font Name="ValueFont" Font="$Required"/>
+            <Color Name="Color" Color="color://s:FontColorLight"/>
+            <cor:String Name="Label" String="" />
+            <EditableText Name="FocusItem" />
+            <Size Name="TextSize" Size="260,0" />
+        </Properties>
+
+        <Locals>
+            <InvokeCommand Name="Previous" Target="[Model.PreviousValue]" />
+            <InvokeCommand Name="Next" Target="[Model.NextValue]" />
+            <cor:Boolean Name="HasFocus" />
+        </Locals>
+
+        <Rules>
+            <Binding Source="[Model.Value]" Target="[Value.Content]" Transformer="[LabelTransformer]" />
+            <Binding Source="[Model.HasNextValue]" Target="[Next.Available]"/>
+            <Binding Source="[Model.HasPreviousValue]" Target="[Previous.Available]"/>
+
+            <Condition Source="[Input.DeepKeyFocus]" SourceValue="true">
+                <Actions>
+                    <Set Target="[FocusItem.Value]" Value="[Label]" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Input.DeepKeyFocus]" SourceValue="true" Target="[HasFocus]" Value="[Input.DeepKeyFocus]" />
+            <Condition Source="[Input.DeepMouseFocus]" SourceValue="true" Target="[HasFocus]" Value="[Input.DeepMouseFocus]" />
+
+        </Rules>
+
+        <Content>
+            <Panel Navigation="Row">
+                <Layout>
+                    <FlowLayout Orientation="Horizontal" />
+                </Layout>
+                <Children>
+
+                    <Text Name="Text" Content="[Label]" Font="[Font]" Color="[Color]" MinimumSize="[TextSize]" />
+
+                    <!-- Previous button -->
+                    <vm:ImageBtn Name="btnPrevious" Focused="image://i:DecrementFocus"
+                                 NonFocused="image://i:DecrementNoFocus"
+                                 Command="[Previous]"/>
+
+                    <!-- Next button -->
+                    <vm:ImageBtn Name="btnNext" Focused="image://i:IncrementFocus"
+                                 NonFocused="image://i:IncrementNoFocus"
+                                 Command="[Next]"/>
+
+                    <!-- Current value -->
+                    <ColorFill Name="Background" Content="Transparent" MinimumSize="80,35" MaximumSize="175,35" Padding="5,0,0,5">
+                        <Children>
+                            <Text Name="Value" Font="[ValueFont]" Color="color://s:FontColorLight" />
+                        </Children>
+                    </ColorFill>
+
+                </Children>
+            </Panel>
+        </Content>
+    </UI>
+
+    <UI Name="SpinnerText" BaseUI="me:SimpleSpinner">
+        <Properties>
+            <cor:String Name="DefaultString" String="Default"/>
+            <Choice Name="Model" Choice="$Required" />
+        </Properties>
+
+        <Locals>
+            <cor:Boolean Name="InitialFocusSet" Boolean="false"/>
+            <Timer Name="CheckInitialFocus" Interval="20" Enabled="false"/>
+        </Locals>
+
+        <Rules>
+            <Default Target="[Model.Default]"  Value="[DefaultString]" />
+            <!--<Default Target="[Background.Content]"  Value="SlateBlue" />-->
+
+            <!-- Set timer to check that we succeeded -->
+            <Rule>
+                <Conditions>
+                    <Equality Source="[InitialFocusSet]" Value="false"/>
+                    <IsValid Source="[DefaultString]"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[InitialFocusSet]" Value="true"/>
+                    <Set Target="[CheckInitialFocus.Enabled]" Value="true"/>
+                </Actions>
+            </Rule>
+
+            <!-- If focus isn't on the right item, move to the next position -->
+            <Changed Source="[CheckInitialFocus.Tick]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen!cor:String]" ConditionOp="NotEquals" Value="[DefaultString]"/>
+                    <Equality Source="[Model.HasNextValue]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[Model.NextValue]" InvokePolicy="Synchronous" />
+                </Actions>
+            </Changed>
+
+            <!-- Shutdown the timer object once item is found -->
+            <Changed Source="[CheckInitialFocus.Tick]">
+                <Conditions>
+                    <Equality Source="[Model.Chosen!cor:String]" ConditionOp="Equals" Value="[DefaultString]"/>
+                </Conditions>
+                <Actions>
+                    <Set Target="[CheckInitialFocus.Enabled]" Value="false"/>
+                </Actions>
+            </Changed>
+
+        </Rules>
+
+    </UI>
+</Mcml>

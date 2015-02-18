@@ -1,0 +1,482 @@
+<Mcml xmlns="http://schemas.microsoft.com/2006/mcml"
+	  xmlns:a="assembly://MediaBrowser/MediaBrowser"
+	  xmlns:lib="assembly://MediaBrowser/MediaBrowser.Library"
+      xmlns:ib="resx://MediaBrowser/MediaBrowser.Resources/ItemButton"
+      xmlns:sd="assembly://Subdued/Subdued"
+	  xmlns:ss="file://Subdued_Styles.mcml"
+	  xmlns:ui="resx://Subdued/Subdued.Resources/UI"
+	  xmlns:anim="resx://Subdued/Subdued.Resources/Animations"
+	  xmlns:bd="resx://Subdued/Subdued.Resources/Backdrop"
+	  xmlns:md="resx://Subdued/Subdued.Resources/MiniDetailsPanel"
+	  xmlns:st="resx://Subdued/Subdued.Resources/ScrollableText"
+	  xmlns:cb="resx://Subdued/Subdued.Resources/CommandButton"
+      xmlns:i="resx://MediaBrowser/MediaBrowser.Resources/Images"
+      xmlns:me="Me"
+	  xmlns:cor="assembly://MSCorLib/System">
+
+    <UI Name="SubduedLayoutAlbum">
+
+        <Properties>
+            <a:Application Name="Application" Application="$Required"/>
+            <lib:FolderModel Name="Folder" FolderModel="$Required"/>
+            <Timer Name="InfoTimer" AutoRepeat="false" Interval="250" Enabled="false"/>
+            <sd:MyConfig Name="Config" MyConfig="$Required" />
+            <sd:AppUtil Name="Utility" AppUtil="$Required" />
+            <Command Name="SkipBackCommand" />
+            <Command Name="SkipForwardCommand" />
+        </Properties>
+
+        <Locals>
+            <ScrollingHandler Name="ChildScrollingHandler" HandleDirectionalKeys="true" HandleHomeEndKeys="true" HandleMouseWheel="true" HandlePageCommands="true" HandlePageKeys="true" HandlerStage="Bubbled" />
+            <ScrollingData Name="ChildSD"/>
+
+            <ShortcutHandler Name="SkipBackShortcut" Shortcut="SkipBack" Command="[SkipBackCommand]" Handle="true" HandlerStage="Bubbled" />
+            <ShortcutHandler Name="SkipForwardShortcut" Shortcut="SkipForward" Command="[SkipForwardCommand]" Handle="true" HandlerStage="Bubbled" />
+
+            <IntRangedValue Name="SelectedIndex" Value="0"/>
+            <lib:Item Name="SelectedItem" Item="[Folder.SelectedChild]"/>
+
+            <AnchorEdge Name="ChildTopAnchor" Id="Parent" Percent=".5" Offset="0" />
+            <AnchorEdge Name="ChildSepAnchor" Id="Parent" Percent=".35" Offset="0" />
+
+            <FlowLayout Name="ChildRepeaterLayout" Orientation="Vertical" ItemAlignment="Near" AllowWrap="true" Repeat="Always" RepeatGap="12,0" />
+
+            <Timer Name="FocusViewTimer" AutoRepeat="false" Interval="500" />
+
+            <Command Name="PlayCommand" />
+            <Command Name="QueueCommand" />
+            <Command Name="ShuffleCommand" />
+
+            <cor:Int32 Name="Startup" />
+        </Locals>
+
+        <Rules>
+            <!-- Live Layout -->
+            <Changed Source="[Folder.DisplayPrefs.ViewTypeString]" InitialEvaluate="true">
+                <Actions>
+                    <Set Target="[Config.AllowLiveLayout]" Value="false" />
+                </Actions>
+            </Changed>
+
+            <!-- Shortcut Handlers -->
+            <Changed Source="[SkipBackCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[ChildSD.PageUp]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[SkipForwardCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[ChildSD.PageDown]" />
+                </Actions>
+            </Changed>
+
+            <!-- Commands -->
+            <Changed Source="[PlayCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[Application.Play]" item="[Folder]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[QueueCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[Application.AddToQueue]" item="[Folder]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ShuffleCommand.Invoked]">
+                <Actions>
+                    <Invoke Target="[Application.Shuffle]" item="[Folder]" />
+                </Actions>
+            </Changed>
+
+            <!-- Scroll Speed -->
+            <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Fast">
+                <Actions>
+                    <Invoke Target="[ChildItemRepeater.DetachAnimation]" type="Move" />
+                    <Invoke Target="[ChildItemRepeater.AttachAnimation]" animation="animation://anim:ScrollFast" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Medium">
+                <Actions>
+                    <Invoke Target="[ChildItemRepeater.DetachAnimation]" type="Move" />
+                    <Invoke Target="[ChildItemRepeater.AttachAnimation]" animation="animation://anim:ScrollMedium" />
+                </Actions>
+            </Condition>
+
+            <Condition Source="[Config.ScrollSpeed]" ConditionOp="Equals" SourceValue="Slow">
+                <Actions>
+                    <Invoke Target="[ChildItemRepeater.DetachAnimation]" type="Move" />
+                    <Invoke Target="[ChildItemRepeater.AttachAnimation]" animation="animation://anim:ScrollSlow" />
+                </Actions>
+            </Condition>
+
+            <!-- Panel Sizes -->
+            <Condition Source="[Config.FolderWrapItemList]" ConditionOp="Equals" SourceValue="Always" Target="[ChildRepeaterLayout.Repeat]" Value="Always" />
+            <Condition Source="[Config.FolderWrapItemList]" ConditionOp="Equals" SourceValue="Never" Target="[ChildRepeaterLayout.Repeat]" Value="Never" />
+            <Condition Source="[Config.FolderWrapItemList]" ConditionOp="Equals" SourceValue="When Too Big" Target="[ChildRepeaterLayout.Repeat]" Value="WhenTooBig" />
+
+            <Binding Source="[Config.ChildDetailsTop!cor:Single]" Target="[ChildTopAnchor.Percent]">
+                <Transformer>
+                    <MathTransformer Divide="100" />
+                </Transformer>
+            </Binding>
+
+            <Binding Source="[Config.ChildDetailsSep!cor:Single]" Target="[ChildSepAnchor.Percent]">
+                <Transformer>
+                    <MathTransformer Divide="100" />
+                </Transformer>
+            </Binding>
+
+            <!-- Scroll Handlers -->
+            <Rule>
+                <Actions>
+                    <Set Target="[ChildScrollingHandler.ScrollingData]" Value="[ChildSD]"/>
+                    <Set Target="[ChildSD.Repeater]" Value="[ChildItemRepeater]"/>
+                </Actions>
+            </Rule>
+
+            <!-- Type Select -->
+            <Changed Source="[Folder.JILShift]">
+                <Actions>
+                    <Invoke Target="[ChildSD.Scroll]"  amount="[Folder.JILShift]"/>
+                </Actions>
+            </Changed>
+
+            <!-- Selection/Info Display -->
+            <Binding Source="[SelectedIndex.Value]" Target="[Folder.SelectedChildIndex]" />
+
+            <Changed Source="[Folder.SelectedChildIndex]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality ConditionOp="NotEquals" Source="[Folder.SelectedChildIndex]" Value="-1" />
+                </Conditions>
+                <Actions>
+                    <Set Target="[InfoTimer.Enabled]" Value="false" ExclusiveApply="false" />
+                    <Set Target="[InfoTimer.Enabled]" Value="true"/>
+                </Actions>
+            </Changed>
+
+            <Changed Source="[InfoTimer.Tick]">
+                <Actions>
+                    <Set Target="[SelectedItem]" Value="[Folder.SelectedChild]" />
+                </Actions>
+            </Changed>
+
+            <!-- List Sort/Group Change -->
+            <Changed Source="[Folder.Children]" InitialEvaluate="false">
+                <Actions>
+                    <Set Target="[ChildItemRepeater.Source]" Value="[Folder.Children]" />
+                    <Set Target="[SelectedIndex.Value]" Value="0" />
+                </Actions>
+            </Changed>
+
+            <!-- Backdrop Content -->
+            <Binding Source="[Folder!lib:Item]" Target="[Backdrop.Item]" />
+
+            <!-- Poster Visibility/Content -->
+            <!-- NOTE: This is a Binding because HasPreferredImage/PreferredImage are not set until the image is loaded from cache -->
+            <Binding Source="[Folder.HasPreferredImage]" Target="[Poster.Visible]" />
+            <Binding Source="[Folder.PreferredImage]" Target="[Poster.Content]" />
+
+            <!-- Title Content -->
+            <Binding Source="[Folder.Name]" Target="[AlbumTitle.Content]" />
+
+            <!-- Initial Focus -->
+            <Rule>
+                <Conditions>
+                    <Equality Source="[Application.NavigatingForward]" Value="true"/>
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[FocusViewTimer.Start]" />
+                </Actions>
+            </Rule>
+
+            <Changed Source="[FocusViewTimer.Tick]">
+                <Actions>
+                    <Invoke Target="[OptionsPanel.NavigateInto]" />
+                </Actions>
+            </Changed>
+
+            <!-- First Unwatched -->
+            <!-- The below default dummy rule is used to navigate to the proper first item.  Using a generic rule or changed does not work the first time -->
+            <Default Target="[Startup]" Value="1" ConditionLogicalOp="And">
+                <Conditions>
+                    <Equality Source="[Application.NavigatingForward]" Value="true"/>
+                    <Equality Source="[Folder.Children.Count]" ConditionOp="GreaterThan" Value="0" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ChildItemRepeater.NavigateIntoIndex]"  index="[Folder.FirstUnwatchedIndex]"/>
+                </Actions>
+            </Default>
+        </Rules>
+
+        <Content>
+            <Panel Layout="Form">
+                <Children>
+                    
+                    <!-- Layout for Child pages -->
+                    <Panel Name="ChildPanel" Layout="Form">
+                        <Children>
+                            <!-- Background Glow -->
+                            <ui:GlowTop VFadeSize="35" HFadeSize="200">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="ChildBG,0" Right="ChildBG,1" Top="InfoBG,0,1" Bottom="ChildBG,0,35"/>
+                                </LayoutInput>
+                            </ui:GlowTop>
+
+                            <Panel Name="OptionsPanel" Layout="VerticalFlow" Navigation="Column,RememberFocus">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="ChildBG,0,40" Right="ChildBG,1,-20" Top="ChildBG,0,35" Bottom="ChildBG,1"/>
+                                </LayoutInput>
+                                <Children>
+                                    <cb:CommandButton Name="PlayButton"
+                                                      Text="[Application.LocalStrings.#PlayAllCMenu!cor:String]"
+                                                      Command="[PlayCommand]"
+                                                      Font="font://ss:SdF_ItemAction"
+                                                      SelFont="font://ss:SdF_ItemActionSel"
+                                                      Color="color://ss:SdC_ItemAction"
+                                                      SelColor="color://ss:SdC_ItemActionSel" />
+
+                                    <cb:CommandButton Name="ShuffleButton"
+                                                      Text="[Application.LocalStrings.#ShufflePlayCMenu!cor:String]"
+                                                      Command="[ShuffleCommand]"
+                                                      Font="font://ss:SdF_ItemAction"
+                                                      SelFont="font://ss:SdF_ItemActionSel"
+                                                      Color="color://ss:SdC_ItemAction"
+                                                      SelColor="color://ss:SdC_ItemActionSel" />
+
+                                    <cb:CommandButton Name="QueueButton"
+                                                      Text="[Application.LocalStrings.#QueueAll!cor:String]"
+                                                      Command="[QueueCommand]"
+                                                      Font="font://ss:SdF_ItemAction"
+                                                      SelFont="font://ss:SdF_ItemActionSel"
+                                                      Color="color://ss:SdC_ItemAction"
+                                                      SelColor="color://ss:SdC_ItemActionSel" />
+                                </Children>
+                            </Panel>
+                            
+                            <!-- Info Panel -->
+                            <Panel Name="ChildInfoPanel">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="InfoBG,0,20" Right="InfoBG,1,-40" Top="InfoBG,0,30" Bottom="InfoBG,1,-30"/>
+                                </LayoutInput>
+                                <Layout>
+                                    <FlowLayout Orientation="Horizontal" ItemAlignment="Near" Spacing="20,0" />
+                                </Layout>
+                                <Children>
+                                    <!-- Thumbnail Poster -->
+                                    <Graphic Name="Poster" MaintainAspectRatio="true" SizingPolicy="SizeToConstraint" MaximumSize="350,0" Visible="false" />
+                                    
+                                    <!-- Item Details -->
+                                    <Panel Layout="Form">
+                                        <Children>
+                                            <Panel Name="Details" Navigation="Column">
+                                                <LayoutInput>
+                                                    <FormLayoutInput Left="Parent,0" Right="Parent,1" Top="Parent,0" />
+                                                </LayoutInput>
+                                                <Layout>
+                                                    <FlowLayout Orientation="Vertical" ItemAlignment="Near" Spacing="0,0" />
+                                                </Layout>
+                                                <Children>
+                                                    <st:MarqueeText Name="AlbumTitle" Color="color://ss:SdC_ItemTitle" Font="font://ss:SdF_ItemTitle" />
+
+                                                    <!-- List of Items -->
+                                                    <Scroller Name="ChildScroller" Orientation="Vertical" ScrollingData="[ChildSD]" Margins="0,10,0,0" FadeAmount="1" FadeSize="-10" Navigation="Column,ContainVertical,RememberFocus">
+                                                        <Children>
+                                                            <Repeater Name="ChildItemRepeater" Source="[Folder.Children]" Layout="[ChildRepeaterLayout]">
+                                                                <Content>
+                                                                    <me:ChildListItem
+                                                                        Application="[Application]"
+                                                                        Utility="[Utility]"
+                                                                        Index="[RepeatedItemIndex]"
+                                                                        Item="[RepeatedItem!lib:Item]"
+                                                                        SelectedIndex="[SelectedIndex]"/>
+                                                                </Content>
+                                                            </Repeater>
+                                                        </Children>
+                                                    </Scroller>
+                                                </Children>
+                                            </Panel>
+                                        </Children>
+                                    </Panel>
+                                </Children>
+                            </Panel>
+
+
+                            <!-- Background Fill -->
+                            <ui:PanelPrimary Name="ChildBG">
+                                <LayoutInput>
+                                    <FormLayoutInput Name="ChildBGLayoutInput" Left="Parent,0" Right="Parent,0,240" Top="Parent,.5" Bottom="Parent,1"/>
+                                </LayoutInput>
+                            </ui:PanelPrimary>
+
+                            <ui:PanelSecondary Name="InfoBG">
+                                <LayoutInput>
+                                    <FormLayoutInput Left="ChildBG,1" Right="Parent,1" Top="ChildBG,0" Bottom="ChildBG,1"/>
+                                </LayoutInput>
+                            </ui:PanelSecondary>
+                        </Children>
+                    </Panel>
+
+                    <!-- Backdrop -->
+                    <bd:Backdrop Name="Backdrop" Application="[Application]" Config="[Config]" Item="[Folder!lib:Item]" Rotate="[Config.FolderRotateBackdrops]">
+                        <LayoutInput>
+                            <FormLayoutInput Left="Parent,0" Top="Parent,0" Bottom="Parent,1" Right="Parent,1"/>
+                        </LayoutInput>
+                    </bd:Backdrop>
+                </Children>
+            </Panel>
+        </Content>
+
+    </UI>
+    
+    <UI Name="ChildListItem" BaseUI="ib:ItemButton">
+
+        <Properties>
+            <IntRangedValue Name="SelectedIndex" IntRangedValue="$Required"/>
+            <Index Name="Index" Index="$Required"/>
+            <sd:AppUtil Name="Utility" AppUtil="$Required" />
+        </Properties>
+
+        <Locals>
+            <ScrollingHandler Name="ScrollingHandler" HandleDirectionalKeys="false" HandleHomeEndKeys="false" HandleMouseWheel="false" HandlePageCommands="false" HandlePageKeys="false" HandlerStage="Bubbled" />
+            <ScrollingData Name="ScrollingData" ScrollStep="4" />
+
+            <Timer Name="ScrollText" Interval="100" AutoRepeat="true" Enabled="false" />
+            <Timer Name="Delay" Interval="5000" AutoRepeat="false" Enabled="false"/>
+            <Timer Name="EndDelay" Interval="5000" AutoRepeat="false" Enabled="false"/>
+        </Locals>
+
+        <Rules>
+            <Default Target="[Input.KeyInteractive]" Value="true" />
+
+            <Binding Source="[Item.DynamicProperties.#PreciseRuntimeStr!cor:String]" Target="[Duration.Content]" />
+
+            <Condition Source="[Input.KeyFocus]" SourceValue="true">
+                <Actions>
+                    <Set Target="[SelectedIndex.Value]" Value="[Index.SourceValue]"/>
+                    <Set Target="[Application.CurrentItem]" Value="[Item]" />
+                    <Set Target="[ChildItemName.Color]" Value="color://ss:SdC_ItemActionSel"/>
+                    <Set Target="[Duration.Color]" Value="color://ss:SdC_ItemActionSel"/>
+                    <Set Target="[DurationBracketLeft.Color]" Value="color://ss:SdC_ItemActionSel"/>
+                    <Set Target="[DurationBracketRight.Color]" Value="color://ss:SdC_ItemActionSel"/>
+                    <Set Target="[Background.Visible]" Value="true" />
+                </Actions>
+            </Condition>
+
+            <Changed Source="[Input.KeyFocus]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Input.KeyFocus]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollText.Stop]" />
+                    <Invoke Target="[Delay.Stop]" />
+                    <Invoke Target="[EndDelay.Stop]" />
+                    <Invoke Target="[Delay.Start]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Input.KeyFocus]" InitialEvaluate="true">
+                <Conditions>
+                    <Equality Source="[Input.KeyFocus]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollText.Stop]" />
+                    <Invoke Target="[Delay.Stop]" />
+                    <Invoke Target="[EndDelay.Stop]" />
+                    <Invoke Target="[ScrollingData.Home]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[Delay.Tick]">
+                <Conditions>
+                    <Equality Source="[ScrollingData.CanScrollDown]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollText.Start]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ScrollText.Tick]">
+                <Conditions>
+                    <Equality Source="[ScrollingData.CanScrollDown]" ConditionOp="Equals" Value="true" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollingData.ScrollDown]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[ScrollText.Tick]">
+                <Conditions>
+                    <Equality Source="[ScrollingData.CanScrollDown]" ConditionOp="Equals" Value="false" />
+                </Conditions>
+                <Actions>
+                    <Invoke Target="[ScrollText.Stop]" />
+                    <Invoke Target="[EndDelay.Start]" />
+                </Actions>
+            </Changed>
+
+            <Changed Source="[EndDelay.Tick]">
+                <Actions>
+                    <Invoke Target="[ScrollingData.Home]" />
+                    <Invoke Target="[Delay.Start]" />
+                </Actions>
+            </Changed>
+
+            <Default Target="[ScrollingHandler.ScrollingData]" Value="[ScrollingData]"/>
+        </Rules>
+
+        <Content>
+            <Panel Layout="Anchor">
+                <Children>
+                    <Scroller Name="AutoText" Orientation="Horizontal" FadeSize="-3" ScrollingData="[ScrollingData]">
+                        <LayoutInput>
+                            <AnchorLayoutInput Left="Parent,0" Right="Parent,1,-130" Vertical="Far" />
+                        </LayoutInput>
+                        <Children>
+                            <Text Name="ChildItemName" Content="[Item.Name]" Font="font://ss:SdF_ItemInfo" Color="color://ss:SdC_ItemInfo" />
+                        </Children>
+                    </Scroller>
+                    <Panel Name="DurationPanel" Layout="HorizontalFlow">
+                        <LayoutInput>
+                            <AnchorLayoutInput Left="Parent,1,-120" Right="Parent,1,-20" Horizontal="Far" Vertical="Far" />
+                        </LayoutInput>
+                        <Children>
+                            <Text Name="DurationBracketLeft" Content="[" Font="font://ss:SdF_ItemInfo" Color="color://ss:SdC_ItemInfo" />
+                            <Text Name="Duration" Font="font://ss:SdF_ItemInfo" Color="color://ss:SdC_ItemInfo" />
+                            <Text Name="DurationBracketRight" Content="]" Font="font://ss:SdF_ItemInfo" Color="color://ss:SdC_ItemInfo" />
+                        </Children>
+                    </Panel>
+                    <Panel Name="Background" Layout="Anchor" Visible="false">
+                        <LayoutInput>
+                            <AnchorLayoutInput ContributesToWidth="false" ContributesToHeight="false" Top="AutoText,0,-2" Bottom="AutoText,1,2" Left="Parent,0,-2" Right="Parent,1,2" />
+                        </LayoutInput>
+                        <Children>
+                            <ui:PanelPrimary>
+                                <LayoutInput>
+                                    <AnchorLayoutInput Top="Parent,0,2" Bottom="Parent,1,-2" Left="Parent,0,2" Right="Parent,1,-2" />
+                                </LayoutInput>
+                            </ui:PanelPrimary>
+                            <ColorFill Content="color://ss:SdC_FocusFrame">
+                                <LayoutInput>
+                                    <AnchorLayoutInput Top="Parent,0" Bottom="Parent,1" Left="Parent,0" Right="Parent,1" />
+                                </LayoutInput>
+                            </ColorFill>
+                        </Children>
+                    </Panel>
+                </Children>
+                <Animations>
+                    <Animation Type="Move">
+                        <Keyframes>
+                            <PositionKeyframe RelativeTo="Current" Time="0"/>
+                            <PositionKeyframe RelativeTo="Final" Time="0.1"/>
+                        </Keyframes>
+                    </Animation>
+                </Animations>
+            </Panel>
+        </Content>
+
+    </UI>
+
+</Mcml>

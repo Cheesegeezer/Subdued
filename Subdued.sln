@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subdued", "Subdued\Subdued.csproj", "{0ECDEF19-D4A2-4C8D-B1B9-EC7B7D85E88C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0ECDEF19-D4A2-4C8D-B1B9-EC7B7D85E88C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ECDEF19-D4A2-4C8D-B1B9-EC7B7D85E88C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ECDEF19-D4A2-4C8D-B1B9-EC7B7D85E88C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0ECDEF19-D4A2-4C8D-B1B9-EC7B7D85E88C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0ECDEF19-D4A2-4C8D-B1B9-EC7B7D85E88C}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		VisualSVNWorkingCopyRoot = .
+	EndGlobalSection
+EndGlobal
